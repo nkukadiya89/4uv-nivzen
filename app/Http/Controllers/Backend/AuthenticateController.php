@@ -1,0 +1,195 @@
+<?php
+namespace App\Http\Controllers\Backend;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+
+class AuthenticateController extends BaseController {
+
+    public function index(Request $request) {
+      
+        return view('admin.auth.login', array('title' => 'Login'));
+    }
+
+    public function loginValidate(Request $request) {
+
+        $this->validator($request);
+     
+        if(Auth::guard('backend')->attempt($request->only('email','password'),$request->filled('remember'))){
+            //Authentication passed...
+          
+            Session::flash('success-message', "Welcome to edulake dashboard!");
+            return response()->json([
+                'status' => 'TRUE',
+                'redirect_url' => config('constants.ADMIN_URL').'dashboard'
+            ]);
+
+        } 
+
+        //Authentication failed...
+        return $this->loginFailed();
+    }
+
+    /**
+     * Validate the form data.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return
+     */
+    private function validator(Request $request)
+    {
+        //validation rules.
+        $rules = [
+            'email'    => 'required|email|exists:users|min:5|max:191',
+            'password' => 'required|string|min:6|max:255',
+        ];
+
+        //custom validation error messages.
+        $messages = [
+            'email.exists' => 'These credentials do not match our records.',
+        ];
+
+        //validate the request.
+         return response()->json([
+            'status' => 'FALSE',
+            'message' =>'"These credentials do not match our records'
+        ]);
+    }
+
+    /**
+     * Redirect back after a failed login.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function loginFailed()
+    {
+        return response()->json([
+            'status' => 'FALSE',
+            'redirect_url' => config('constants.ADMIN_URL').'login'
+        ]);
+
+    }
+
+   /**
+     * Logout the admin.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout()
+    {
+        Auth::guard('backend')->logout();
+        return redirect(config('constants.ADMIN_URL').'login');
+    }
+
+
+    /**
+     * Add user the admin.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addUser(Request $request)
+    {
+      
+        $inputs = $request->all();
+
+        $validator = Validator::make($inputs, [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'email' => ['required', 'string', 'email', 'max:191', 'unique:users', 'regex:/(.+)@(.+)\.(.+)/i'],
+            'password' => 'required',
+            'dob' => 'required',
+            'phone' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            return json_encode( $validator->errors());
+
+        } else {
+
+            $user = new User();
+            $user->name = $request->firstname.' '.$request->lastname;
+            $user->firstname = $request->firstname;
+            $user->lastname =  $request->lastname;
+            $user->email =  $request->email;
+            $user->dob =  $request->dob;
+            $user->phone =  $request->phone;
+            $user->feature_access = '1';
+
+            $user->password =   isset($request->password) ? Hash::make($request->password) : '';
+
+            $user->save();
+
+            Session::flash('success-message',  "User created successfully! Plase login");
+
+            $data['status'] = 'TRUE';
+           
+            return response()->json($data);
+        }
+    } 
+
+    public function myProfile(Request $request) {
+        $inputs = $request->all();
+        $user = auth()->guard('admin')->user();
+        if($inputs) {
+            $id = $user->id;
+           
+        }
+        return view('admin.authenticate.myprofile', array('title' => 'My Profile','user' => $user));
+    }
+
+
+    public function sendResetLinkEmail(Request $request) {
+         //$this->validateEmail($request);
+         $user = DB::table('users')->where('email', '=', $request->email)->first();
+         if (!$user) {
+            $data['status'] = 'false';
+            return response()->json($data);
+         }
+        
+         //get password reset token
+        //  DB::table('password_reset_tokens')->insert([
+        //      'email' => $request->email,
+        //      'token' => Str::random(60),
+        //      'created_at' => Carbon::now()
+        //  ]);
+        //  $tokenData = DB::table('password_reset_tokens')->where('email', $request->email)->first();
+        
+ 
+        //  $event_name="Reset Password";
+        //  $data['name'] = $user->firstname;
+        //  $data['link'] = config('constants.ADMIN_URL').'/password/reset/'.Str::random(60).'?email='.$request->email;
+        //  $data['site_url'] = config('constants.ADMIN_URL');
+ 
+        //  $to      = 'test.wld3@gmail.com';
+        //  $subject = 'Request for password reset';
+        //  $message = 'hello';
+        //  $headers = 'From: webmaster@example.com'       . "\r\n" .
+        //               'Reply-To: webmaster@example.com' . "\r\n" .
+        //               'X-Mailer: PHP/' . phpversion();
+     
+        //  mail($to, $subject, $message, $headers);
+        //  $this->sendKlaviyoEmail($request->email, $event_name, $data);
+ 
+         $data['status'] = 'true';
+
+           
+         return response()->json($data);
+    }
+
+    public function dashboard() {
+
+        $title = 'Dashboard';
+       
+
+        return view('admin.auth.dashboard',compact('title'));
+    }
+ }
