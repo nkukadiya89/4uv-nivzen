@@ -29,7 +29,7 @@
                 <!--end: Aside content-->
                 <!--begin: Aside footer for desktop-->
                 <div class="d-none flex-column-auto d-lg-flex justify-content-between mt-10">
-                    <div class="opacity-70 font-weight-bold text-black">© {{date('Y')}} Edulake</div>
+                    <div class="opacity-70 font-weight-bold text-black">© {{date('Y')}} 4UV</div>
                    
                 </div>
                 <!--end: Aside footer for desktop-->

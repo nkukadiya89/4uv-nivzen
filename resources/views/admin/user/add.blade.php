@@ -1,6 +1,6 @@
 @extends('backend.page')
 
-@section('title', 'Edulake - Add Tax')
+@section('title', '4UV - Add Tax')
 
 @section('content_header')
     <h1 class="m-0 text-dark">Add User</h1>

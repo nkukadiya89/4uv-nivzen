@@ -9,7 +9,7 @@
 			@if(View::hasSection('title'))
 				@yield('title')
 			@else
-				Admin | Edulake
+				Admin | 4UV
 			@endif	
 		</title>
 		<meta name="description" content="" />
@@ -75,7 +75,7 @@
 		<div id="kt_header_mobile" class="header-mobile align-items-center header-mobile-fixed">
 			<!--begin::Logo-->
 			<a href="/backend">
-				<h1>EDULAKE</h1>
+				<h1>4UV</h1>
 			</a>
 			<!--end::Logo-->
 			<!--begin::Toolbar-->
@@ -117,7 +117,7 @@
 					<div class="brand flex-column-auto" id="kt_brand">
 						<!--begin::Logo-->
 						<a href="/backend" class="brand-logo">
-							<h1>Edulake</h1>
+							<h1>4UV</h1>
 						</a>
 						<!--end::Logo-->
 						<!--begin::Toggle-->

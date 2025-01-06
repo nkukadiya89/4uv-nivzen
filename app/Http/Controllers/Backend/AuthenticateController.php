@@ -26,7 +26,7 @@ class AuthenticateController extends BaseController {
         if(Auth::guard('backend')->attempt($request->only('email','password'),$request->filled('remember'))){
             //Authentication passed...
           
-            Session::flash('success-message', "Welcome to edulake dashboard!");
+            Session::flash('success-message', "Welcome to 4uv dashboard!");
             return response()->json([
                 'status' => 'TRUE',
                 'redirect_url' => config('constants.ADMIN_URL').'dashboard'

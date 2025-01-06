@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\ModulesController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\UsersController;
+use App\Http\Controllers\Backend\DistributorController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -86,5 +87,14 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::get('batches-content/delete/{id}', [BatchesContentController::class,'deleteBatcheContent'])->name('batche-content-delete');
     Route::post('batches-content-upload', [BatchesContentController::class,'uploadLargeFiles'])->name('files.upload.large');
 
+
+    // Manage Distributors modules
+    Route::get('distributors', [DistributorController::class, 'index'])->name('distributors-manage');
+    Route::post('distributors/list-ajax', [DistributorController::class,'anyListAjax'])->name('distributors-list-ajax');
+    Route::any('distributors/add', [DistributorController::class,'showDistributorForm'])->name('distributor-add-form');
+    Route::post('distributors/add', [DistributorController::class,'addDistributor'])->name('distributor-add');
+    Route::any('distributors/edit/{id}', [DistributorController::class,'editDistributor'])->name('distributor-edit');
+    Route::any('distributors/view/{id}', [DistributorController::class,'viewDistributor'])->name('distributor-view');
+    Route::get('distributors/delete/{id}', [DistributorController::class,'deleteDistributor'])->name('distributor-delete');
 });
 
