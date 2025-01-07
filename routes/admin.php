@@ -9,6 +9,8 @@ use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\UsersController;
 use App\Http\Controllers\Backend\DistributorController;
+use App\Http\Controllers\Backend\ProspectController;
+use App\Http\Controllers\Backend\SupportRequestController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -96,5 +98,20 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('distributors/edit/{id}', [DistributorController::class,'editDistributor'])->name('distributor-edit');
     Route::any('distributors/view/{id}', [DistributorController::class,'viewDistributor'])->name('distributor-view');
     Route::get('distributors/delete/{id}', [DistributorController::class,'deleteDistributor'])->name('distributor-delete');
+
+    // Manage Prospects modules
+    Route::get('prospects', [ProspectController::class, 'index'])->name('prospects-manage');
+    Route::post('prospects/list-ajax', [ProspectController::class,'anyListAjax'])->name('prospects-list-ajax');
+    Route::any('prospects/add', [ProspectController::class,'showProspectForm'])->name('prospect-add-form');
+    Route::post('prospects/add', [ProspectController::class,'addProspect'])->name('prospect-add');
+    Route::any('prospects/edit/{id}', [ProspectController::class,'editProspect'])->name('prospect-edit');
+    Route::any('prospects/view/{id}', [ProspectController::class,'viewProspect'])->name('prospect-view');
+    Route::get('prospects/delete/{id}', [ProspectController::class,'deleteProspect'])->name('prospect-delete');
+
+    // Support
+    Route::get('support', [SupportRequestController::class, 'index'])->name('support-manage');
+    Route::post('support/list-ajax', [SupportRequestController::class, 'anyListAjax'])->name('support-list-ajax');
+    Route::get('/support/create', [SupportRequestController::class, 'create'])->name('support-create');
+    Route::post('/support/store', [SupportRequestController::class, 'store'])->name('support-store');
 });
 
