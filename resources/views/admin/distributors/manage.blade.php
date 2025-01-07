@@ -57,7 +57,8 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Enagic id</th>
-                                <th>Name</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
                                 <th>Status</th>
                                 <th width="105" class="no-sort text-center">Actions</th>
                             </tr>
@@ -66,12 +67,13 @@
                             <tr class="filter">
                                 <td></td>
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="enagic_id"></td>
-                                <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="name"></td>
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="firstname"></td>
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="lastname"></td>
                                 <td>
                                     <select class="form-control form-control-sm form-filter kt-input" title="Select" name="account_status">
                                         <option value="">Select</option>
-                                        <option value="1">Active</option>
-                                        <option value="0">Inactive</option>
+                                        <option value="Active">Active</option>
+                                        <option value="InActive">Inactive</option>
                                     </select>
                                 </td>
 

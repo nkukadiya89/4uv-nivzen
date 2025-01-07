@@ -25,11 +25,14 @@ return new class extends Migration
             $table->enum('type', ['User', 'Distributor']);
             $table->enum('distributor_status', ['Active', 'Inactive']);
             $table->enum('goal_for', ['User', '3A', '6A', '6A2', '6A2-3']);
-            $table->string('upline_name');
-            $table->string('leader_name');
+            $table->unsignedBigInteger('upline_id');
+            $table->unsignedBigInteger('leader_id');
             $table->enum('account_status', ['Active', 'Inactive'])->default('Inactive');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('upline_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('leader_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

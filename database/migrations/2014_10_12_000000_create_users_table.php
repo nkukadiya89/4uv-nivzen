@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('firstname');
             $table->string('lastname');
             $table->string('email')->unique();
@@ -30,8 +30,18 @@ return new class extends Migration
             $table->string('feature_access');
             $table->dateTime('last_login')->useCurrent();
             $table->boolean('status')->default(true);
+            $table->unsignedBigInteger('upline_id')->nullable();
+            $table->unsignedBigInteger('leader_id')->nullable();
+            $table->string('enagic_id')->nullable();
+            $table->enum('type', ['User', 'Distributor'])->default('User');
+            $table->enum('distributor_status', ['Active', 'Inactive']);
+            $table->enum('goal_for', ['User', '3A', '6A', '6A2', '6A2-3'])->default('User');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('upline_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('leader_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

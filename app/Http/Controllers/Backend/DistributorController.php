@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Distributor;
+use App\Mail\DistributorRegister;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,20 +25,27 @@ class DistributorController extends Controller
     public function anyListAjax(Request $request) {
         $data = $request->all();
 
-        $sortColumn = array('id','enagic_id','name', 'account_status');
-        $query = new Distributor();
+        $sortColumn = array('id','enagic_id','firstname','lastname', 'status');
+        $query = new User();
+
+        // Add condition to fetch only 'Distributor' type users
+        $query = $query->where('type', 'Distributor');
 
         if (isset($data['enagic_id']) && $data['enagic_id'] != '') {
             $query = $query->where('enagic_id', 'LIKE', '%' . $data['enagic_id'] . '%');
         }
 
-        if (isset($data['name']) && $data['name'] != '') {
-            $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
+        if (isset($data['firstname']) && $data['firstname'] != '') {
+            $query = $query->where('firstname', 'LIKE', '%' . $data['firstname'] . '%');
+        }
+
+        if (isset($data['lastname']) && $data['lastname'] != '') {
+            $query = $query->where('lastname', 'LIKE', '%' . $data['lastname'] . '%');
         }
 
 
-        if (isset($data['account_status']) && $data['account_status'] != '') {
-            $query = $query->where('account_status', 'LIKE', '%' . $data['account_status'] . '%');
+        if (isset($data['status']) && $data['status'] != '') {
+            $query = $query->where('status', '=', $data['status']);
         }
 
         $rec_per_page = 10;
@@ -64,9 +76,10 @@ class DistributorController extends Controller
 
             $data[$key][$index++] = $val['id'];
             $data[$key][$index++] = $val['enagic_id'];
-            $data[$key][$index++] = $val['name'];
+            $data[$key][$index++] = $val['firstname'];
+            $data[$key][$index++] = $val['lastname'];
 
-            $data[$key][$index++] = $val['account_status'] == 1 ? 'Active' : 'Inactive' ;
+            $data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
 
             // $data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
@@ -92,28 +105,32 @@ class DistributorController extends Controller
 
     public function showDistributorForm () {
         $title = 'Add Distributor';
-        return view('admin.distributors.add', compact('title'));
+        $users = User::pluck('name','id');
+        return view('admin.distributors.add', compact('title', 'users'));
     }
 
     public function addDistributor(Request $request) {
         $inputs = $request->all();
-
+        $randomPassword = Str::random(10);
+        $hashedPassword = Hash::make($randomPassword);
         $validator = Validator::make($inputs, [
             'enagic_id' => 'required',
-            'mobile_no' => 'required',
-            'email' => 'required',
-            'name' => 'required',
-            'address' => 'required',
-            'area' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'dob' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'address1' => 'required',
+            'address2' => 'required',
             'city' => 'required',
             'state' => 'required',
             'country' => 'required',
             'type' => 'required',
             'distributor_status' => 'required',
             'goal_for' => 'required',
-            'upline_name' => 'required',
-            'leader_name' => 'required',
-            'account_status' => 'required',
+            'upline_id' => 'required',
+            'leader_id' => 'required',
+            'status' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -121,37 +138,43 @@ class DistributorController extends Controller
 
         } else {
 
-            $distributor = new Distributor();
+            $distributor = new User();
             $distributor->enagic_id= $request->enagic_id;
-            $distributor->mobile_no= $request->mobile_no;
+            $distributor->phone= $request->phone;
             $distributor->email= $request->email;
-            $distributor->name= $request->name;
-            $distributor->address= $request->address;
-            $distributor->area= $request->area;
+            $distributor->dob =  $request->dob;
+            $distributor->password= $hashedPassword;
+            $distributor->firstname= $request->firstname;
+            $distributor->lastname= $request->lastname;
+            $distributor->address1= $request->address1;
+            $distributor->address2= $request->address2;
             $distributor->city= $request->city;
             $distributor->state= $request->state;
             $distributor->country= $request->country;
             $distributor->country= $request->country;
             $distributor->type = $request->type;
             $distributor->distributor_status = $request->distributor_status;
-            $distributor->upline_name = $request->upline_name;
-            $distributor->leader_name = $request->leader_name;
-            $distributor->account_status = $request->account_status;
+            $distributor->upline_id = $request->upline_id;
+            $distributor->leader_id = $request->leader_id;
+            $distributor->status = isset($request->status) && $request->status == 'Active' ? 1: 0;
+            $distributor->feature_access = '1';
 
             $distributor->save();
+            if ($distributor->save()) {
+                Mail::to($distributor->email)->send(new DistributorRegister($distributor, $randomPassword));
+                Session::flash('success-message', $request->title . " created successfully !");
+                $data['success'] = true;
 
-            Session::flash('success-message', $request->title . " created successfully !");
-
-            $data['success'] = true;
-             print_r($data);
-            return response()->json($data);
+                return response()->json($data);
+            }
+            return redirect()->back()->with("success", " Distributor added successfully !");
         }
     }
 
     public function editDistributor(Request $request, $id)
     {
 
-        $distributor = Distributor::find($id);
+        $distributor = User::find($id);
         $title = 'Edit Distributor';
         $inputs  = $request->all();
         if ($distributor || !empty($distributor)) {
@@ -159,43 +182,46 @@ class DistributorController extends Controller
 
                 $validator = Validator::make($inputs, [
                     'enagic_id' => 'required',
-                    'mobile_no' => 'required',
-                    'email' => 'required',
-                    'name' => 'required',
-                    'address' => 'required',
-                    'area' => 'required',
+                    'phone' => 'required',
+                    'email' => 'required|email|unique:users,email',
+                    'dob' => 'required',
+                    'firstname' => 'required',
+                    'lastname' => 'required',
+                    'address1' => 'required',
+                    'address2' => 'required',
                     'city' => 'required',
                     'state' => 'required',
                     'country' => 'required',
                     'type' => 'required',
                     'distributor_status' => 'required',
                     'goal_for' => 'required',
-                    'upline_name' => 'required',
-                    'leader_name' => 'required',
-                    'account_status' => 'required',
+                    'upline_id' => 'required',
+                    'leader_id' => 'required',
+                    'status' => 'required',
                 ]);
 
                 if ($validator->fails()) {
                     return json_encode($validator->errors());
                 } else {
                     $distributor->enagic_id= $request->enagic_id;
-                    $distributor->mobile_no= $request->mobile_no;
+                    $distributor->phone= $request->phone;
                     $distributor->email= $request->email;
-                    $distributor->name= $request->name;
-                    $distributor->address= $request->address;
-                    $distributor->area= $request->area;
+                    $distributor->dob =  $request->dob;
+                    $distributor->firstname= $request->firstname;
+                    $distributor->lastname= $request->lastname;
+                    $distributor->address1= $request->address1;
+                    $distributor->address2= $request->address2;
                     $distributor->city= $request->city;
                     $distributor->state= $request->state;
                     $distributor->country= $request->country;
-                    $distributor->country= $request->country;
                     $distributor->type = $request->type;
                     $distributor->distributor_status = $request->distributor_status;
-                    $distributor->upline_name = $request->upline_name;
-                    $distributor->leader_name = $request->leader_name;
-                    $distributor->account_status = $request->account_status;
+                    $distributor->upline_id = $request->upline_id;
+                    $distributor->leader_id = $request->leader_id;
+                    $distributor->status = isset($request->status) && $request->status == 'Active' ? 1: 0;
 
                     if ($distributor->save()) {
-                        Session::flash('success-message', $distributor->name . " updated successfully !");
+                        Session::flash('success-message', $distributor->firstname . " updated successfully !");
                         $data['success'] = true;
 
                         return response()->json($data);
@@ -203,7 +229,9 @@ class DistributorController extends Controller
                     return redirect()->back()->with("success", " Distributor updated successfully !");
                 }
             } else {
-                return view('admin.distributors.edit', compact('distributor', 'title'));
+                $users = User::pluck('name','id');
+                return view('admin.distributors.edit', compact('title', 'distributor', 'users'));
+                //return view('admin.distributors.edit', compact('distributor', 'title'));
             }
 
         }
@@ -212,13 +240,13 @@ class DistributorController extends Controller
 
     public function viewDistributor($id) {
 
-        $distributor = Distributor::find($id);
+        $distributor = User::find($id);
         $title = 'View Distributor ';
         return view('admin.distributors.view', compact('title', 'distributor'));
     }
     public function deleteDistributor($id)
     {
-        $object = Distributor::find($id);
+        $object = User::find($id);
 
         if ($object) {
             if ($object->delete()) {

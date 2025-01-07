@@ -35,7 +35,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Course</p>
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Enagic Id</p>
                                         </div>
                                         <div class="col-lg-9 col-6">
                                             <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$distributor->enagic_id ?? ''}}</p>
@@ -44,10 +44,19 @@
                                     <div class="separator separator-solid my-3"></div>
                                     <div class="row">
                                         <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">name</p>
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">First Name</p>
                                         </div>
                                         <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$distributor->name ?? '' }}</p>
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$distributor->firstname ?? '' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Last Name</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$distributor->lastname ?? '' }}</p>
                                         </div>
                                     </div>
                                     <div class="separator separator-solid my-3"></div>
@@ -56,7 +65,7 @@
                                             <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Mobile</p>
                                         </div>
                                         <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$batche->mobile_no ?? '' }}</p>
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$distributor->phone ?? '' }}</p>
                                         </div>
                                     </div>
                                     
@@ -69,6 +78,77 @@
                                             <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->email!!}</p>
                                         </div>
                                     </div>
+
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Address</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->address1!!}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">City</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->city!!}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">State</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->state!!}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Country</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->country!!}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Type</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->type!!}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Goal For</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->goal_for!!}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator separator-solid my-3"></div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Status</p>
+                                        </div>
+                                        <div class="col-lg-9 col-6">
+                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->distributor_status!!}</p>
+                                        </div>
+                                    </div>
                                  
                                 </div>
                             </div>
@@ -76,17 +156,6 @@
                        
                     </div>
                     
-                </div>
-            </div>
-            <!--end::Card-->
-            <!--begin::Card-->
-            <div class="card card-custom gutter-b">
-
-
-                <div class="card-body">
-                    <!--begin: Datatable-->
-
-                    <!--end: Datatable-->
                 </div>
             </div>
             <!--end::Card-->
