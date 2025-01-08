@@ -1,0 +1,95 @@
+.loginbg {
+    background: url(../../images/loginbg.png) no-repeat center top;
+    background-size: cover;
+}
+
+.loginwrap {
+    background: #fff;
+    max-width: 600px;
+    width: 100%;
+
+    .authpagename {
+        h3 {
+            color: #05478E;
+            font-size: 24px;
+            font-weight: 600;
+            padding-bottom: 10px;
+        }
+
+        h5 {
+            color: #9c9c9c;
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 24px;
+        }
+    }
+}
+
+.form-control {
+    border: 1px solid #e5e5e5;
+    padding: 24px 16px;
+
+    &:focus {
+        border: 1px solid #b9b9b9;
+    }
+}
+
+.btn {
+    &.btn-primary {
+        background: #05478E;
+        border: 0;
+        padding: 10px 16px;
+        font-size: 16px;
+
+        &:focus,
+        &:hover {
+            background: #0852a0;
+        }
+    }
+}
+
+.btn.btn-primary:hover:not(.btn-text):not(:disabled):not(.disabled),
+.btn.btn-primary:focus:not(.btn-text),
+.btn.btn-primary.focus:not(.btn-text) {
+    color: #FFFFFF;
+    background-color: #0852a0;
+    border-color: #0852a0;
+}
+
+.loginleft {
+    background: url(../../images/loginimg.png) no-repeat left center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+
+    .logincontent {
+        max-width: 50%;
+        text-align: left;
+        padding: 32px;
+
+        .logo {
+            font-size: 52px;
+            font-weight: bold;
+            background-image: linear-gradient(90deg, rgba(9, 9, 121, 1) 0%, rgba(0, 212, 255, 1) 100%);
+            color: transparent;
+            background-clip: text;
+            display: inline-flex;
+        }
+
+        h3 {
+            color: #05478E;
+            font-size: 32px;
+            font-weight: 600;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            font-size: 18px;
+            color: #343434;
+            margin: 0;
+        }
+
+    }
+}
