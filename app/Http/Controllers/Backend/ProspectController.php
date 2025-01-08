@@ -97,11 +97,12 @@ class ProspectController extends Controller
     }
 
     public function addProspect(Request $request) {
+
         $inputs = $request->all();
 
         $validator = Validator::make($inputs, [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required',
             'mobile_no' => 'required',
             'address' => 'required',
             'area' => 'required',
@@ -114,7 +115,6 @@ class ProspectController extends Controller
             return json_encode($validator->errors());
 
         } else {
-
             $prospect = new Prospect();
             $prospect->name= $request->name;
             $prospect->email= $request->email;
@@ -124,8 +124,8 @@ class ProspectController extends Controller
             $prospect->city= $request->city;
             $prospect->state= $request->state;
             $prospect->country= $request->country;
-
             $prospect->save();
+
             if ($prospect->save()) {
                 Session::flash('success-message', $request->name . " created successfully !");
                 $data['success'] = true;
@@ -147,7 +147,7 @@ class ProspectController extends Controller
 
                 $validator = Validator::make($inputs, [
                     'name' => 'required',
-                    'email' => 'required|email|unique:users,email',
+                    'email' => 'required|email|unique:prospects,email',
                     'mobile_no' => 'required',
                     'address' => 'required',
                     'area' => 'required',
@@ -171,7 +171,6 @@ class ProspectController extends Controller
                     if ($prospect->save()) {
                         Session::flash('success-message', $prospect->name . " updated successfully !");
                         $data['success'] = true;
-
                         return response()->json($data);
                     }
                     return redirect()->back()->with("success", " Prospect updated successfully !");

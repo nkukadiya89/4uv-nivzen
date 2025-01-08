@@ -10,6 +10,7 @@ use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\UsersController;
 use App\Http\Controllers\Backend\DistributorController;
 use App\Http\Controllers\Backend\ProspectController;
+use App\Http\Controllers\Backend\ToDoController;
 use App\Http\Controllers\Backend\SupportRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -108,10 +109,23 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('prospects/view/{id}', [ProspectController::class,'viewProspect'])->name('prospect-view');
     Route::get('prospects/delete/{id}', [ProspectController::class,'deleteProspect'])->name('prospect-delete');
 
+    // Manage Todos modules
+    Route::get('todos', [ToDoController::class, 'index'])->name('todos-manage');
+    Route::post('todos/list-ajax', [ToDoController::class,'anyListAjax'])->name('todos-list-ajax');
+    Route::any('todos/add', [ToDoController::class,'showTodoForm'])->name('todo-add-form');
+    Route::post('todos/add', [ToDoController::class,'addTodo'])->name('todo-add');
+    Route::any('todos/edit/{id}', [ToDoController::class,'editTodo'])->name('todo-edit');
+    Route::any('todos/view/{id}', [ToDoController::class,'viewTodo'])->name('todo-view');
+    Route::get('todos/delete/{id}', [ToDoController::class,'deleteTodo'])->name('todo-delete');
+
     // Support
     Route::get('support', [SupportRequestController::class, 'index'])->name('support-manage');
     Route::post('support/list-ajax', [SupportRequestController::class, 'anyListAjax'])->name('support-list-ajax');
-    Route::get('/support/create', [SupportRequestController::class, 'create'])->name('support-create');
-    Route::post('/support/store', [SupportRequestController::class, 'store'])->name('support-store');
+    Route::get('support/create', [SupportRequestController::class, 'create'])->name('support-create');
+    Route::post('support/store', [SupportRequestController::class, 'store'])->name('support-store');
+    Route::get('support/edit/{id}', [SupportRequestController::class, 'edit'])->name('support-requests.edit');
+    Route::post('support/{id}', [SupportRequestController::class, 'update'])->name('support-requests.update');
+    Route::any('support/view/{id}', [SupportRequestController::class,'viewSupport'])->name('support-view');
+    Route::get('support/delete/{id}', [SupportRequestController::class,'deleteSupport'])->name('support-delete');
 });
 

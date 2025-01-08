@@ -4,21 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Prospect extends Model
+class ToDo extends Model
 {
-    use SoftDeletes, HasFactory;
-
+    use HasFactory, SoftDeletes;
+    protected $table = 'todos';
     protected $fillable = [
+        'user_id',
         'name',
-        'email',
-        'mobile_no',
-        'address',
-        'area',
-        'city',
-        'state',
-        'country'
+        'date',
+        'time',
+        'is_completed',
+        'customer_list',
+        'note',
     ];
-
 }

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\SupportRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 
 class SupportRequestController extends Controller
@@ -119,5 +122,52 @@ class SupportRequestController extends Controller
         });
 
         return redirect()->back()->with('success', "Request submitted! Request Number: {$requestNumber}");
+    }
+    public function edit($id)
+    {
+        $title = 'Edit Support';
+        $supportRequest = SupportRequest::with(['fromUser', 'toUser'])->findOrFail($id);
+        $users = User::all(); // Fetch users to populate dropdowns
+        return view('admin.support.edit', compact('title', 'supportRequest', 'users'));
+    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'support_name' => 'required|string|max:255',
+            'from_user_id' => 'required|exists:users,id',
+            'to_user_id' => 'required|exists:users,id',
+            'description' => 'nullable|string',
+        ]);
+
+        $supportRequest = SupportRequest::findOrFail($id);
+        $supportRequest->update([
+            'support_name' => $request->input('support_name'),
+            'from_user_id' => $request->input('from_user_id'),
+            'to_user_id' => $request->input('to_user_id'),
+            'description' => $request->input('description'),
+        ]);
+
+        return redirect()->route('support-requests.edit', $id)->with('success', 'Support Request updated successfully.');
+    }
+
+    public function viewSupport($id) {
+
+        $support = SupportRequest::find($id);
+        $title = 'View Support ';
+        return view('admin.support.view', compact('title', 'support'));
+    }
+    public function deleteSupport($id)
+    {
+        $object = SupportRequest::find($id);
+
+        if ($object) {
+            if ($object->delete()) {
+                return 'TRUE';
+            } else {
+                return 'FALSE';
+            }
+        } else {
+            return 'FALSE';
+        }
     }
 }

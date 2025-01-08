@@ -38,10 +38,10 @@ class UserRolePermissionSeeder extends Seeder
 
 
         // Create Roles
-        $superAdminRole = Role::create(['name' => 'super-admin']); //as super-admin
-        $adminRole = Role::create(['name' => 'admin']);
-        $staffRole = Role::create(['name' => 'staff']);
-        $userRole = Role::create(['name' => 'user']);
+        $superAdminRole = Role::create(['name' => 'Administrator']); //as super-admin
+        $adminRole = Role::create(['name' => 'golden-admin']);
+        $staffRole = Role::create(['name' => 'super-admin']);
+        $userRole = Role::create(['name' => 'dist-admin']);
 
         // Lets give all permission to super-admin role.
         $allPermissionNames = Permission::pluck('name')->toArray();
@@ -58,14 +58,14 @@ class UserRolePermissionSeeder extends Seeder
         // Let's Create User and assign Role to it.
 
         $superAdminUser = User::firstOrCreate([
-                    'email' => 'superadmin@gmail.com',
+                    'email' => 'administrator@yopmail.com',
                 ], [
-                    'name' => 'Super Admin',
+                    'name' => 'Administrator',
                     'firstname' => 'Super',
                     'lastname' => 'Admin',
                     'dob' => now(),
-                    'phone' => '7777777777', 
-                    'email' => 'superadmin@gmail.com',
+                    'phone' => '9875024235',
+                    'email' => 'administrator@yopmail.com',
                     'feature_access'=> '1',
                     'password' => Hash::make ('12345678'),
                 ]);
@@ -74,14 +74,14 @@ class UserRolePermissionSeeder extends Seeder
 
 
         $adminUser = User::firstOrCreate([
-                            'email' => 'admin@gmail.com'
+                            'email' => 'golden-admin@yopmail.com'
                         ], [
-                            'name' => 'Admin',
+                            'name' => 'GoldenAdmin',
                             'firstname' => 'David',
                             'lastname' => 'Admin',
                             'dob' => now(),
-                            'phone' => '7777777777',
-                            'email' => 'admin@gmail.com',
+                            'phone' => '9909923456',
+                            'email' => 'golden-admin@yopmail.com',
                             'feature_access'=> '1',
                             'password' => Hash::make ('12345678'),
                         ]);
@@ -90,18 +90,33 @@ class UserRolePermissionSeeder extends Seeder
 
 
         $staffUser = User::firstOrCreate([
-                            'email' => 'staff@gmail.com',
+                            'email' => 'super-admin@yopmail.com',
                         ], [
-                            'name' => 'Staff',
+                            'name' => 'SuperAdmin',
                             'firstname' => 'Maldi',
                             'lastname' => 'Staff',
                             'dob' => now(),
-                            'phone' => '7777777777',    
-                            'email' => 'staff@gmail.com',
+                            'phone' => '9723456078',
+                            'email' => 'super-admin@yopmail.com',
                             'feature_access'=> '1',
                             'password' => Hash::make('12345678'),
                         ]);
 
         $staffUser->assignRole($staffRole);
+
+        $distAdmin = User::firstOrCreate([
+            'email' => 'dist-admin@yopmail.com',
+        ], [
+            'name' => 'DistAdmin',
+            'firstname' => 'Maldi',
+            'lastname' => 'Staff',
+            'dob' => now(),
+            'phone' => '9723456078',
+            'email' => 'dist-admin@yopmail.com',
+            'feature_access'=> '1',
+            'password' => Hash::make('12345678'),
+        ]);
+
+        $distAdmin->assignRole($userRole);
     }
 }

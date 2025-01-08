@@ -5,13 +5,14 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -53,7 +54,7 @@ class User extends Authenticatable
     // Define a scope to filter users based on the current user's permissions
     public function scopeManageableBy($query, $user)
     {
-        if ($user->hasRole('super-admin')) {
+        if ($user->hasRole('Administrator')) {
             return $query; // Super admin can manage all users
         } else {
             return $query->where('id', $user->id); // Other users can manage only their own details
