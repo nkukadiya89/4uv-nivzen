@@ -16,6 +16,8 @@
     font-size: 1rem;
 }
 
+
+
 @media (max-width: 768px) {
     .kt-header__topbar-username {
         color: #636177 !important;
@@ -366,68 +368,83 @@ Line Run Templates
 }
 
 /* Fix width checkbox and action coumn in listing */
-#datatable_ajax th.no-sort.last{
-    width : 100px !important ;
-}
-#datatable_ajax th.no-sort.first-col-fix-width{
-    width : 20px !important ;
-}
-#datatable_ajax th{
-    width : auto !important ;
+#datatable_ajax th.no-sort.last {
+    width: 100px !important;
 }
 
-.no-sort{
+#datatable_ajax th.no-sort.first-col-fix-width {
+    width: 20px !important;
+}
+
+#datatable_ajax th {
+    width: auto !important;
+}
+
+.no-sort {
     pointer-events: none !important;
 }
+
 .no-sort:after,
-.no-sort:before{
+.no-sort:before {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
     visibility: hidden !important;
 }
+
 .remove_disable_sorting_class_listing {
     padding-right: 0px !important;
 }
-.ticket_info{
+
+.ticket_info {
     background: #f0f0f9;
-    color: #000;display: flex;
+    color: #000;
+    display: flex;
     align-items: stretch;
     padding: 1rem 2rem;
     margin: 0 0 20px;
 }
+
 .reservation_log_details, .reservation_log_details th, .reservation_log_details td {
     border-color: #000;
     background-color: #fff;
 }
+
 .line_run_card table, .reservations_card table {
     font-weight: 600;
     margin-bottom: 0;
 }
+
 .line_run_card .table-bordered th, .reservations_card .table-bordered th {
     border: 1px solid #b5b5b5;
 }
+
 .line_run_card table .btn {
     border-color: #FFF;
     background-color: #FFF;
     color: #000;
 }
+
 .line_run_card table .btn i {
     color: #000 !important;
 }
+
 .line_run_card table .btn:hover {
     border-color: #000;
     background-color: #000;
     color: #fe9600;
 }
+
 .line_run_card table .btn:hover i {
     color: #fe9600 !important;
 }
+
 .line_run_card table tbody tr.active .btn {
     background-color: #5d59a6;
     border-color: #5d59a6;
 }
-.line_run_card table tbody > tr.active .btn i {
+
+.line_run_card table tbody>tr.active .btn i {
     color: #FFF !important;
 }
 
@@ -435,14 +452,17 @@ Line Run Templates
     background-color: #FFF !important;
     color: #000 !important;
 }
+
 .line_run_card table tbody tr.active td a {
     color: #000 !important;
 }
+
 .line_run_card table thead tr th:first-child {
     background-color: #FFF;
     border-color: #FFF;
     /* border-right-color: #b5b5b5; */
 }
+
 .line_run_card table tbody tr td:first-child {
     pointer-events: none;
     background-color: #FFF;
@@ -450,11 +470,13 @@ Line Run Templates
     width: 15px;
     padding: 0.25rem 0 0 0;
 }
+
 .line_run_card table thead tr th:nth-child(1) {
     background-color: #FFF;
     border-color: #FFF;
     border-right-color: #b5b5b5;
 }
+
 .line_run_card table tbody tr td:nth-child(1) {
     /* pointer-events: none; */
     background-color: #FFF;
@@ -462,89 +484,106 @@ Line Run Templates
     width: 15px;
     padding: 0.25rem 0 0 0;
 }
+
 table tr.hold-bg td {
     background-color: #f2dede;
     border: 1px solid #a94442 !important;
     color: #a94442;
 }
+
 table td.hold-bg td {
     background-color: #f2dede;
 }
+
 table tr.booked-bg td {
     background-color: #dff0d8;
     border: 1px solid #3c763d !important;
     color: #3c763d;
 }
+
 table tr.booked-bg td, table tr.pending-payment-bg td, table tr.callrequest-bg td, table tr.hold-bg td {
     /* border: 1px solid; */
 }
+
 table tr.pending-payment-bg td {
     background-color: #fcf8e3;
     border: 1px solid #8a6d3b !important;
     color: #8a6d3b;
 }
+
 table tr.callrequest-bg td {
     background-color: #d9edf7;
     border: 1px solid #31708f !important;
     color: #31708f;
 }
+
 .line_run_card table tbody td:last-child, .reservations_card table tbody td:last-child {
-    min-width:55px;
+    min-width: 55px;
 }
+
 table td i.icon-class {
     color: #3c763d;
 }
+
 #line_run_card .table-responsive {
     height: 296px;
     overflow-y: auto;
 }
+
 #reservations_card .table-responsive {
     height: 304px;
     overflow-y: auto;
 }
+
 #reservations_card {
     z-index: 999;
 }
+
 .ui-draggable-dragging {
     z-index: 9999;
 }
+
 #line_run_card .upper,
 #line_run_card .lower {
-  position: absolute;
-  height: 20px;
-  width: 100%;
-  z-index: 10;
+    position: absolute;
+    height: 20px;
+    width: 100%;
+    z-index: 10;
 }
+
 #line_run_card .lower {
     bottom: 0;
 }
-.line_run_card .btn-group-sm > .btn.btn-icon,.line_run_card .btn.btn-icon.btn-sm, .reservations_card .btn-group-sm > .btn.btn-icon, .reservations_card .btn.btn-icon.btn-sm {
+
+.line_run_card .btn-group-sm>.btn.btn-icon, .line_run_card .btn.btn-icon.btn-sm, .reservations_card .btn-group-sm>.btn.btn-icon, .reservations_card .btn.btn-icon.btn-sm {
     height: 20px;
     width: 20px;
 }
+
 .line_run_card table td, .line_run_card table th, .reservations_card table td, .reservations_card table th {
     padding: 0.25rem;
     font-size: 12px;
-    align-items: center!important;
+    align-items: center !important;
 }
+
 .line_run_card .form-control, .reservations_card .form-control {
     padding: 0.25rem;
     line-height: 1;
     height: calc(0.5em + 1.3rem + 2px);
 }
 
-.lbl-private{
+.lbl-private {
     background-color: #8950FC;
     color: #ffffff;
     padding: 5px;
-    border-radius:1rem;
+    border-radius: 1rem;
     font-size: 1rem;
     padding: 7px;
     width: 100%;
     text-align: center;
 }
 
-.lbl-pending{
+.lbl-pending {
     background-color: #F64E60;
     color: #ffffff;
     padding: 5px;
@@ -556,16 +595,17 @@ table td i.icon-class {
 }
 
 .reservation-rate {
-    padding:2px 4px 4px 4px !important;
-    margin-right:2px;
+    padding: 2px 4px 4px 4px !important;
+    margin-right: 2px;
     pointer-events: none;
 }
-.reservation-rate  > i {
-    padding-right:0px !important;
-    color:white;
+
+.reservation-rate>i {
+    padding-right: 0px !important;
+    color: white;
 }
 
-.btn-grey-rate{
+.btn-grey-rate {
     background-color: #efefef;
     border-color: #efefef;
     color: #fff;
@@ -575,6 +615,7 @@ table td i.icon-class {
     .kt-header__topbar-username {
         color: #636177 !important;
     }
+
     #send_status_email {
         margin-top: 5px;
     }
@@ -585,14 +626,16 @@ table td i.icon-class {
 } */
 .btn-clear-week-view {
     padding: .10rem .20rem !important;
-    line-height:1.1 !important;
-    float:right !important;
-    margin-top:7px;
+    line-height: 1.1 !important;
+    float: right !important;
+    margin-top: 7px;
 }
-.btn-clear-week-view i{
-    font-size:.9rem !important;
-    padding-right:0px !important;
+
+.btn-clear-week-view i {
+    font-size: .9rem !important;
+    padding-right: 0px !important;
 }
+
 .copy-txt {
     font-size: 11px !important;
     vertical-align: top;
@@ -600,17 +643,20 @@ table td i.icon-class {
     padding-left: 3px;
     text-align: center;
 }
+
 @media only screen and (max-width: 600px) {
     #filter_week {
-        width:100% !important;
+        width: 100% !important;
         margin-bottom: 15px;
     }
 
 }
+
 .line_run_template .col-form-label {
     width: 10px;
     text-align: center;
 }
+
 #send_status_email {
     margin-left: 10px;
 }
@@ -621,19 +667,22 @@ table td i.icon-class {
     .sec-send-email {
         position: absolute;
     }
+
     td select.e_reservation_status {
-        width:100%;
-        display:block;
+        width: 100%;
+        display: block;
     }
 }
+
 @media only screen and (min-width: 1448px) {
     .sec-send-email {
         display: inline;
         position: relative;
     }
+
     td select.e_reservation_status {
-        width:70%;
-        display:inline;
+        width: 70%;
+        display: inline;
     }
 }
 
@@ -648,8 +697,9 @@ table td i.icon-class {
     line-height: 1.5;
     height: calc(1.5em + 1rem + 2px);
 }
+
 .line_run_card table div.table-bulk-action .btn i {
-    color:#fff !important;
+    color: #fff !important;
 }
 
 .line_run_card table div.table-bulk-action {
