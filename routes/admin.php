@@ -11,6 +11,7 @@ use App\Http\Controllers\Backend\UsersController;
 use App\Http\Controllers\Backend\DistributorController;
 use App\Http\Controllers\Backend\ProspectController;
 use App\Http\Controllers\Backend\ToDoController;
+use App\Http\Controllers\Backend\TrainingProgramsController;
 use App\Http\Controllers\Backend\SupportRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,6 +100,16 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('distributors/edit/{id}', [DistributorController::class,'editDistributor'])->name('distributor-edit');
     Route::any('distributors/view/{id}', [DistributorController::class,'viewDistributor'])->name('distributor-view');
     Route::get('distributors/delete/{id}', [DistributorController::class,'deleteDistributor'])->name('distributor-delete');
+
+    // Manage Training Programs modules
+    Route::get('trainings', [TrainingProgramsController::class, 'index'])->name('trainings-manage');
+    Route::post('trainings/list-ajax', [TrainingProgramsController::class,'anyListAjax'])->name('trainings-list-ajax');
+    Route::any('trainings/add', [TrainingProgramsController::class,'showTrainingForm'])->name('training-add-form');
+    Route::post('trainings/add', [TrainingProgramsController::class,'addTraining'])->name('training-add');
+    Route::any('trainings/edit/{id}', [TrainingProgramsController::class,'editTraining'])->name('training-edit');
+    Route::post('trainings/{id}/remove-video', [TrainingProgramsController::class, 'removeVideo'])->name('trainings.remove_video');
+    Route::any('trainings/view/{id}', [TrainingProgramsController::class,'viewTraining'])->name('training-view');
+    Route::get('trainings/delete/{id}', [TrainingProgramsController::class,'deleteTraining'])->name('training-delete');
 
     // Manage Prospects modules
     Route::get('prospects', [ProspectController::class, 'index'])->name('prospects-manage');

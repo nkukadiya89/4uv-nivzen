@@ -172,8 +172,6 @@
             toastr.info("{{ session('success-message') }}");
         @endif
 
-        var url =  '{{config('constants.ADMIN_URL')}}batches-content/list-ajax';
-        DataTables.init('#datatable_ajax', url);
     });
 
 

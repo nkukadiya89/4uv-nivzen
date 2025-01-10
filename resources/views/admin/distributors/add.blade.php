@@ -51,7 +51,7 @@
                                     <label for="mobile_no">Mobile No<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="mobile_no" id="mobile_no" class="form-control"
-                                               value="{{ old('mobile_no') }}" required>
+                                               value="{{ old('mobile_no') }}">
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                     <label for="email">Email ID<span class="required">*</span></label>
                                     <div>
                                         <input type="email" name="email" id="email" class="form-control"
-                                               value="{{ old('email') }}" required>
+                                               value="{{ old('email') }}">
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                     <label for="address">Address<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="address" id="address" class="form-control"
-                                               value="{{ old('address') }}" required>
+                                               value="{{ old('address') }}">
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                                     <label for="area">Area<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="area" id="area" class="form-control"
-                                               value="{{ old('area') }}" required>
+                                               value="{{ old('area') }}">
                                     </div>
                                 </div>
                             </div>
@@ -89,7 +89,7 @@
                                     <label for="city">City<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="city" id="city" class="form-control"
-                                               value="{{ old('city') }}" required>
+                                               value="{{ old('city') }}">
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                                     <label for="state">State<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="state" id="state" class="form-control"
-                                               value="{{ old('state') }}" required>
+                                               value="{{ old('state') }}">
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                                     <label for="country">Country<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="country" id="country" class="form-control"
-                                               value="{{ old('country') }}" required>
+                                               value="{{ old('country') }}">
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                                     <label for="upline_name">Upline Name<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="upline_name" id="upline_name" class="form-control"
-                                               value="{{ old('upline_name') }}" required>
+                                               value="{{ old('upline_name') }}">
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@
                                     <label for="leader_name">Leader Name<span class="required">*</span></label>
                                     <div>
                                         <input type="text" name="leader_name" id="leader_name" class="form-control"
-                                               value="{{ old('leader_name') }}" required>
+                                               value="{{ old('leader_name') }}">
                                     </div>
                                 </div>
                             </div>

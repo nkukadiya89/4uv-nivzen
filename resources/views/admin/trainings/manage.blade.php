@@ -31,8 +31,8 @@
                     </div>
                     <div class="p-2">
                         <!--begin::Button-->
-                        <a href="{{ route('distributor-add-form') }}" class="btn btn-primary">
-                            <i class="la la-plus"></i>New Distributor</a>
+                        <a href="{{ route('training-add-form') }}" class="btn btn-primary">
+                            <i class="la la-plus"></i>New Training</a>
                         <!--end::Button-->
                     </div>
                 </div>
@@ -55,10 +55,8 @@
                         <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Enagic id</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Status</th>
+                            <th>Name</th>
+                            <th>Videos</th>
                             <th width="105" class="no-sort text-center">Actions</th>
                         </tr>
                         </thead>
@@ -66,11 +64,7 @@
                         <tr class="filter">
                             <td></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
-                                       name="enagic_id"></td>
-                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
-                                       name="firstname"></td>
-                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
-                                       name="lastname"></td>
+                                       name="name"></td>
                             <td>
                                 <select class="form-control form-control-sm form-filter kt-input" title="Select"
                                         name="account_status">
@@ -105,8 +99,7 @@
 toastr.info("{{ session('success-message') }}");
                     @endif
 
-            var url = '{{config('
-    constants.ADMIN_URL ')}}distributors/list-ajax';
+            var url = '{{config('constants.ADMIN_URL ')}}trainings/list-ajax';
             DataTables.init('#datatable_ajax', url);
 
 

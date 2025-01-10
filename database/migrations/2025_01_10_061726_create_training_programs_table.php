@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('training_videos', function (Blueprint $table) {
+        Schema::create('training_programs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('training_program_id');
-            $table->string('video_name');
+            $table->string('name');
+            $table->string('video_path');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('training_program_id')->references('id')->on('training_programs')->onDelete('cascade');
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_videos');
+        Schema::dropIfExists('training_programs');
     }
 };
