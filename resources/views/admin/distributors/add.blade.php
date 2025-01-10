@@ -1,232 +1,239 @@
 @extends('admin.layouts.master')
 @section('content')
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-    <!--begin::Subheader-->
-    <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
-        <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
-            <!--begin::Info-->
-            <div class="d-flex align-items-center flex-wrap mr-1">
-                <!--begin::Page Heading-->
-                <div class="d-flex align-items-baseline flex-wrap mr-5">
-                    <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">{{$title}}</h5>
-                    <!--end::Page Title-->
+    <div class="d-flex flex-column flex-column-fluid" id="kt_content">
+        <!--begin::Subheader-->
+        <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
+            <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+                <!--begin::Info-->
+                <div class="d-flex align-items-center flex-wrap mr-1">
+                    <!--begin::Page Heading-->
+                    <div class="d-flex align-items-baseline flex-wrap mr-5">
+                        <!--begin::Page Title-->
+                        <h5 class="text-dark font-weight-bold my-1 mr-5">{{$title}}</h5>
+                        <!--end::Page Title-->
+                    </div>
+                    <!--end::Page Heading-->
                 </div>
-                <!--end::Page Heading-->
+                <!--end::Info-->
+
             </div>
-            <!--end::Info-->
-
         </div>
-    </div>
-    <!--end::Subheader-->
-    <!--begin::Entry-->
-    <div class="d-flex flex-column-fluid">
-        <!--begin::Container-->
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!--begin::Card-->
-                    <div class="card card-custom gutter-b example example-compact">
-                        <!--begin::Form-->
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+        <!--end::Subheader-->
+        <!--begin::Entry-->
+        <div class="p-6 flex-fill">
+            <!--begin::Container-->
+
+            <div class="card card-custom gutter-b example example-compact">
+                <!--begin::Form-->
+                <form class="form-horizontal" id="frmAdd" action="{{ route('distributor-add') }}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="batch_id">Enagic Id<span class="required">*</span></label>
+                                    <div>
+                                        <input id="enagic_id" type="text" class="form-control required" name="enagic_id"
+                                               value="{{ old('enagic_id') }}" placeholder="Enagic Id">
+                                    </div>
+                                </div>
                             </div>
-                        @endif
-                        <form class="form-horizontal" id="frmAdd"  action="{{ route('distributor-add') }}" >
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="enagic_id">Enagic Id<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input id="enagic_id" type="text" class="form-control required" name="enagic_id" value="{{ old('enagic_id') }}" placeholder="Enagic Id" >
-                                    </div>
-                                    @error('enagic_id')
-                                      <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="firstname">First Name<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input id="firstname" type="text" class="form-control required" name="firstname" value="{{ old('firstname') }}" placeholder="First Name">
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group ">
+                                    <label for="title">Name<span class="required">*</span></label>
+                                    <div>
+                                        <input id="name" type="text" class="form-control required" name="name"
+                                               value="{{ old('name') }}" placeholder="Name">
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="lastname">Last Name<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input id="lastname" type="text" class="form-control required" name="lastname" value="{{ old('lastname') }}" placeholder="Last Name">
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="mobile_no">Mobile No<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="mobile_no" id="mobile_no" class="form-control"
+                                               value="{{ old('mobile_no') }}" required>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="phone">Mobile No<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                      <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" placeholder="Mobile No" required>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="email">Email ID<span class="required">*</span></label>
+                                    <div>
+                                        <input type="email" name="email" id="email" class="form-control"
+                                               value="{{ old('email') }}" required>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="dob">Date of Birth<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                    <input class="form-control form-control-solid h-auto py-5 px-6" type="date" placeholder="Birth date" name="dob" autocomplete="off" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="email">Email ID<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                     <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" placeholder="Email" required>
-                                    </div>
-                                    @error('email')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
 
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="address1">Address<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                    <input type="text" name="address1" id="address1" class="form-control" value="{{ old('address1') }}" placeholder="Address" required>
+                                <div class="form-group">
+                                    <label for="address">Address<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="address" id="address" class="form-control"
+                                               value="{{ old('address') }}" required>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="address2">Area<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                      <input type="text" name="address2" id="address2" class="form-control" value="{{ old('address2') }}" placeholder="Area" required>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="area">Area<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="area" id="area" class="form-control"
+                                               value="{{ old('area') }}" required>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
 
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="city">City<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                    <input type="text" name="city" id="city" class="form-control" value="{{ old('city') }}" placeholder="City" required>
+                                <div class="form-group">
+                                    <label for="city">City<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="city" id="city" class="form-control"
+                                               value="{{ old('city') }}" required>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="state">State<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                     <input type="text" name="state" id="state" class="form-control" value="{{ old('state') }}" placeholder="State" required>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="state">State<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="state" id="state" class="form-control"
+                                               value="{{ old('state') }}" required>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="country">Country<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                      <input type="text" name="country" id="country" class="form-control" value="{{ old('country') }}" placeholder="Country" required>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="country">Country<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="country" id="country" class="form-control"
+                                               value="{{ old('country') }}" required>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
 
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="type">Type<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <select name="type" id="type" class="form-control" placeholder="Type" required>
-                                            <option value="User" {{ old('type', $distributor->type ?? '') == 'User' ? 'selected' : '' }}>User</option>
-                                            <option value="Distributor" {{ old('type', $distributor->type ?? '') == 'Distributor' ? 'selected' : '' }}>Distributor</option>
+                                <div class="form-group">
+                                    <label for="type">Type<span class="required">*</span></label>
+                                    <div>
+                                        <select name="type" id="type" class="form-control" required>
+                                            <option value="User"
+                                                    {{ old('type', $distributor->type ?? '') == 'User' ? 'selected' : '' }}>User
+                                            </option>
+                                            <option value="Distributor"
+                                                    {{ old('type', $distributor->type ?? '') == 'Distributor' ? 'selected' : '' }}>
+                                                Distributor</option>
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="status">Distributor Status</label>
-                                    <div class="col-lg-6">
-                                        <select name="distributor_status" id="distributor_status" class="form-control" placeholder="Status" required>
-                                            <option value="Active" {{ old('distributor_status') == 'Active' ? 'selected' : '' }}>Active</option>
-                                            <option value="Inactive" {{ old('distributor_status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="status">Distributor Status</label>
+                                    <div>
+                                        <select name="distributor_status" id="distributor_status" class="form-control"
+                                                required>
+                                            <option value="Active"
+                                                    {{ old('distributor_status') == 'Active' ? 'selected' : '' }}>
+                                                Active
+                                            </option>
+                                            <option value="Inactive"
+                                                    {{ old('distributor_status') == 'Inactive' ? 'selected' : '' }}>Inactive
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
 
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="goal_for">Goal For<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <select name="goal_for" id="goal_for" class="form-control" placeholder="Goal for" required>
-                                            <option value="User" {{ old('goal_for') == 'User' ? 'selected' : '' }}>User</option>
+                                <div class="form-group">
+                                    <label for="goal_for">Goal For<span class="required">*</span></label>
+                                    <div>
+                                        <select name="goal_for" id="goal_for" class="form-control" required>
+                                            <option value="User" {{ old('goal_for') == 'User' ? 'selected' : '' }}>User
+                                            </option>
                                             <option value="3A" {{ old('goal_for') == '3A' ? 'selected' : '' }}>3A</option>
                                             <option value="6A" {{ old('goal_for') == '6A' ? 'selected' : '' }}>6A</option>
-                                            <option value="6A2" {{ old('goal_for') == '6A2' ? 'selected' : '' }}>6A2</option>
-                                            <option value="6A2-3" {{ old('goal_for') == '6A2-3' ? 'selected' : '' }}>6A2-3</option>
+                                            <option value="6A2" {{ old('goal_for') == '6A2' ? 'selected' : '' }}>6A2
+                                            </option>
+                                            <option value="6A2-3" {{ old('goal_for') == '6A2-3' ? 'selected' : '' }}>6A2-3
+                                            </option>
                                         </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="upline_name">Upline Name<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <select class="form-control city custom-select required" name="upline_id" id="upline_id" placeholder="Upline Name">
-
-                                            <option value="">-- Select Upline Name --</option>
-                                            @foreach ($users as $k=>$res)
-                                                <option value="{{$k}}" >{{$res}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="leader_name">Leader Name<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <select class="form-control city custom-select required" name="leader_id" id="leader_id" placeholder="Leader Name">
-
-                                            <option value="">-- Select Leader Name --</option>
-                                            @foreach ($users as $k=>$res)
-                                                <option value="{{$k}}" >{{$res}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="status">Account Status</label>
-                                    <div class="col-lg-6">
-                                    <select name="status" id="status" class="form-control" placeholder="Account Status" required>
-                                        <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>Active</option>
-                                        <option value="Inactive" {{ old('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
-                                    </select>
-                                    </div>
-                                </div>
-
-
-                                
-                            </div>
-                            <!-- /.card-body -->
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-lg-3"></div>
-                                    <div class="col-lg-6">
-                                        <button type="submit" class="btn btn-warning mr-2">Submit</button>
-                                        <a href="{{ route('distributors-manage') }}" class="btn btn-secondary">Cancel</a>
                                     </div>
                                 </div>
                             </div>
-                            <!-- /.card-footer -->
-                        </form>
-                        <!--end::Form-->
+                            <div class="col-12 col-md-4 col-lg-3">
+
+                                <div class="form-group">
+                                    <label for="upline_name">Upline Name<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="upline_name" id="upline_name" class="form-control"
+                                               value="{{ old('upline_name') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="leader_name">Leader Name<span class="required">*</span></label>
+                                    <div>
+                                        <input type="text" name="leader_name" id="leader_name" class="form-control"
+                                               value="{{ old('leader_name') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="status">Account Status</label>
+                                    <div>
+                                        <select name="account_status" id="account_status" class="form-control" required>
+                                            <option value="Active"
+                                                    {{ old('account_status') == 'Active' ? 'selected' : '' }}>
+                                                Active
+                                            </option>
+                                            <option value="Inactive"
+                                                    {{ old('account_status') == 'Inactive' ? 'selected' : '' }}>
+                                                Inactive
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
                     </div>
-                    <!--end::Card-->
-                </div>
-            </div>
-        </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer d-flex justify-content-end">
 
-        <!--end::Container-->
+
+
+                        <a href="{{ route('batches-manage') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary ml-2">Submit</button>
+
+                        <!-- /.card-footer -->
+                </form>
+                <!--end::Form-->
+            </div>
+
+
+            <!--end::Container-->
+        </div>
+        <!--end::Entry-->
     </div>
-    <!--end::Entry-->
-</div>
 
 @section('custom_js')
-<script>
-    $('#description').summernote({
+    <script>
+        $('#description').summernote({
             height: 200,
-    });
-    $(document).ready(function() {
+        });
+        $(document).ready(function() {
 
-        @if(Session::has('success-message'))
-            toastr.info("{{ session('success-message') }}");
-        @endif
-    });
-  </script>
+            @if(Session::has('success-message'))
+toastr.info("{{ session('success-message') }}");
+            @endif
+        });
+    </script>
 @stop
 
 @stop
-
