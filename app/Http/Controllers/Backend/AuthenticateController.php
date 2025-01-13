@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Models\User;
+use App\Models\Prospect;
+use App\Models\TrainingPrograms;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -188,8 +190,16 @@ class AuthenticateController extends BaseController {
     public function dashboard() {
 
         $title = 'Dashboard';
-       
+        $distributorCount = User::where('type', 'Distributor')->count();;
+        $prospectCount = Prospect::count();
+        $demoCount = TrainingPrograms::count();
 
-        return view('admin.auth.dashboard',compact('title'));
+        //return view('admin.auth.dashboard',compact('title'));
+        return view('admin.auth.dashboard', compact(
+            'title',
+            'distributorCount',
+            'prospectCount',
+            'demoCount'
+        ));
     }
  }
