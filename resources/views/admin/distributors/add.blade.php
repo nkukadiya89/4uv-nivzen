@@ -39,19 +39,36 @@
                             </div>
                             <div class="col-12 col-md-4 col-lg-3">
                                 <div class="form-group ">
-                                    <label for="title">Name<span class="required">*</span></label>
+                                    <label for="firstname">First Name<span class="required">*</span></label>
                                     <div>
-                                        <input id="name" type="text" class="form-control required" name="name"
-                                               value="{{ old('name') }}" placeholder="Name">
+                                        <input id="firstname" type="text" class="form-control required" name="firstname"
+                                               value="{{ old('firstname') }}" placeholder="First Name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group ">
+                                    <label for="lastname">Last Name<span class="required">*</span></label>
+                                    <div>
+                                        <input id="lastname" type="text" class="form-control required" name="lastname"
+                                               value="{{ old('lastname') }}" placeholder="Last Name">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4 col-lg-3">
                                 <div class="form-group">
-                                    <label for="mobile_no">Mobile No<span class="required">*</span></label>
+                                    <label for="phone">Mobile No<span class="required">*</span></label>
                                     <div>
-                                        <input type="text" name="mobile_no" id="mobile_no" class="form-control"
-                                               value="{{ old('mobile_no') }}">
+                                        <input type="text" name="phone" id="phone" class="form-control"
+                                               value="{{ old('phone') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth<span class="required">*</span></label>
+                                    <div>
+                                        <input class="form-control form-control-solid h-auto py-5 px-6" type="date" placeholder="Birth date" name="dob" value="{{ old('dob') }}" autocomplete="off" />
                                     </div>
                                 </div>
                             </div>
@@ -67,19 +84,19 @@
                             <div class="col-12 col-md-4 col-lg-3">
 
                                 <div class="form-group">
-                                    <label for="address">Address<span class="required">*</span></label>
+                                    <label for="address1">Address<span class="required">*</span></label>
                                     <div>
-                                        <input type="text" name="address" id="address" class="form-control"
-                                               value="{{ old('address') }}">
+                                        <input type="text" name="address1" id="address1" class="form-control"
+                                               value="{{ old('address1') }}">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4 col-lg-3">
                                 <div class="form-group">
-                                    <label for="area">Area<span class="required">*</span></label>
+                                    <label for="address2">Area<span class="required">*</span></label>
                                     <div>
-                                        <input type="text" name="area" id="area" class="form-control"
-                                               value="{{ old('area') }}">
+                                        <input type="text" name="address2" id="address2" class="form-control"
+                                               value="{{ old('address2') }}">
                                     </div>
                                 </div>
                             </div>
@@ -167,8 +184,15 @@
                                 <div class="form-group">
                                     <label for="upline_name">Upline Name<span class="required">*</span></label>
                                     <div>
-                                        <input type="text" name="upline_name" id="upline_name" class="form-control"
-                                               value="{{ old('upline_name') }}">
+                                        <select class="form-control city custom-select required" name="upline_id" id="upline_id" placeholder="Upline Name">
+
+                                            <option value="">-- Select Upline Name --</option>
+                                            @foreach ($users as $k=>$res)
+                                                <option value="{{ $k }}">
+                                                    {{ $res }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -176,8 +200,15 @@
                                 <div class="form-group">
                                     <label for="leader_name">Leader Name<span class="required">*</span></label>
                                     <div>
-                                        <input type="text" name="leader_name" id="leader_name" class="form-control"
-                                               value="{{ old('leader_name') }}">
+                                        <select class="form-control city custom-select required" name="leader_id" id="leader_id" placeholder="Leader Name">
+
+                                            <option value="">-- Select Leader Name --</option>
+                                            @foreach ($users as $k=>$res)
+                                                <option value="{{ $k }}">
+                                                    {{ $res }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -185,13 +216,13 @@
                                 <div class="form-group">
                                     <label for="status">Account Status</label>
                                     <div>
-                                        <select name="account_status" id="account_status" class="form-control" required>
+                                        <select name="status" id="status" class="form-control" required>
                                             <option value="Active"
-                                                    {{ old('account_status') == 'Active' ? 'selected' : '' }}>
+                                                    {{ old('status') == 'Active' ? 'selected' : '' }}>
                                                 Active
                                             </option>
                                             <option value="Inactive"
-                                                    {{ old('account_status') == 'Inactive' ? 'selected' : '' }}>
+                                                    {{ old('status') == 'Inactive' ? 'selected' : '' }}>
                                                 Inactive
                                             </option>
                                         </select>
@@ -208,8 +239,9 @@
 
 
 
-                        <a href="{{ route('batches-manage') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('distributors-manage') }}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary ml-2">Submit</button>
+                    </div>
 
                         <!-- /.card-footer -->
                 </form>

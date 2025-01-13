@@ -34,7 +34,7 @@
                             </div>
                             <div class="card-toolbar">
                                 <!--begin::Button-->
-                                <a href="{{ route('support-create') }}" class="btn btn-warning font-weight-bolder">
+                                <a href="{{ route('support-create') }}" class="btn btn-primary">
                                     <i class="la la-plus"></i>New Support</a>
                                 <!--end::Button-->
                             </div>
@@ -49,7 +49,7 @@
                                 <option value="">Select Action</option>
                                 <option value="Delete">Delete</option>
                             </select>
-                            <button href="javascript:;" type="button" class="btn btn-warning font-weight-bolder btn-sm table-group-action-submit submit-btn" id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
+                            <button href="javascript:;" type="button" class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn" id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
                             <input type="hidden"  class="table-group-action-url" value="<?php echo 'event-category/bulk-action';?>"/>
                         </div>
                         <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">

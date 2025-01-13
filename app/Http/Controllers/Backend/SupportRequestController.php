@@ -90,7 +90,9 @@ class SupportRequestController extends Controller
 
     public function create() {
         $title = 'Add Support';
-        $users = User::pluck('name','id');
+        $users = User::where('id', '!=', auth()->id())
+            ->where('type', 'User') // Replace 'desired_type_value' with the value you're checking for
+            ->pluck('name', 'id');
         return view('admin.support.create', compact('title', 'users'));
     }
 

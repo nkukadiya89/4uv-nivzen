@@ -57,8 +57,8 @@
 
 
 
-                        <a href="{{ route('trainings-manage') }}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary ml-2">Submit</button>
+                        <a href="{{ route('trainings-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
 
                         <!-- /.card-footer -->
                 </form>

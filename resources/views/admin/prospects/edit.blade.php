@@ -30,78 +30,86 @@
                         <!--begin::Form-->
                         <form class="form-horizontal" id="frmEdit"  action="{{ route('prospect-edit',$prospect->id) }}" >
                             <div class="card-body">
-                                <div class="form-group row">
-                                    <label  class="col-lg-3 col-form-label" for="name">Name<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input id="name" type="text" class="form-control required" name="name" placeholder="Name" value="{{$prospect->name}}">
+                                <div class="row">
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label  for="name">Name<span class="required">*</span></label>
+                                            <div>
+                                                <input id="name" type="text" class="form-control required" name="name" placeholder="Name" value="{{$prospect->name}}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="email">Email ID<span class="required">*</span></label>
+                                            <div>
+                                                <input type="email" name="email" id="email" class="form-control" value="{{ $prospect->email }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label  for="mobile_no">Mobile No<span class="required">*</span></label>
+                                            <div>
+                                                <input type="text" name="mobile_no" id="mobile_no" class="form-control" value="{{ $prospect->mobile_no }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label  for="address">Address<span class="required">*</span></label>
+                                            <div>
+                                                <input type="text" name="address" id="address" class="form-control" value="{{ $prospect->address }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="area">Area<span class="required">*</span></label>
+                                            <div>
+                                                <input type="text" name="area" id="area" class="form-control" value="{{ $prospect->area }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="city">City<span class="required">*</span></label>
+                                            <div>
+                                                <input type="text" name="city" id="city" class="form-control" value="{{ $prospect->city }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label  for="state">State<span class="required">*</span></label>
+                                            <div>
+                                                <input type="text" name="state" id="state" class="form-control" value="{{ $prospect->state }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="country">Country<span class="required">*</span></label>
+                                            <div>
+                                                <input type="text" name="country" id="country" class="form-control" value="{{ $prospect->country }}" required>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="email">Email ID<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="email" name="email" id="email" class="form-control" value="{{ $prospect->email }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="mobile_no">Mobile No<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="text" name="mobile_no" id="mobile_no" class="form-control" value="{{ $prospect->mobile_no }}" required>
-                                    </div>
-                                </div>
-
-
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="address">Address<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="text" name="address" id="address" class="form-control" value="{{ $prospect->address }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="area">Area<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="text" name="area" id="area" class="form-control" value="{{ $prospect->area }}" required>
-                                    </div>
-                                </div>
-
-
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="city">City<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="text" name="city" id="city" class="form-control" value="{{ $prospect->city }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="state">State<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="text" name="state" id="state" class="form-control" value="{{ $prospect->state }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label" for="country">Country<span class="required">*</span></label>
-                                    <div class="col-lg-6">
-                                        <input type="text" name="country" id="country" class="form-control" value="{{ $prospect->country }}" required>
-                                    </div>
-                                </div>
-
-
-                                
                             </div>
                             <!-- /.card-body -->
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-lg-3"></div>
-                                    <div class="col-lg-6">
-                                        <button type="submit" class="btn btn-warning mr-2">Submit</button>
-                                        <a href="{{ route('distributors-manage') }}" class="btn btn-secondary">Cancel</a>
-                                    </div>
-                                </div>
+                            <div class="card-footer d-flex justify-content-end">
+
+                                <a href="{{ route('distributors-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary ">Submit</button>
+
                             </div>
                             <!-- /.card-footer -->
                         </form>

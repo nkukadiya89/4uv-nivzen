@@ -36,7 +36,7 @@
                             <option value="">Select Action</option>
                             <option value="Delete">Delete</option>
                             </select>
-                        <button href="javascript:;" type="button" class="btn btn-warning font-weight-bolder btn-sm table-group-action-submit submit-btn" id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
+                        <button href="javascript:;" type="button" class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn" id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
                         <input type="hidden"  class="table-group-action-url" value="<?php echo 'event-category/bulk-action';?>"/>
                       </div>
                     <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">
