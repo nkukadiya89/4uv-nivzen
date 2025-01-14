@@ -70,6 +70,14 @@
   background-clip: text;
   display: inline-flex; }
 
+.form-group label.customlbl {
+  font-weight: bold; }
+
+.videoswrp {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap; }
+
 @media screen and (max-width: 991px) {
   .loginleft {
     display: none; }

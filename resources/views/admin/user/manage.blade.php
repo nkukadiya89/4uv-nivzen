@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('content')
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+<div class=" d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::Subheader-->
     <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
         <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
@@ -20,99 +20,101 @@
     </div>
     <!--end::Subheader-->
     <!--begin::Entry-->
-    <div class="d-flex flex-column-fluid">
-        <!--begin::Container-->
-        <div class="container">
+    <div class="p-6 flex-fill">
+        <div class="card card-custom">
 
-            <!--begin::Card-->
-            <div class="card card-custom">
-               
 
-                <div class="card-body">
-                    <!--begin: Datatable-->
-                    <div class="table-bulk-action kt-hide">
-                        <label class="kt-mr-20" style="display: inline;">Bulk Action</label>
-                            <select class="form-control form-control-sm form-filter kt-input table-group-action-input" title="Select Action" name="bulk_action" style="width: 150px;display: inline;">
-                            <option value="">Select Action</option>
-                            <option value="Delete">Delete</option>
-                            </select>
-                        <button href="javascript:;" type="button" class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn" id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
-                        <input type="hidden"  class="table-group-action-url" value="<?php echo 'event-category/bulk-action';?>"/>
-                      </div>
-                    <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Birth date</th>
-                                <th width="105" class="no-sort text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <thead>
-                            <tr class="filter">
-                                <td></td>
-                                <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="name"></td>
-                                <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="email"></td>
-                                <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="phone"></td>
-                               <td>
-                               
-                                    {{-- <input type="text" class="form-control form-control-sm form-filter kt-input" name="start_date" placeholder="Start Date"   onfocus="(this.type='date')" id="date"
+            <div class="card-body">
+                <!--begin: Datatable-->
+                <div class="table-bulk-action kt-hide">
+                    <label class="kt-mr-20" style="display: inline;">Bulk Action</label>
+                    <select class="form-control form-control-sm form-filter kt-input table-group-action-input"
+                        title="Select Action" name="bulk_action" style="width: 150px;display: inline;">
+                        <option value="">Select Action</option>
+                        <option value="Delete">Delete</option>
+                    </select>
+                    <button href="javascript:;" type="button"
+                        class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn"
+                        id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
+                    <input type="hidden" class="table-group-action-url"
+                        value="<?php echo 'event-category/bulk-action';?>" />
+                </div>
+                <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Birth date</th>
+                            <th width="105" class="no-sort text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr class="filter">
+                            <td></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                    name="name"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                    name="email"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                    name="phone"></td>
+                            <td>
+
+                                {{-- <input type="text" class="form-control form-control-sm form-filter kt-input" name="start_date" placeholder="Start Date"   onfocus="(this.type='date')" id="date"
                                     >
                                     <br>
                                     <input type="text" class="form-control form-control-sm form-filter kt-input" name="end_date" placeholder="End Date"   onfocus="(this.type='date')"
                                     > --}}
-                                    <input type="text" id="date_range" name="date_range" class="form-control form-control-sm form-filter kt-input" placeholder="Select date">
+                                <input type="text" id="date_range" name="date_range"
+                                    class="form-control form-control-sm form-filter kt-input" placeholder="Select date">
 
-                              </td>
-                                <td>
-                                    <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i class="la la-search"></i><span>Search</span></span></button> &nbsp;
-                                    <button class="btn btn-secondary btn-sm  mb-2 filter-cancel reset-btn search-btn"><span><i class="la la-close"></i><span>Reset</span></span></button>
-                                </td>
-                            </tr>
-                        </thead>
-                    </table>
-                    <!--end: Datatable-->
-                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i
+                                            class="la la-search"></i><span>Search</span></span></button> &nbsp;
+                                <button class="btn btn-secondary btn-sm  mb-2 filter-cancel reset-btn search-btn"><span><i
+                                            class="la la-close"></i><span>Reset</span></span></button>
+                            </td>
+                        </tr>
+                    </thead>
+                </table>
+                <!--end: Datatable-->
             </div>
-            <!--end::Card-->
         </div>
-        <!--end::Container-->
     </div>
     <!--end::Entry-->
 </div>
 @section('custom_js')
-  <script>
-    $(document).ready(function() {
+<script>
+$(document).ready(function() {
 
-        @if(Session::has('success-message'))
-            toastr.info("{{ session('success-message') }}");
-        @endif
+    @if(Session::has('success-message'))
+    toastr.info("{{ session('success-message') }}");
+    @endif
 
-        var url =  '{{config('constants.ADMIN_URL')}}users/list-ajax';
-        DataTables.init('#datatable_ajax', url);
+    var url = '{{config('
+    constants.ADMIN_URL ')}}users/list-ajax';
+    DataTables.init('#datatable_ajax', url);
 
-        $('#date_range').daterangepicker({
-            opens: 'left',
-            autoUpdateInput: false,
-            locale: {
-                cancelLabel: 'Clear'
-            },
-            placeholder: 'Date'
-        });
-
-        $('#date_range').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' → ' + picker.endDate.format('YYYY-MM-DD'));
-        });
-
-        $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-        });
+    $('#date_range').daterangepicker({
+        opens: 'left',
+        autoUpdateInput: false,
+        locale: {
+            cancelLabel: 'Clear'
+        },
+        placeholder: 'Date'
     });
 
+    $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD') + ' → ' + picker.endDate.format(
+            'YYYY-MM-DD'));
+    });
 
-  </script>
+    $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+});
+</script>
 @stop
 @stop
-
