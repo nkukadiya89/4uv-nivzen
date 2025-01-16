@@ -22,7 +22,7 @@
     <!--begin::Entry-->
     <div class="d-flex flex-column-fluid">
         <!--begin::Container-->
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
                     <!--begin::Card-->
@@ -31,7 +31,7 @@
                         <form class="form-horizontal" id="frmEdit"  action="{{ route('support-requests.update',$supportRequest->id) }}" >
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <label  class="col-lg-3 col-form-label" for="support_name">Support Name<span class="required">*</span></label>
+                                    <label  class="col-lg-3 col-form-label" for="support_name">Subject<span class="required">*</span></label>
                                     <div class="col-lg-6">
                                         <input type="text" class="form-control @error('support_name') is-invalid @enderror" id="support_name" name="support_name" value="{{ old('support_name', $supportRequest->support_name) }}">
                                     </div>

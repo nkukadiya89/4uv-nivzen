@@ -22,7 +22,7 @@
     <!--begin::Entry-->
     <div class="d-flex flex-column-fluid">
         <!--begin::Container-->
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
                     <!--begin::Card-->
@@ -44,7 +44,7 @@
                                 <div class="row">
                                     <div class="col-lg-3"></div>
                                     <div class="col-lg-6">
-                                        <button type="submit" class="btn btn-warning mr-2">Submit</button>
+                                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                         <a href="{{ url('backend/roles') }}" class="btn btn-secondary">Cancel</a>
                                     </div>
                                 </div>

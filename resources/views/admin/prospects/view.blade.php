@@ -22,7 +22,7 @@
     <!--begin::Entry-->
     <div class="d-flex flex-column-fluid">
         <!--begin::Container-->
-        <div class="container">
+        <div class="container-fluid">
 
             <!--begin::Card-->
             <div class="card card-custom gutter-b">
@@ -37,87 +37,72 @@
                     </div>
                 </div>
                 <div class="card-body">
-                   {{-- User Details --}}
-                    <div class="d-flex  justify-content-between">
-                        <div class="w-100">
-                            {{-- <h1 class="ml-2 mb-3 text-dark text-capitalize">{{$batche->title}}</h1> --}}
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Name</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$prospect->name ?? '' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Email</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$prospect->email!!}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Mobile</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$prospect->mobile_no ?? '' }}</p>
-                                        </div>
-                                    </div>
+                    <div class="row">
 
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Address</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$prospect->address!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Area</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$prospect->area!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">City</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$prospect->city!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">State</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$prospect->state!!}</p>
-                                        </div>
-                                    </div>
-
-
-                                 
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Name</label>
+                                <div>
+                                    {{$prospect->name ?? ''}}
                                 </div>
                             </div>
                         </div>
-                       
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Email</label>
+                                <div>
+                                    {{$prospect->email ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Mobile No</label>
+                                <div>
+                                    {{$prospect->mobile_no ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Address</label>
+                                <div>
+                                    {{$prospect->address ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Area</label>
+                                <div>
+                                    {{$prospect->area ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">City</label>
+                                <div>
+                                    {{$prospect->city ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">State</label>
+                                <div>
+                                    {{$prospect->state ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    
                 </div>
             </div>
             <!--end::Card-->

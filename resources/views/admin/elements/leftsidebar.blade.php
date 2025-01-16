@@ -81,7 +81,7 @@
             @endrole
 
             @role(['Administrator'])
-            <li class="menu-item {{ str_contains($current_url, 'prospects') ? 'menu-item-active' : '' }} {{ str_contains($current_url, 'permissions') ? 'menu-item-active' : '' }}" aria-haspopup="true">
+            <li class="menu-item {{ str_contains($current_url, 'prospects') ? 'menu-item-active' : '' }} " aria-haspopup="true">
                 <a href="{{url('backend/prospects')}}" class="menu-link">
                         <span class="svg-icon menu-icon">
                         <!--begin::Svg Icon | path:assets/media/svg/icons/Home/Library.svg-->
@@ -119,7 +119,7 @@
             @endrole
 
             @role(['Administrator'])
-            <li class="menu-item {{ str_contains($current_url, 'todos') ? 'menu-item-active' : '' }} {{ str_contains($current_url, 'permissions') ? 'menu-item-active' : '' }}" aria-haspopup="true">
+            <li class="menu-item {{ str_contains($current_url, 'todos') ? 'menu-item-active' : '' }}" aria-haspopup="true">
                 <a href="{{url('backend/todos')}}" class="menu-link">
                         <span class="svg-icon menu-icon">
                         <!--begin::Svg Icon | path:assets/media/svg/icons/Home/Library.svg-->
@@ -138,7 +138,7 @@
             @endrole
 
             @role(['Administrator'])
-            <li class="menu-item {{ str_contains($current_url, 'support') ? 'menu-item-active' : '' }} {{ str_contains($current_url, 'permissions') ? 'menu-item-active' : '' }}" aria-haspopup="true">
+            <li class="menu-item {{ str_contains($current_url, 'support') ? 'menu-item-active' : '' }}" aria-haspopup="true">
                 <a href="{{url('backend/support')}}" class="menu-link">
                         <span class="svg-icon menu-icon">
                         <!--begin::Svg Icon | path:assets/media/svg/icons/Home/Library.svg-->

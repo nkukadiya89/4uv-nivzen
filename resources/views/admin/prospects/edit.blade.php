@@ -107,7 +107,7 @@
                             <!-- /.card-body -->
                             <div class="card-footer d-flex justify-content-end">
 
-                                <a href="{{ route('distributors-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
+                                <a href="{{ route('prospects-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
                                 <button type="submit" class="btn btn-primary ">Submit</button>
 
                             </div>

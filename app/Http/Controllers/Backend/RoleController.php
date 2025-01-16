@@ -57,7 +57,7 @@ class RoleController extends Controller
             ]);
         }
 
-        Session::flash('success-message', $request->role_name . "role created successfully !");
+        Session::flash('success-message', $request->role_name . " role created successfully !");
 
         $data['success'] = true;
 

@@ -22,7 +22,7 @@
     <!--begin::Entry-->
     <div class="d-flex flex-column-fluid">
         <!--begin::Container-->
-        <div class="container">
+        <div class="container-fluid">
 
             <!--begin::Card-->
             <div class="card card-custom gutter-b">
@@ -37,67 +37,53 @@
                     </div>
                 </div>
                 <div class="card-body">
-                   {{-- User Details --}}
-                    <div class="d-flex  justify-content-between">
-                        <div class="w-100">
-                            {{-- <h1 class="ml-2 mb-3 text-dark text-capitalize">{{$batche->title}}</h1> --}}
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Name</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$todo->name ?? '' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Note</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$todo->note!!}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Date</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$todo->date ?? '' }}</p>
-                                        </div>
-                                    </div>
+                    <div class="row">
 
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Time</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$todo->time!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Completed</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{ $todo->is_completed === 1 ? 'Completed' : 'Pending' }}</p>
-                                        </div>
-                                    </div>
-
-
-                                 
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Name</label>
+                                <div>
+                                    {{$todo->name ?? ''}}
                                 </div>
                             </div>
                         </div>
-                       
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Note</label>
+                                <div>
+                                    <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$todo->note!!}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Date</label>
+                                <div>
+                                    {{$todo->date ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Time</label>
+                                <div>
+                                    {{$todo->time ?? ''}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Completed</label>
+                                <div>
+                                    {{ $todo->is_completed === 1 ? 'Completed' : 'Pending' }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
                 </div>
             </div>
             <!--end::Card-->

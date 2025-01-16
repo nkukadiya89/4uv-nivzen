@@ -22,7 +22,7 @@
     <!--begin::Entry-->
     <div class="d-flex flex-column-fluid">
         <!--begin::Container-->
-        <div class="container">
+        <div class="container-fluid">
 
             <!--begin::Card-->
             <div class="card card-custom gutter-b">
@@ -37,135 +37,112 @@
                     </div>
                 </div>
                 <div class="card-body">
-                   {{-- User Details --}}
-                    <div class="d-flex  justify-content-between">
-                        <div class="w-100">
-                            {{-- <h1 class="ml-2 mb-3 text-dark text-capitalize">{{$batche->title}}</h1> --}}
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Enagic Id</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$distributor->enagic_id ?? ''}}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">First Name</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$distributor->firstname ?? '' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Last Name</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0"> {{$distributor->lastname ?? '' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Mobile</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{{$distributor->phone ?? '' }}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Email</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->email!!}</p>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Address</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->address1!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">City</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->city!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">State</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->state!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Country</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->country!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Type</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->type!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Goal For</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->goal_for!!}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="separator separator-solid my-3"></div>
-                                    <div class="row">
-                                        <div class="col-lg-3 col-6">
-                                            <p class="text-dark-75 font-weight-bolder font-size-lg mb-0">Status</p>
-                                        </div>
-                                        <div class="col-lg-9 col-6">
-                                            <p class="text-muted font-weight-bold text-hover-warning mb-0">{!!$distributor->distributor_status!!}</p>
-                                        </div>
-                                    </div>
-                                 
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Enagic Id</label>
+                                <div>
+                                    {{$distributor->enagic_id ?? ''}}
                                 </div>
                             </div>
                         </div>
-                       
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">First Name</label>
+                                <div>
+                                    {{$distributor->firstname ?? '' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Last Name</label>
+                                <div>
+                                    {{$distributor->lastname ?? '' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Mobile No.</label>
+                                <div>
+                                    {{ $distributor->phone }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Email</label>
+                                <div>
+                                    {{ $distributor->email }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Address</label>
+                                <div>
+                                    {{ $distributor->address1 }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Area</label>
+                                <div>
+                                    {{ $distributor->address2 }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">City</label>
+                                <div>
+                                    {{ $distributor->city }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">State</label>
+                                <div>
+                                    {{ $distributor->state }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Country</label>
+                                <div>
+                                    {{ $distributor->country }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Type</label>
+                                <div>
+                                    {{ $distributor->type }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Goal For</label>
+                                <div>
+                                    {{ $distributor->goal_for }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label class="customlbl">Status</label>
+                                <div>
+                                    {{ $distributor->distributor_status }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
                 </div>
             </div>
             <!--end::Card-->
@@ -188,4 +165,3 @@
   </script>
 @stop
 @stop
-

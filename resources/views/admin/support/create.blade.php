@@ -22,7 +22,7 @@
         <!--begin::Entry-->
         <div class="d-flex flex-column-fluid">
             <!--begin::Container-->
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
                         <!--begin::Card-->
@@ -70,7 +70,7 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label" for="support_name">Support Name<span class="required">*</span></label>
+                                        <label class="col-lg-3 col-form-label" for="support_name">Subject<span class="required">*</span></label>
                                         <div class="col-lg-6">
                                             <input type="text" name="support_name" id="support_name" class="form-control" value="{{ old('support_name') }}" placeholder="Support Name" required>
                                         </div>
