@@ -105,9 +105,8 @@ class DistributorController extends Controller
 
     public function showDistributorForm () {
         $title = 'Add Distributor';
-        $users = User::where('id', '!=', auth()->id())
-            ->where('type', 'User') // Replace 'desired_type_value' with the value you're checking for
-            ->pluck('name', 'id');
+        //$users = User::where('id', '!=', auth()->id())->where('type', 'User')->pluck('name', 'id');
+        $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
         return view('admin.distributors.add', compact('title', 'users'));
     }
 
@@ -230,9 +229,7 @@ class DistributorController extends Controller
                     return redirect()->back()->with("success", " Distributor updated successfully !");
                 }
             } else {
-                $users = User::where('id', '!=', auth()->id())
-                    ->where('type', 'User') // Replace 'desired_type_value' with the value you're checking for
-                    ->pluck('name', 'id');
+                $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
                 return view('admin.distributors.edit', compact('title', 'distributor', 'users'));
                 //return view('admin.distributors.edit', compact('distributor', 'title'));
             }

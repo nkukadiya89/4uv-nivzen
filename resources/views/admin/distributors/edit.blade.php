@@ -195,10 +195,10 @@
                                     <select class="form-control city custom-select required" name="upline_id"
                                         id="upline_id" placeholder="Upline Name">
 
-                                        <option value="">-- Select Upline Name --</option>
-                                        @foreach ($users as $k=>$res)
-                                        <option value="{{ $k }}" {{ $distributor->upline_id == $k ? 'selected' : '' }}>
-                                            {{ $res }}
+                                        <option value="">Select Upline Name</option>
+                                        @foreach ($users as $res)
+                                        <option value="{{ $res->id }}" {{ $distributor->upline_id == $res->id ? 'selected' : '' }}>
+                                            {{ $res->firstname }} {{$res->lastname}}
                                         </option>
                                         @endforeach
                                     </select>
@@ -213,10 +213,10 @@
                                     <select class="form-control city custom-select required" name="leader_id"
                                         id="leader_id" placeholder="Leader Name">
 
-                                        <option value="">-- Select Leader Name --</option>
-                                        @foreach ($users as $k=>$res)
-                                        <option value="{{ $k }}" {{ $distributor->leader_id == $k ? 'selected' : '' }}>
-                                            {{ $res }}
+                                        <option value="">Select Leader Name</option>
+                                        @foreach ($users as $res)
+                                        <option value="{{ $res->id }}" {{ $distributor->leader_id == $res->id ? 'selected' : '' }}>
+                                            {{ $res->firstname }} {{$res->lastname}}
                                         </option>
                                         @endforeach
                                     </select>

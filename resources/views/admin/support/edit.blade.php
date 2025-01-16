@@ -47,7 +47,7 @@
                                             <option value="">Select From User</option>
                                             @foreach($users as $user)
                                                 <option value="{{ $user->id }}" {{ old('from_user_id', $supportRequest->from_user_id) == $user->id ? 'selected' : '' }}>
-                                                    {{ $user->name }}
+                                                    {{ $user->firstname }} {{$user->lastname}}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -64,7 +64,7 @@
                                             <option value="">Select To User</option>
                                             @foreach($users as $user)
                                                 <option value="{{ $user->id }}" {{ old('to_user_id', $supportRequest->to_user_id) == $user->id ? 'selected' : '' }}>
-                                                    {{ $user->name }}
+                                                    {{ $user->firstname }} {{$user->lastname}}
                                                 </option>
                                             @endforeach
                                         </select>

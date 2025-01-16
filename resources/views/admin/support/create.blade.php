@@ -43,9 +43,9 @@
                                         <label class="col-lg-3 col-form-label" for="from_user_id">From User:<span class="required">*</span></label>
                                         <div class="col-lg-6">
                                             <select class="form-control city custom-select required" name="from_user_id" id="from_user_id" required>
-                                                <option value="">-- Select From User Name --</option>
-                                                @foreach ($users as $k=>$res)
-                                                    <option value="{{$k}}" >{{$res}}</option>
+                                                <option value="">Select From User Name</option>
+                                                @foreach ($users as $res)
+                                                    <option value="{{$res->id}}" >{{$res->firstname}} {{$res->lastname}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -58,9 +58,9 @@
                                         <label class="col-lg-3 col-form-label" for="to_user_id">To User:<span class="required">*</span></label>
                                         <div class="col-lg-6">
                                             <select class="form-control city custom-select required" name="to_user_id" id="to_user_id" required>
-                                                <option value="">-- Select To User Name --</option>
-                                                @foreach ($users as $k=>$res)
-                                                    <option value="{{$k}}" >{{$res}}</option>
+                                                <option value="">Select To User Name</option>
+                                                @foreach ($users as $res)
+                                                    <option value="{{$res->id}}" >{{$res->firstname}} {{$res->lastname}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
