@@ -64375,6 +64375,11 @@ code {
   font-weight: 400;
   color: #3F4254;
 }
+.form-group label .required{
+    font-size: 1rem;
+    font-weight: 400;
+    color: #db1430;
+}
 .form-group .invalid-feedback,
 .form-group .valid-feedback {
   font-size: 0.9rem;

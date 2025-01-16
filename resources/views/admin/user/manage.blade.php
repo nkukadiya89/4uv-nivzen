@@ -21,8 +21,17 @@
     <!--end::Subheader-->
     <!--begin::Entry-->
     <div class="p-6 flex-fill">
-        <div class="card card-custom">
-
+        <div class="card card-custom w-full">
+            <div class="card-header align-content-center">
+                <div class="card-title">
+                </div>
+                <div class="p-2">
+                    <!--begin::Button-->
+                    <a href="{{ route('user-add-form') }}" class="btn btn-primary">
+                        <i class="la la-plus"></i>New User</a>
+                    <!--end::Button-->
+                </div>
+            </div>
 
             <div class="card-body">
                 <!--begin: Datatable-->

@@ -153,7 +153,6 @@ class DistributorController extends Controller
             $distributor->city= $request->city;
             $distributor->state= $request->state;
             $distributor->country= $request->country;
-            $distributor->country= $request->country;
             $distributor->type = $request->type;
             $distributor->distributor_status = $request->distributor_status;
             $distributor->upline_id = $request->upline_id;

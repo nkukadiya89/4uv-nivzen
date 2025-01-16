@@ -49,6 +49,8 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     // Manage user moddule
     Route::get('users', [UsersController::class,'index'])->name('users-manage');
     Route::post('users/list-ajax', [UsersController::class,'anyListAjax'])->name('users-list-ajax');
+    Route::any('users/add', [UsersController::class,'showUsersForm'])->name('user-add-form');
+    Route::post('users/add', [UsersController::class,'addUSer'])->name('user-add');
     Route::any('users/edit/{id}', [UsersController::class,'editUser'])->name('user-edit');
     Route::get('users/view/{id}', [UsersController::class,'show'])->name('user-view');
     Route::get('users/delete/{id}', [UsersController::class,'deleteUser'])->name('user-delete')->middleware('permission:delete user');

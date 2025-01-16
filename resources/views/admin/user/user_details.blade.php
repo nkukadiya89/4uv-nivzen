@@ -22,7 +22,16 @@
     <!--begin::Entry-->
     <div class="p-6 flex-fill">
         <div class="card card-custom gutter-b">
-
+            <div class="card-header align-content-center">
+                <div class="card-title">
+                </div>
+                <div class="p-2">
+                    <!--begin::Button-->
+                    <a href="{{ route('users-manage') }}" class="btn btn-primary">
+                        Back</a>
+                    <!--end::Button-->
+                </div>
+            </div>
 
             <div class="card-body">
                 <div class="row">
@@ -45,19 +54,29 @@
                     </div>
                     <div class="col-12 col-md-4 col-lg-3">
                         <div class="form-group">
-                            <label class="customlbl">Phone</label>
+                            <label class="customlbl">Roles</label>
                             <div>
-                                {{ $user->phone }}
+                                @foreach ($userRoles as $key => $value)
+                                    <p> {{ $value }}</p>
+                                @endforeach
 
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4 col-lg-3">
                         <div class="form-group">
-                            <label class="customlbl">City</label>
+                            <label class="customlbl">Birth Date</label>
                             <div>
-                                {{ $user->city }}
+                                {{ $user->dob }}
 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="form-group">
+                            <label class="customlbl">Phone</label>
+                            <div>
+                                {{ $user->phone }}
                             </div>
                         </div>
                     </div>
@@ -66,12 +85,34 @@
                             <label class="customlbl">Address</label>
                             <div>
                                 {{ $user->address1 . ' ' . $user->address2 }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="form-group">
+                            <label class="customlbl">City</label>
+                            <div>
+                                {{ $user->city }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="form-group">
+                            <label class="customlbl">State</label>
+                            <div>
+                                {{ $user->state }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="form-group">
+                            <label class="customlbl">Country</label>
+                            <div>
+                                {{ $user->country }}
 
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
 
@@ -79,49 +120,6 @@
 
         </div>
         <!--end::Card-->
-        <!--begin::Card 2-->
-        <div class="card card-custom gutter-b">
-            <div class="card-header">
-                <div class="card-title">
-                    <h1 class="ml-2 mb-3 text-dark text-capitalize">Batch Details </h1>
-                </div>
-
-            </div>
-
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="w-100">
-                        <div class="card col-12 mb-4">
-                            @foreach ($user->batches as $batch)
-                            <h3 class="p-2">{{$batch->course->title}}</h3>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-3 col-6">
-                                        <p class="mb-0">Title</p>
-                                    </div>
-                                    <div class="col-lg-9 col-6">
-                                        <p class="text-muted mb-0">{!! $batch->title ?? '' !!}</p>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-lg-3 col-6">
-                                        <p class="mb-0">Description</p>
-                                    </div>
-                                    <div class="col-lg-9 col-6">
-                                        <p class="text-muted mb-0">{!! $batch->description ?? '' !!}</p>
-                                    </div>
-                                </div>
-                                <hr>
-
-
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <!--end::Entry-->
 </div>

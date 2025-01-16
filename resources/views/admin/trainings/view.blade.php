@@ -22,6 +22,16 @@
     <!--begin::Entry-->
     <div class="p-6 flex-fill">
         <div class="card card-custom gutter-b">
+            <div class="card-header align-content-center">
+                <div class="card-title">
+                </div>
+                <div class="p-2">
+                    <!--begin::Button-->
+                    <a href="{{ route('trainings-manage') }}" class="btn btn-primary">
+                        Back</a>
+                    <!--end::Button-->
+                </div>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 ">

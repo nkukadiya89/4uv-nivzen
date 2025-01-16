@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Mail\ActivateUser;
 use App\Models\Batch;
-use App\Models\Batches;
+use App\Mail\UserRegister;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +45,7 @@ class UsersController extends Controller
         $authUser = Auth::user();
         $query = User::manageableBy($authUser);
 
+        $query = $query->where('type', 'User');
         if (isset($data['name']) && $data['name'] != '') {
             $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
         }
@@ -111,7 +114,72 @@ class UsersController extends Controller
         $return_data['data_array'] = $arrUsers['data'];
         return $return_data;
     }
-   
+
+    public function showUsersForm () {
+        $title = 'Add User';
+        $roles = Role::pluck('name','name')->all();
+        return view('admin.user.add', compact('title','roles'));
+    }
+
+    public function addUSer(Request $request) {
+        $inputs = $request->all();
+        $randomPassword = Str::random(10);
+        $hashedPassword = Hash::make($randomPassword);
+        $validator = Validator::make($inputs, [
+            'phone' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'dob' => 'required',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'address1' => 'required',
+            'address2' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'country' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return json_encode($validator->errors());
+
+        } else {
+
+            $user = new User();
+            $user->phone= $request->phone;
+            $user->email= $request->email;
+            $user->dob =  $request->dob;
+            $user->password= $hashedPassword;
+            $user->name= $request->firstname;
+            $user->firstname= $request->firstname;
+            $user->lastname= $request->lastname;
+            $user->address1= $request->address1;
+            $user->address2= $request->address2;
+            $user->city= $request->city;
+            $user->state= $request->state;
+            $user->country= $request->country;
+            $user->pincode= $request->pincode;
+            $user->status =isset($request->status) && $request->status == 1 ? 1: 0;
+            $user->feature_access = '1';
+            $user->upline_id = $request->upline_id ?? null;
+            $user->leader_id = $request->leader_id ?? null;
+            $user->enagic_id = $request->enagic_id ?? null;
+            $user->type = $request->type ?? 'User';
+            $user->distributor_status = $request->distributor_status ?? 'Inactive';
+            $user->goal_for = $request->goal_for ?? 'User';
+
+            $user->save();
+            $user->syncRoles($request->roles);
+            if ($user->save()) {
+                Mail::to($user->email)->send(new UserRegister($user, $randomPassword));
+                Session::flash('success-message', $request->title . " created successfully !");
+                $data['success'] = true;
+
+                return response()->json($data);
+            }
+            return redirect()->back()->with("success", " User added successfully !");
+        }
+    }
+
     public function editUser(Request $request, $id)
     {
         $user = User::find($id);
@@ -120,9 +188,7 @@ class UsersController extends Controller
         $userRoles = $user->roles->pluck('name','name')->all();
         $inputs  = $request->all();
 
-        $selected_batches = $user->batches->pluck('id')->toArray();
-        
-        $batches = Batch::pluck('title','id');
+
 
         if ($user || !empty($user)) {
             if($inputs) {
@@ -153,8 +219,7 @@ class UsersController extends Controller
                     $user->address2 = $request->address2;
                     $user->pincode = $request->pincode;
                     $user->status =isset($request->status) && $request->status == 1 ? 1: 0;
-                    $user->batches()->detach(); 
-                    $user->batches()->attach($request->user_batch); 
+
                     $user->save();
                     $user->syncRoles($request->roles);
 
@@ -167,7 +232,7 @@ class UsersController extends Controller
                     return redirect()->back()->with("success", " User updated successfully !");
                 }
             } else {
-                return view('admin.user.edit', compact('user', 'title', 'batches', 'selected_batches','userRoles','roles'));
+                return view('admin.user.edit', compact('user', 'title', 'userRoles','roles'));
 
             }
 
@@ -179,8 +244,9 @@ class UsersController extends Controller
     public function show(Request $request, $id)
     {
         $user = User::find($id);
-        $title = 'View Users';
-        return view('admin.user.user_details', compact('user', 'title'));
+        $userRoles = $user->roles->pluck('name','name')->all();
+        $title = 'View User';
+        return view('admin.user.user_details', compact('user', 'title', 'userRoles'));
     }
 
     public function deleteUser($id)

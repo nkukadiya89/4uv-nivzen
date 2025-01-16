@@ -26,6 +26,16 @@
 
             <!--begin::Card-->
             <div class="card card-custom gutter-b">
+                <div class="card-header align-content-center">
+                    <div class="card-title">
+                    </div>
+                    <div class="p-2">
+                        <!--begin::Button-->
+                        <a href="{{ route('prospects-manage') }}" class="btn btn-primary">
+                            Back</a>
+                        <!--end::Button-->
+                    </div>
+                </div>
                 <div class="card-body">
                    {{-- User Details --}}
                     <div class="d-flex  justify-content-between">
