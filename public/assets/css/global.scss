@@ -102,6 +102,80 @@
     display: inline-flex;
 }
 
+.form-group label.customlbl {
+    font-weight: bold;
+}
+
+.videoswrp {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+
+.aside.aside-left {
+    background-color: #fff;
+    border-right: 1px solid #ededed;
+
+    .brand {
+        background-color: #fff;
+    }
+
+    .aside-menu {
+        background-color: #fff;
+    }
+
+    .aside-menu .menu-nav>.menu-item>.menu-heading .menu-text,
+    .aside-menu .menu-nav>.menu-item>.menu-link .menu-text {
+        color: #343434;
+    }
+
+    .aside-menu .menu-nav>.menu-item.menu-item-active>.menu-heading,
+    .aside-menu .menu-nav>.menu-item.menu-item-active>.menu-link {
+        background-color: #05478E;
+    }
+
+    .aside-menu .menu-nav>.menu-item.menu-item-active>.menu-heading .menu-text,
+    .aside-menu .menu-nav>.menu-item.menu-item-active>.menu-link .menu-text {
+        color: #ffffff;
+    }
+
+    .aside-menu .menu-nav>.menu-item:not(.menu-item-parent):not(.menu-item-open):not(.menu-item-here):not(.menu-item-active):hover>.menu-heading,
+    .aside-menu .menu-nav>.menu-item:not(.menu-item-parent):not(.menu-item-open):not(.menu-item-here):not(.menu-item-active):hover>.menu-link {
+        background-color: #05478E;
+    }
+
+
+}
+
+.aside-minimize:not(.aside-minimize-hover) .aside {
+    .brand {
+        background-color: #fff;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        padding-top: 44px;
+        height: auto;
+    }
+}
+
+@media (min-width: 992px) {
+    .aside-fixed .aside {
+        position: relative;
+
+        z-index: 98;
+    }
+
+    #kt_wrapper {
+        padding-left: 0;
+    }
+
+    .aside-fixed.header-fixed.aside-minimize.aside-minimize-hover .header {
+        left: 265px;
+    }
+}
+
 @media screen and (max-width: 991px) {
     .loginleft {
         display: none;
