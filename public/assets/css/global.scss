@@ -38,11 +38,34 @@
         background: #05478E;
         border: 0;
         font-size: 16px;
+        display: inline-flex;
+        align-items: center;
 
         &:focus,
         &:hover {
             background: #0852a0;
         }
+
+        &.btn-sm {
+            padding: 5px 10px;
+            font-size: 16px;
+            font-weight: normal !important;
+        }
+    }
+
+    &.btn-secondary {
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
+.table-group-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    label {
+        margin: 0;
     }
 }
 
@@ -119,10 +142,30 @@
 
     .brand {
         background-color: #fff;
+
+        .brand-logo {
+            h1 {
+                font-size: 52px;
+                font-weight: bold;
+                background-image: linear-gradient(90deg, #090979 0%, #00d4ff 100%);
+                color: transparent;
+                background-clip: text;
+                display: inline-flex;
+                margin: 0;
+            }
+        }
     }
 
     .aside-menu {
         background-color: #fff;
+
+        .menu-nav {
+            padding-top: 0;
+        }
+    }
+
+    .aside-menu .menu-nav>.menu-item>.menu-link {
+        border-bottom: 1px solid #f3f3f3;
     }
 
     .aside-menu .menu-nav>.menu-item>.menu-heading .menu-text,

@@ -77,7 +77,7 @@
                                
                                 <td>
                                     <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i class="la la-search"></i><span>Search</span></span></button> &nbsp;
-                                    <button class="btn btn-secondary btn-sm  mb-2 filter-cancel reset-btn search-btn"><span><i class="la la-close"></i><span>Reset</span></span></button>
+                                    <button class="btn btn-secondary btn-sm  mt-0 filter-cancel reset-btn search-btn"><span><i class="la la-close"></i><span>Reset</span></span></button>
                                 </td>
                             </tr>
                         </thead>
