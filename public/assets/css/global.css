@@ -99,8 +99,18 @@
   border-right: 1px solid #ededed; }
   .aside.aside-left .brand {
     background-color: #fff; }
+    .aside.aside-left .brand .brand-logo h1 {
+      font-size: 52px;
+      font-weight: bold;
+      background-image: linear-gradient(90deg, #090979 0%, #00d4ff 100%);
+      color: transparent;
+      background-clip: text;
+      display: inline-flex;
+      margin: 0; }
   .aside.aside-left .aside-menu {
     background-color: #fff; }
+    .aside.aside-left .aside-menu .menu-nav {
+      padding-top: 0; }
   .aside.aside-left .aside-menu .menu-nav > .menu-item > .menu-link {
     border-bottom: 1px solid #f3f3f3; }
   .aside.aside-left .aside-menu .menu-nav > .menu-item > .menu-heading .menu-text,

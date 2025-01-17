@@ -142,10 +142,26 @@
 
     .brand {
         background-color: #fff;
+
+        .brand-logo {
+            h1 {
+                font-size: 52px;
+                font-weight: bold;
+                background-image: linear-gradient(90deg, #090979 0%, #00d4ff 100%);
+                color: transparent;
+                background-clip: text;
+                display: inline-flex;
+                margin: 0;
+            }
+        }
     }
 
     .aside-menu {
         background-color: #fff;
+
+        .menu-nav {
+            padding-top: 0;
+        }
     }
 
     .aside-menu .menu-nav>.menu-item>.menu-link {
