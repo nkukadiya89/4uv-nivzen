@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('content')
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+<div class=" d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::Subheader-->
     <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
         <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
@@ -20,135 +20,131 @@
     </div>
     <!--end::Subheader-->
     <!--begin::Entry-->
-    <div class="d-flex flex-column-fluid">
-        <!--begin::Container-->
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!--begin::Card-->
-                    <div class="card card-custom gutter-b example example-compact">
-                        <!--begin::Form-->
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                        <form class="form-horizontal" id="frmAdd"  action="{{ route('prospect-add') }}" >
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label for="name">Name<span class="required">*</span></label>
-                                            <div>
-                                                <input id="name" type="text" class="form-control required" name="name" value="{{ old('name') }}" placeholder="Name">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label  for="email">Email<span class="required">*</span></label>
-                                            <div>
-                                              <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" placeholder="Email" required>
-                                            </div>
-                                            @error('email')
-                                              <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                        <label  for="mobile_no">Mobile No<span class="required">*</span></label>
-                                        <div>
-                                            <input type="text" name="mobile_no" id="mobile_no" class="form-control" value="{{ old('mobile_no') }}" placeholder="Mobile No" required>
-                                        </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label  for="address">Address<span class="required">*</span></label>
-                                            <div>
-                                               <input type="text" name="address" id="address" class="form-control" value="{{ old('address') }}" placeholder="Address" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label  for="area">Area<span class="required">*</span></label>
-                                            <div>
-                                              <input type="text" name="area" id="area" class="form-control" value="{{ old('area') }}" placeholder="Area" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label  for="city">City<span class="required">*</span></label>
-                                            <div>
-                                              <input type="text" name="city" id="city" class="form-control" value="{{ old('city') }}" placeholder="City" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label  for="state">State<span class="required">*</span></label>
-                                            <div>
-                                              <input type="text" name="state" id="state" class="form-control" value="{{ old('state') }}" placeholder="State" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-md-4 col-lg-3">
-                                        <div class="form-group">
-                                            <label  for="country">Country<span class="required">*</span></label>
-                                            <div>
-                                              <input type="text" name="country" id="country" class="form-control" value="{{ old('country') }}" placeholder="Country" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
+    <div class="p-6">
+        <div class="card card-custom w-full">
+            <!--begin::Form-->
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+            <form class="form-horizontal" id="frmAdd" action="{{ route('prospect-add') }}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="name">Name<span class="required">*</span></label>
+                                <div>
+                                    <input id="name" type="text" class="form-control required" name="name"
+                                        value="{{ old('name') }}" placeholder="Name">
                                 </div>
                             </div>
-                            <!-- /.card-body -->
-                            <div class="card-footer d-flex justify-content-end">
-
-                                <a href="{{ route('prospects-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="email">Email<span class="required">*</span></label>
+                                <div>
+                                    <input type="email" name="email" id="email" class="form-control"
+                                        value="{{ old('email') }}" placeholder="Email" required>
+                                </div>
+                                @error('email')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
-                            <!-- /.card-footer -->
-                        </form>
-                        <!--end::Form-->
-                    </div>
-                    <!--end::Card-->
-                </div>
-            </div>
-        </div>
+                        </div>
 
-        <!--end::Container-->
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="mobile_no">Mobile No<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control"
+                                        value="{{ old('mobile_no') }}" placeholder="Mobile No" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="address">Address<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" name="address" id="address" class="form-control"
+                                        value="{{ old('address') }}" placeholder="Address" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="area">Area<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" name="area" id="area" class="form-control"
+                                        value="{{ old('area') }}" placeholder="Area" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="city">City<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" name="city" id="city" class="form-control"
+                                        value="{{ old('city') }}" placeholder="City" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="state">State<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" name="state" id="state" class="form-control"
+                                        value="{{ old('state') }}" placeholder="State" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="country">Country<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" name="country" id="country" class="form-control"
+                                        value="{{ old('country') }}" placeholder="Country" required>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer d-flex justify-content-end">
+
+                    <a href="{{ route('prospects-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                </div>
+                <!-- /.card-footer -->
+            </form>
+            <!--end::Form-->
+        </div>
     </div>
     <!--end::Entry-->
 </div>
 
 @section('custom_js')
 <script>
-    $('#description').summernote({
-            height: 200,
-    });
-    $(document).ready(function() {
+$('#description').summernote({
+    height: 200,
+});
+$(document).ready(function() {
 
-        @if(Session::has('success-message'))
-            toastr.info("{{ session('success-message') }}");
-        @endif
-    });
-  </script>
+    @if(Session::has('success-message'))
+    toastr.info("{{ session('success-message') }}");
+    @endif
+});
+</script>
 @stop
 
 @stop
-
