@@ -25,7 +25,7 @@ class DistributorController extends Controller
     public function anyListAjax(Request $request) {
         $data = $request->all();
 
-        $sortColumn = array('id','enagic_id','firstname','lastname', 'status');
+        $sortColumn = array('enagic_id','firstname','lastname', 'email', 'phone','dob', 'city', 'state', 'country', 'status');
         $query = new User();
 
         // Add condition to fetch only 'Distributor' type users
@@ -43,7 +43,31 @@ class DistributorController extends Controller
             $query = $query->where('lastname', 'LIKE', '%' . $data['lastname'] . '%');
         }
 
+        if (isset($data['email']) && $data['email'] != '') {
+            $query = $query->where('email', 'LIKE', '%' . $data['email'] . '%');
+        }
 
+        if (isset($data['phone']) && $data['phone'] != '') {
+            $query = $query->where('phone', 'LIKE', '%' . $data['phone'] . '%');
+        }
+
+        if (isset($data['date_range']) && $data['date_range'] != '') {
+            $date_range = explode('→', trim($data['date_range']));
+            $query = $query->where(DB::raw('DATE(users.dob)'), '>=', trim(date('Y-m-d',strtotime(trim($date_range[0])))));
+            $query = $query->where(DB::raw('DATE(users.dob)'), '<=', trim(date('Y-m-d',strtotime(trim($date_range[1])))));
+        }
+
+        if (isset($data['city']) && $data['city'] != '') {
+            $query = $query->where('city', 'LIKE', '%' . $data['city'] . '%');
+        }
+
+        if (isset($data['state']) && $data['state'] != '') {
+            $query = $query->where('state', 'LIKE', '%' . $data['state'] . '%');
+        }
+
+        if (isset($data['country']) && $data['country'] != '') {
+            $query = $query->where('country', 'LIKE', '%' . $data['country'] . '%');
+        }
         if (isset($data['status']) && $data['status'] != '') {
             $query = $query->where('status', '=', $data['status']);
         }
@@ -74,10 +98,17 @@ class DistributorController extends Controller
         foreach ($arrUsers['data'] as $key => $val) {
             $index = 0;
 
-            $data[$key][$index++] = $val['id'];
+            //$data[$key][$index++] = $val['id'];
+            $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
             $data[$key][$index++] = $val['enagic_id'];
             $data[$key][$index++] = $val['firstname'];
             $data[$key][$index++] = $val['lastname'];
+            $data[$key][$index++] = $val['email'];
+            $data[$key][$index++] = $val['phone'];
+            $data[$key][$index++] = date('d F, Y', strtotime($val['dob']));
+            $data[$key][$index++] = $val['city'];
+            $data[$key][$index++] = $val['state'];
+            $data[$key][$index++] = $val['country'];
 
             $data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
@@ -257,5 +288,28 @@ class DistributorController extends Controller
         } else {
             return 'FALSE';
         }
+    }
+
+    public function bulkAction(Request $request)
+    {
+        $action = $request->input('action'); // Extract the 'action' value
+        $ids = $request->input('ids') ?? []; // Extract the 'ids' array
+
+        if (!$action) {
+            return response()->json(['message' => 'No action selected.'], 400);
+        }
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['message' => 'No records selected.'], 400);
+        }
+
+        if ($action === 'Delete') {
+            // Perform delete operation
+            User::whereIn('id', $ids)->delete();
+            return response('TRUE');
+            //return response()->json(['message' => 'Records deleted successfully.']);
+        }
+
+        return response()->json(['message' => 'Invalid action.'], 400);
     }
 }

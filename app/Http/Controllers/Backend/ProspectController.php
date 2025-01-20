@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
 
 class ProspectController extends Controller
 {
@@ -20,7 +22,7 @@ class ProspectController extends Controller
     public function anyListAjax(Request $request) {
         $data = $request->all();
 
-        $sortColumn = array('id','name','email','mobile_no');
+        $sortColumn = array('name','email','mobile_no', 'city', 'state', 'country');
         $query = new Prospect();
 
 
@@ -34,6 +36,18 @@ class ProspectController extends Controller
 
         if (isset($data['mobile_no']) && $data['mobile_no'] != '') {
             $query = $query->where('mobile_no', 'LIKE', '%' . $data['mobile_no'] . '%');
+        }
+
+        if (isset($data['city']) && $data['city'] != '') {
+            $query = $query->where('city', 'LIKE', '%' . $data['city'] . '%');
+        }
+
+        if (isset($data['state']) && $data['state'] != '') {
+            $query = $query->where('state', 'LIKE', '%' . $data['state'] . '%');
+        }
+
+        if (isset($data['country']) && $data['country'] != '') {
+            $query = $query->where('country', 'LIKE', '%' . $data['country'] . '%');
         }
 
         $rec_per_page = 10;
@@ -61,11 +75,14 @@ class ProspectController extends Controller
 
         foreach ($arrUsers['data'] as $key => $val) {
             $index = 0;
-
-            $data[$key][$index++] = $val['id'];
+            $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
+            //$data[$key][$index++] = $val['id'];
             $data[$key][$index++] = $val['name'];
             $data[$key][$index++] = $val['email'];
             $data[$key][$index++] = $val['mobile_no'];
+            $data[$key][$index++] = $val['city'];
+            $data[$key][$index++] = $val['state'];
+            $data[$key][$index++] = $val['country'];
 
             //$data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
@@ -190,6 +207,7 @@ class ProspectController extends Controller
         $title = 'View Prospect ';
         return view('admin.prospects.view', compact('title', 'prospect'));
     }
+
     public function deleteProspect($id)
     {
         $object = Prospect::find($id);
@@ -203,5 +221,28 @@ class ProspectController extends Controller
         } else {
             return 'FALSE';
         }
+    }
+
+    public function bulkAction(Request $request)
+    {
+        $action = $request->input('action'); // Extract the 'action' value
+        $ids = $request->input('ids') ?? []; // Extract the 'ids' array
+
+        if (!$action) {
+            return response()->json(['message' => 'No action selected.'], 400);
+        }
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['message' => 'No records selected.'], 400);
+        }
+
+        if ($action === 'Delete') {
+            // Perform delete operation
+            Prospect::whereIn('id', $ids)->delete();
+            return response('TRUE');
+            //return response()->json(['message' => 'Records deleted successfully.']);
+        }
+
+        return response()->json(['message' => 'Invalid action.'], 400);
     }
 }

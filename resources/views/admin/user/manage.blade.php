@@ -46,16 +46,22 @@
                         class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn"
                         id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
                     <input type="hidden" class="table-group-action-url"
-                        value="<?php echo 'event-category/bulk-action';?>" />
+                        value="<?php echo 'users/bulk-action';?>" />
                 </div>
                 <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Name</th>
+                            <td><input type="checkbox" class="row-checkbox" id="select-all"></td>
+                            <th>First Name</th>
+                            <th>Last Name</th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Birth date</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Roles</th>
+                            <th>Status</th>
                             <th width="105" class="no-sort text-center">Actions</th>
                         </tr>
                     </thead>
@@ -63,9 +69,12 @@
                         <tr class="filter">
                             <td></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
-                                    name="name"></td>
+                                    name="firstname"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                       name="lastname"></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                     name="email"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter" name="roles"></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                     name="phone"></td>
                             <td>
@@ -77,7 +86,20 @@
                                     > --}}
                                 <input type="text" id="date_range" name="date_range"
                                     class="form-control form-control-sm form-filter kt-input" placeholder="Select date">
-
+                            </td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                       name="city"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                       name="state"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                       name="country"></td>
+                            <td>
+                                <select class="form-control form-control-sm form-filter kt-input" title="Select"
+                                        name="account_status">
+                                    <option value="">Select</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
                             </td>
                             <td>
                                 <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i
@@ -122,6 +144,29 @@ $(document).ready(function() {
 
     $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
         $(this).val('');
+    });
+
+    // When "Select All" checkbox is clicked
+    $('#select-all').click(function() {
+        var isChecked = $(this).prop('checked'); // Check if "Select All" is checked
+
+        // Select or deselect all checkboxes based on the "Select All" checkbox state
+        $('#datatable_ajax .row-checkbox').each(function() {
+            $(this).prop('checked', isChecked); // Set checked state
+        });
+    });
+
+    // Optionally, update the "Select All" checkbox state based on individual checkboxes
+    $('#datatable_ajax').on('change', '.row-checkbox', function() {
+        var totalCheckboxes = $('#datatable_ajax .row-checkbox').length;
+        var checkedCheckboxes = $('#datatable_ajax .row-checkbox:checked').length;
+
+        // If all checkboxes are selected, check the "Select All" checkbox
+        if (totalCheckboxes === checkedCheckboxes) {
+            $('#select-all').prop('checked', true);
+        } else {
+            $('#select-all').prop('checked', false);
+        }
     });
 });
 </script>

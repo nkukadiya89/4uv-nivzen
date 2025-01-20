@@ -66,7 +66,7 @@ var DataTables = function() {
                 order: order,
                 pageLength: 10,
                 columnDefs: [{
-                    "targets": 'no-sort',
+                    "targets": 0,
                     "orderable": false,
                 }],
                 language: {
@@ -302,7 +302,7 @@ var DataTables = function() {
          
             var model_title = title;
             swal.fire({
-                title: 'Are you sure You want to '+model_title.toLowerCase()+' this record?',
+                title: 'Are you sure You want to '+ model_title.toLowerCase()+' this record?',
                 text: '',
                 type: 'warning',
                 showCancelButton: true,
@@ -373,7 +373,7 @@ var DataTables = function() {
 
                                     swal.fire('Record has been ' + send_data_action + ' successfully.')
                                     dataTable.ajax.reload();
-
+                                    $('#select-all').prop('checked', false);
                                     $.each(send_data['ids'], function(i, id) {
                                         if (send_data.action == 'Active') {
                                             $('tbody > tr > td > .status_' + id, table).addClass('label-success');

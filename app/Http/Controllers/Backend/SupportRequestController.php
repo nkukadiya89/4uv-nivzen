@@ -21,7 +21,7 @@ class SupportRequestController extends Controller
     public function anyListAjax(Request $request) {
         $data = $request->all();
 
-        $sortColumn = array('id','support_name','request_number');
+        $sortColumn = array('support_name','request_number');
         $query = SupportRequest::with(['fromUser', 'toUser']);
 
 
@@ -60,7 +60,8 @@ class SupportRequestController extends Controller
         foreach ($arrUsers['data'] as $key => $val) {
             $index = 0;
 
-            $data[$key][$index++] = $val['id'];
+            //$data[$key][$index++] = $val['id'];
+            $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
             $data[$key][$index++] = $val['support_name'];
             $data[$key][$index++] = $val['request_number'];
 
@@ -169,5 +170,38 @@ class SupportRequestController extends Controller
         } else {
             return 'FALSE';
         }
+    }
+
+    public function bulkAction(Request $request)
+    {
+        var_dump($request);
+        exit;
+        // Validate required fields
+        $validated = $request->validate([
+            'action' => 'required|string',  // Action field must be present
+            'ids' => 'required|array', // IDs field must be an array
+            'ids.*' => 'integer', // Each item in the 'ids' array must be an integer
+        ]);
+
+
+        $action = $request->input('action'); // Extract the 'action' value
+        $ids = $request->input('ids') ?? []; // Extract the 'ids' array
+
+        if (!$action) {
+            return response()->json(['message' => 'No action selected.'], 400);
+        }
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['message' => 'No records selected.'], 400);
+        }
+
+        if ($action === 'Delete') {
+            // Perform delete operation
+            SupportRequest::whereIn('id', $ids)->delete();
+            return response('TRUE');
+            //return response()->json(['message' => 'Records deleted successfully.']);
+        }
+
+        return response()->json(['message' => 'Invalid action.'], 400);
     }
 }

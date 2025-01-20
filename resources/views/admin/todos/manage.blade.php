@@ -49,12 +49,12 @@
                             class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn"
                             id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
                         <input type="hidden" class="table-group-action-url"
-                            value="<?php echo 'event-category/bulk-action';?>" />
+                            value="<?php echo 'todos/bulk-action';?>" />
                     </div>
                     <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">
                         <thead>
                             <tr>
-                                <th>Id</th>
+                                <td><input type="checkbox" class="row-checkbox" id="select-all"></td>
                                 <th>Name</th>
                                 <th>Date</th>
                                 <th>Time</th>
@@ -98,13 +98,35 @@
 $(document).ready(function() {
 
     @if(Session::has('success-message'))
-    toastr.info("{{ session('success-message') }}");
+      toastr.info("{{ session('success-message') }}");
     @endif
 
     var url = '{{config('
     constants.ADMIN_URL ')}}todos/list-ajax';
     DataTables.init('#datatable_ajax', url);
 
+    // When "Select All" checkbox is clicked
+    $('#select-all').click(function() {
+        var isChecked = $(this).prop('checked'); // Check if "Select All" is checked
+
+        // Select or deselect all checkboxes based on the "Select All" checkbox state
+        $('#datatable_ajax .row-checkbox').each(function() {
+            $(this).prop('checked', isChecked); // Set checked state
+        });
+    });
+
+    // Optionally, update the "Select All" checkbox state based on individual checkboxes
+    $('#datatable_ajax').on('change', '.row-checkbox', function() {
+        var totalCheckboxes = $('#datatable_ajax .row-checkbox').length;
+        var checkedCheckboxes = $('#datatable_ajax .row-checkbox:checked').length;
+
+        // If all checkboxes are selected, check the "Select All" checkbox
+        if (totalCheckboxes === checkedCheckboxes) {
+            $('#select-all').prop('checked', true);
+        } else {
+            $('#select-all').prop('checked', false);
+        }
+    });
 
 });
 </script>

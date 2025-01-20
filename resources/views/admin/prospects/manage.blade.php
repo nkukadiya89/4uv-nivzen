@@ -52,28 +52,38 @@
                             class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn"
                             id="bulk_action_submit"><i class="fa fa-check"></i> Submit</button>
                         <input type="hidden" class="table-group-action-url"
-                            value="<?php echo 'event-category/bulk-action';?>" />
+                            value="<?php echo 'prospects/bulk-action';?>" />
                     </div>
                     <table class="table table-striped- table-bordered table-hover table-checkable" id="datatable_ajax">
                         <thead>
                             <tr>
-                                <th>Id</th>
+                                <td><input type="checkbox" class="row-checkbox" id="select-all"></td>
+
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Mobile</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Country</th>
                                 <th width="105" class="no-sort text-center">Actions</th>
                             </tr>
                         </thead>
                         <thead>
                             <tr class="filter">
                                 <td></td>
+
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                         name="name"></td>
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                         name="email"></td>
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                         name="mobile_no"></td>
-
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                           name="city"></td>
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                           name="state"></td>
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                           name="country"></td>
                                 <td>
                                     <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i
                                                 class="la la-search"></i><span>Search</span></span></button> &nbsp;
@@ -98,12 +108,35 @@
 $(document).ready(function() {
 
     @if(Session::has('success-message'))
-    toastr.info("{{ session('success-message') }}");
+      toastr.info("{{ session('success-message') }}");
     @endif
 
-    var url = '{{config('
-    constants.ADMIN_URL ')}}prospects/list-ajax';
+    var url = '{{config('constants.ADMIN_URL ')}}prospects/list-ajax';
     DataTables.init('#datatable_ajax', url);
+
+
+    // When "Select All" checkbox is clicked
+    $('#select-all').click(function() {
+        var isChecked = $(this).prop('checked'); // Check if "Select All" is checked
+
+        // Select or deselect all checkboxes based on the "Select All" checkbox state
+        $('#datatable_ajax .row-checkbox').each(function() {
+            $(this).prop('checked', isChecked); // Set checked state
+        });
+    });
+
+    // Optionally, update the "Select All" checkbox state based on individual checkboxes
+    $('#datatable_ajax').on('change', '.row-checkbox', function() {
+        var totalCheckboxes = $('#datatable_ajax .row-checkbox').length;
+        var checkedCheckboxes = $('#datatable_ajax .row-checkbox:checked').length;
+
+        // If all checkboxes are selected, check the "Select All" checkbox
+        if (totalCheckboxes === checkedCheckboxes) {
+            $('#select-all').prop('checked', true);
+        } else {
+            $('#select-all').prop('checked', false);
+        }
+    });
 
 
 });

@@ -40,14 +40,20 @@ class UsersController extends Controller
     public function anyListAjax(Request $request) {
         $data = $request->all();
 
-        $sortColumn = array('id','name','email','phone','dob');
+        $sortColumn = array('firstname','lastname','email','phone','dob', 'city', 'state', 'country', 'status');
        
         $authUser = Auth::user();
-        $query = User::manageableBy($authUser);
+        $query = User::manageableBy($authUser)->with('roles');
 
+        $query = $query->where('id', '!=', auth()->id());
         $query = $query->where('type', 'User');
-        if (isset($data['name']) && $data['name'] != '') {
-            $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
+
+        if (isset($data['firstname']) && $data['firstname'] != '') {
+            $query = $query->where('firstname', 'LIKE', '%' . $data['firstname'] . '%');
+        }
+
+        if (isset($data['lastname']) && $data['lastname'] != '') {
+            $query = $query->where('lastname', 'LIKE', '%' . $data['lastname'] . '%');
         }
 
         if (isset($data['email']) && $data['email'] != '') {
@@ -62,6 +68,26 @@ class UsersController extends Controller
             $date_range = explode('→', trim($data['date_range']));
             $query = $query->where(DB::raw('DATE(users.dob)'), '>=', trim(date('Y-m-d',strtotime(trim($date_range[0])))));
             $query = $query->where(DB::raw('DATE(users.dob)'), '<=', trim(date('Y-m-d',strtotime(trim($date_range[1])))));
+        }
+
+        if (isset($data['city']) && $data['city'] != '') {
+            $query = $query->where('city', 'LIKE', '%' . $data['city'] . '%');
+        }
+
+        if (isset($data['state']) && $data['state'] != '') {
+            $query = $query->where('state', 'LIKE', '%' . $data['state'] . '%');
+        }
+
+        if (isset($data['country']) && $data['country'] != '') {
+            $query = $query->where('country', 'LIKE', '%' . $data['country'] . '%');
+        }
+
+        if (isset($data['country']) && $data['country'] != '') {
+            $query = $query->where('country', 'LIKE', '%' . $data['country'] . '%');
+        }
+
+        if (isset($data['status']) && $data['status'] != '') {
+            $query = $query->where('status', '=', $data['status']);
         }
 
         $rec_per_page = 10;
@@ -88,11 +114,23 @@ class UsersController extends Controller
         foreach ($arrUsers['data'] as $key => $val) {
             $index = 0;
 
-            $data[$key][$index++] = $val['id'];
-            $data[$key][$index++] = $val['name'];
+            //$data[$key][$index++] = $val['id'];
+            $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
+            $data[$key][$index++] = $val['firstname'];
+            $data[$key][$index++] = $val['lastname'];
             $data[$key][$index++] = $val['email'];
             $data[$key][$index++] = $val['phone'];
-            $data[$key][$index++] = date('d F, Y', strtotime($val['dob'])); ;
+            $data[$key][$index++] = date('d F, Y', strtotime($val['dob']));
+            $data[$key][$index++] = $val['city'];
+            $data[$key][$index++] = $val['state'];
+            $data[$key][$index++] = $val['country'];
+
+            // Fetch user and their roles
+            $user = User::find($val['id']);
+            $userRoles = $user->roles->pluck('name')->implode(', '); // Get roles as a comma-separated string
+            $data[$key][$index++] = $userRoles; // Add roles to the data table
+
+            $data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
             $action = '';
             $action .= '<div class="d-flex">';
@@ -262,5 +300,28 @@ class UsersController extends Controller
         } else {
             return 'FALSE';
         }
+    }
+
+    public function bulkAction(Request $request)
+    {
+        $action = $request->input('action'); // Extract the 'action' value
+        $ids = $request->input('ids') ?? []; // Extract the 'ids' array
+
+        if (!$action) {
+            return response()->json(['message' => 'No action selected.'], 400);
+        }
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['message' => 'No records selected.'], 400);
+        }
+
+        if ($action === 'Delete') {
+            // Perform delete operation
+            User::whereIn('id', $ids)->delete();
+            return response('TRUE');
+            //return response()->json(['message' => 'Records deleted successfully.']);
+        }
+
+        return response()->json(['message' => 'Invalid action.'], 400);
     }
 }

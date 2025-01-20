@@ -54,6 +54,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('users/edit/{id}', [UsersController::class,'editUser'])->name('user-edit');
     Route::get('users/view/{id}', [UsersController::class,'show'])->name('user-view');
     Route::get('users/delete/{id}', [UsersController::class,'deleteUser'])->name('user-delete')->middleware('permission:delete user');
+    Route::post('users/bulk-action', [UsersController::class, 'bulkAction'])->name('user.bulkAction');
 
 
     // Manage courses moddule
@@ -102,6 +103,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('distributors/edit/{id}', [DistributorController::class,'editDistributor'])->name('distributor-edit');
     Route::any('distributors/view/{id}', [DistributorController::class,'viewDistributor'])->name('distributor-view');
     Route::get('distributors/delete/{id}', [DistributorController::class,'deleteDistributor'])->name('distributor-delete');
+    Route::post('distributors/bulk-action', [DistributorController::class, 'bulkAction'])->name('distributor.bulkAction');
 
     // Manage Training Programs modules
     Route::get('trainings', [TrainingProgramsController::class, 'index'])->name('trainings-manage');
@@ -112,6 +114,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::post('trainings/{id}/remove-video', [TrainingProgramsController::class, 'removeVideo'])->name('trainings.remove_video');
     Route::any('trainings/view/{id}', [TrainingProgramsController::class,'viewTraining'])->name('training-view');
     Route::get('trainings/delete/{id}', [TrainingProgramsController::class,'deleteTraining'])->name('training-delete');
+    Route::post('trainings/bulk-action', [TrainingProgramsController::class, 'bulkAction'])->name('training.bulkAction');
 
     // Manage Prospects modules
     Route::get('prospects', [ProspectController::class, 'index'])->name('prospects-manage');
@@ -121,6 +124,8 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('prospects/edit/{id}', [ProspectController::class,'editProspect'])->name('prospect-edit');
     Route::any('prospects/view/{id}', [ProspectController::class,'viewProspect'])->name('prospect-view');
     Route::get('prospects/delete/{id}', [ProspectController::class,'deleteProspect'])->name('prospect-delete');
+    Route::post('prospects/bulk-action', [ProspectController::class, 'bulkAction'])->name('prospect.bulkAction');
+
 
     // Manage Todos modules
     Route::get('todos', [ToDoController::class, 'index'])->name('todos-manage');
@@ -130,6 +135,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('todos/edit/{id}', [ToDoController::class,'editTodo'])->name('todo-edit');
     Route::any('todos/view/{id}', [ToDoController::class,'viewTodo'])->name('todo-view');
     Route::get('todos/delete/{id}', [ToDoController::class,'deleteTodo'])->name('todo-delete');
+    Route::post('todos/bulk-action', [ToDoController::class, 'bulkAction'])->name('todo.bulkAction');
 
     // Support
     Route::get('support', [SupportRequestController::class, 'index'])->name('support-manage');
@@ -140,5 +146,6 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::post('support/{id}', [SupportRequestController::class, 'update'])->name('support-requests.update');
     Route::any('support/view/{id}', [SupportRequestController::class,'viewSupport'])->name('support-view');
     Route::get('support/delete/{id}', [SupportRequestController::class,'deleteSupport'])->name('support-delete');
+    Route::post('support/bulk-action', [SupportRequestController::class, 'bulkAction'])->name('support.bulkAction');
 });
 
