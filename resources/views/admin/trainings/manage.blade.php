@@ -57,6 +57,7 @@
                             <td><input type="checkbox" class="row-checkbox" id="select-all"></td>
                             <th>Name</th>
                             <th>Videos</th>
+                            <th>Quiz Questions</th>
                             <th width="105" class="no-sort text-center">Actions</th>
                         </tr>
                         </thead>
@@ -65,14 +66,9 @@
                             <td></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                        name="name"></td>
-                            <td>
-                                <select class="form-control form-control-sm form-filter kt-input" title="Select"
-                                        name="account_status">
-                                    <option value="">Select</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
-                            </td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                       name="video_lessons_count"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input" name="quiz_questions_count"></td>
                             <td>
                                 <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i
                                                 class="la la-search"></i><span>Search</span></span></button> &nbsp;

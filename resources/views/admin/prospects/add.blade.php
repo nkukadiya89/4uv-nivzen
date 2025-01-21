@@ -52,7 +52,7 @@
                                         value="{{ old('email') }}" placeholder="Email" required>
                                 </div>
                                 @error('email')
-                                <span class="text-danger">{{ $message }}</span>
+                                  <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>

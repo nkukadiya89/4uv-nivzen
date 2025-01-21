@@ -66,14 +66,16 @@ $(document).ready(function() {
         save_and_continue_flag = true
     });
 
-    $("#frmAdd").submit(function() {
-       
+    $("#frmAdd").submit(function(event) {
+        event.preventDefault();
+
         var form = $("#frmAdd");
         form.find('.duplicate-error').hide();
         form.find(".form-group").removeClass('is-invalid');
+        form.find(".form-group").removeClass('is-invalid').find('.help-block').remove();
 
         if (form_valid("#frmAdd")) {
-            var curObj = $(this);``
+            var curObj = $(this);
 
             if (save_and_continue_flag) {
                 curObj.find('#frmAddNewSubmit').addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
@@ -121,6 +123,27 @@ $(document).ready(function() {
 
                     } else {
                         console.log(data);
+                        if (data.errors) {
+                            // Clear any previous errors
+                            $('.is-invalid').removeClass('is-invalid');
+                            $('.invalid-feedback').remove();
+
+                            $.each(data.errors, function(field, messages) {
+                                var fieldName = field.replace('.', '\\.') // Escape dots for jQuery selectors
+                                var errorMessage = messages.join('<br>'); // Join multiple messages if any
+
+                                // Add the 'is-invalid' class to the form group
+                                $('#' + fieldName).closest('.form-group').addClass('is-invalid');
+
+                                // Display the error message
+                                $('#' + fieldName).after('<div class="invalid-feedback">' + errorMessage + '</div>');
+                            });
+
+                            // Optionally scroll to the first invalid field
+                            $('html, body').animate({
+                                scrollTop: $('.is-invalid .form-control').first().offset().top - 200
+                            }, 1000);
+                        }
                         $(data).each(function(i, val) {
                             $.each(val, function(key, v) {
 
@@ -138,6 +161,48 @@ $(document).ready(function() {
 
                             $('.is-invalid .form-control').first().focus()
                         }
+                    }
+                },
+                error: function( error) {
+                    console.error("AJAX Error Response:", error); // Log the error for debugging
+                    $('button[type="submit"]').prop('disabled', false);
+                    // Clear previous errors
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('.invalid-feedback').remove();
+
+                    if (error.responseJSON && error.responseJSON.errors) {
+                        const errors = error.responseJSON.errors;
+
+                        $.each(errors, function (key, messages) {
+                            // Example: questions.1.correct -> [questions, 1, correct]
+                            const parts = key.split('.');
+                            let field;
+
+                            // Handle dynamic fields
+                            if (parts.length === 3 && parts[0] === 'questions') {
+                                const questionId = parts[1]; // Extract question index
+                                const fieldName = parts[2]; // Extract field type (e.g., correct, options)
+
+                                if (fieldName === 'correct') {
+                                    // Radio button for correct answer
+                                    field = $(`input[name="questions[${questionId}][${fieldName}]"]`);
+                                } else {
+                                    // Other input fields
+                                    field = $(`input[name="questions[${questionId}][${fieldName}]"]`);
+                                }
+                            }
+
+                            if (field && field.length) {
+                                // Add error class and display message
+                                field.addClass('is-invalid');
+                                field.after('<div class="invalid-feedback">' + messages[0] + '</div>');
+                            } else {
+                                // Log if the field is not found
+                                console.warn('Field not found in form:', key);
+                            }
+                        });
+                    } else {
+                        console.warn('No validation errors found in the response.');
                     }
                 }
             });
@@ -213,6 +278,48 @@ $(document).ready(function() {
 
                             $('.is-invalid .form-control').first().focus()
                         }
+                    }
+                },
+                error: function( error) {
+                    console.error("AJAX Error Response:", error); // Log the error for debugging
+                    $('button[type="submit"]').prop('disabled', false);
+                    // Clear previous errors
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('.invalid-feedback').remove();
+
+                    if (error.responseJSON && error.responseJSON.errors) {
+                        const errors = error.responseJSON.errors;
+
+                        $.each(errors, function (key, messages) {
+                            // Example: questions.1.correct -> [questions, 1, correct]
+                            const parts = key.split('.');
+                            let field;
+
+                            // Handle dynamic fields
+                            if (parts.length === 3 && parts[0] === 'questions') {
+                                const questionId = parts[1]; // Extract question index
+                                const fieldName = parts[2]; // Extract field type (e.g., correct, options)
+
+                                if (fieldName === 'correct') {
+                                    // Radio button for correct answer
+                                    field = $(`input[name="questions[${questionId}][${fieldName}]"]`);
+                                } else {
+                                    // Other input fields
+                                    field = $(`input[name="questions[${questionId}][${fieldName}]"]`);
+                                }
+                            }
+
+                            if (field && field.length) {
+                                // Add error class and display message
+                                field.addClass('is-invalid');
+                                field.after('<div class="invalid-feedback">' + messages[0] + '</div>');
+                            } else {
+                                // Log if the field is not found
+                                console.warn('Field not found in form:', key);
+                            }
+                        });
+                    } else {
+                        console.warn('No validation errors found in the response.');
                     }
                 }
             });
