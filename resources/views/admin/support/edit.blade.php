@@ -24,7 +24,7 @@
         <div class="card card-custom gutter-b example example-compact">
             <!--begin::Form-->
             <form class="form-horizontal" id="frmEdit"
-                action="{{ route('support-requests.update',$supportRequest->id) }}">
+                action="{{ route('support-edit',$supportRequest->id) }}">
                 <div class="card-body">
                     @error('support_name')
                     <div class="invalid-feedback">{{ $message }}</div>

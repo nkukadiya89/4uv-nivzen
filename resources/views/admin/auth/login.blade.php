@@ -74,10 +74,10 @@
                             <!--end::Action-->
                         </form>
 
-                        <div class="text-gray-400 fw-bold fs-4">New Here?
-                            <a href="javascript:;" class="text-dark-50 my-3 mr-2" id="kt_login_signup">Create an Account ?
-                            </a>
-                        </div>
+                        {{--<div class="text-gray-400 fw-bold fs-4">New Here?--}}
+                            {{--<a href="javascript:;" class="text-dark-50 my-3 mr-2" id="kt_login_signup">Create an Account ?--}}
+                            {{--</a>--}}
+                        {{--</div>--}}
                         <!--end::Form-->
                     </div>
                     <!--end::Signin-->
@@ -181,7 +181,7 @@
         $(document).ready(function() {
 
             @if(Session::has('success-message'))
-toastr.info("{{ session('success-message') }}");
+                  toastr.info("{{ session('success-message') }}");
             @endif
 
 

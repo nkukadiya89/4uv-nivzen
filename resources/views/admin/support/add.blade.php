@@ -32,7 +32,7 @@
                 </ul>
             </div>
             @endif
-            <form class="form-horizontal" id="frmAdd" action="{{ route('support-store') }}">
+            <form class="form-horizontal" id="frmAdd" action="{{ route('support-add') }}">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 col-md-4 col-lg-3">

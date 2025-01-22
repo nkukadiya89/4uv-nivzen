@@ -37,6 +37,21 @@
                                         <input id="permission_name" type="text" class="form-control required" name="permission_name" value="{{ old('permission_name') }}" placeholder="Permission Name" >
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label" for="model_name">Model<span class="required">*</span></label>
+                                    <div class="col-lg-6">
+                                        <select class="form-control city custom-select required" name="model_name"
+                                                id="model_name" required>
+                                            <option value="">Select Model</option>
+                                            @foreach($models as $model)
+                                                <option value="{{ $model }}">{{ $model }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('model_name')
+                                     <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                                 
                             </div>
                             <!-- /.card-body -->

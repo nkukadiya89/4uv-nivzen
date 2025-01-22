@@ -89,41 +89,99 @@ class SupportRequestController extends Controller
         return $return_data;
     }
 
-    public function create() {
+
+
+    public function showSupportForm () {
         $title = 'Add Support';
         $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
-        return view('admin.support.create', compact('title', 'users'));
+        return view('admin.support.add', compact('title', 'users'));
     }
 
-    public function store(Request $request) {
-        $request->validate([
+    public function addSupport(Request $request) {
+        $inputs = $request->all();
+
+        $validator = Validator::make($inputs, [
             'from_user_id' => 'required|exists:users,id',
             'to_user_id' => 'required|exists:users,id',
             'support_name' => 'required|string|max:255',
             'description' => 'required|string',
         ]);
 
+
         // Generate unique request number
         $requestNumber = 'REQ-' . strtoupper(uniqid());
 
-        $supportRequest = SupportRequest::create([
-            'from_user_id' => $request->from_user_id,
-            'to_user_id' => $request->to_user_id,
-            'support_name' => $request->support_name,
-            'description' => $request->description,
-            'request_number' => $requestNumber,
-        ]);
+        if ($validator->fails()) {
+            return json_encode($validator->errors());
 
-        // Send email alert to the recipient
-        $toUser = User::find($request->to_user_id);
+        } else {
+            $supportRequest = new SupportRequest();
+            $supportRequest->from_user_id = $request->from_user_id;
+            $supportRequest->to_user_id = $request->to_user_id;
+            $supportRequest->support_name = $request->support_name;
+            $supportRequest->description = $request->description;
+            $supportRequest->request_number = $requestNumber;
+            $supportRequest->save();
 
-        Mail::raw("You have received a new support request: {$requestNumber}", function ($message) use ($toUser) {
-            $message->to($toUser->email)
-                ->subject('New Support Request');
-        });
+            if ($supportRequest->save()) {
+                $toUser = User::find($request->to_user_id);
 
-        return redirect()->back()->with('success', "Request submitted! Request Number: {$requestNumber}");
+//                Mail::raw("You have received a new support request: {$requestNumber}", function ($message) use ($toUser) {
+//                    $message->to($toUser->email)
+//                        ->subject('New Support Request');
+//                });
+
+                Session::flash('success-message', $request->name . " created successfully !");
+                $data['success'] = true;
+
+                return response()->json($data);
+            }
+            return redirect()->back()->with("success", " Todo added successfully !");
+        }
+
     }
+
+    public function editSupport(Request $request, $id)
+    {
+        $users = User::all();
+        $supportRequest = SupportRequest::with(['fromUser', 'toUser'])->findOrFail($id);
+        $title = 'Edit Support';
+        $inputs  = $request->all();
+        if ($supportRequest || !empty($supportRequest)) {
+            if($inputs) {
+
+                $validator = Validator::make($inputs, [
+                    'support_name' => 'required|string|max:255',
+                    'from_user_id' => 'required|exists:users,id',
+                    'to_user_id' => 'required|exists:users,id',
+                    'description' => 'nullable|string',
+                ]);
+
+                if ($validator->fails()) {
+                    return json_encode($validator->errors());
+                } else {
+                    $supportRequest->support_name = $request->support_name;
+                    $supportRequest->from_user_id = $request->from_user_id;
+                    $supportRequest->to_user_id = $request->to_user_id;
+                    $supportRequest->description = $request->description;
+
+
+                    if ($supportRequest->save()) {
+                        Session::flash('success-message', $supportRequest->support_name . " updated successfully !");
+                        $data['success'] = true;
+                        return response()->json($data);
+                    }
+                    return redirect()->back()->with("success", " Todo updated successfully !");
+                }
+            } else {
+                return view('admin.support.edit', compact('title', 'supportRequest', 'users'));
+                //return view('admin.distributors.edit', compact('distributor', 'title'));
+            }
+
+        }
+        return Redirect(config('constants.ADMIN_URL') . 'support');
+    }
+
     public function edit($id)
     {
         $title = 'Edit Support';
@@ -131,6 +189,7 @@ class SupportRequestController extends Controller
         $users = User::all(); // Fetch users to populate dropdowns
         return view('admin.support.edit', compact('title', 'supportRequest', 'users'));
     }
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -152,11 +211,11 @@ class SupportRequestController extends Controller
     }
 
     public function viewSupport($id) {
-
         $support = SupportRequest::find($id);
         $title = 'View Support ';
         return view('admin.support.view', compact('title', 'support'));
     }
+
     public function deleteSupport($id)
     {
         $object = SupportRequest::find($id);
@@ -174,16 +233,6 @@ class SupportRequestController extends Controller
 
     public function bulkAction(Request $request)
     {
-        var_dump($request);
-        exit;
-        // Validate required fields
-        $validated = $request->validate([
-            'action' => 'required|string',  // Action field must be present
-            'ids' => 'required|array', // IDs field must be an array
-            'ids.*' => 'integer', // Each item in the 'ids' array must be an integer
-        ]);
-
-
         $action = $request->input('action'); // Extract the 'action' value
         $ids = $request->input('ids') ?? []; // Extract the 'ids' array
 

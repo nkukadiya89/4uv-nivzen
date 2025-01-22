@@ -141,10 +141,9 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     // Support
     Route::get('support', [SupportRequestController::class, 'index'])->name('support-manage');
     Route::post('support/list-ajax', [SupportRequestController::class, 'anyListAjax'])->name('support-list-ajax');
-    Route::get('support/create', [SupportRequestController::class, 'create'])->name('support-create');
-    Route::post('support/store', [SupportRequestController::class, 'store'])->name('support-store');
-    Route::get('support/edit/{id}', [SupportRequestController::class, 'edit'])->name('support-requests.edit');
-    Route::post('support/{id}', [SupportRequestController::class, 'update'])->name('support-requests.update');
+    Route::get('support/add', [SupportRequestController::class, 'showSupportForm'])->name('support-add-form');
+    Route::post('support/add', [SupportRequestController::class, 'addSupport'])->name('support-add');
+    Route::any('support/edit/{id}', [SupportRequestController::class, 'editSupport'])->name('support-edit');
     Route::any('support/view/{id}', [SupportRequestController::class,'viewSupport'])->name('support-view');
     Route::get('support/delete/{id}', [SupportRequestController::class,'deleteSupport'])->name('support-delete');
     Route::post('support/bulk-action', [SupportRequestController::class, 'bulkAction'])->name('support.bulkAction');

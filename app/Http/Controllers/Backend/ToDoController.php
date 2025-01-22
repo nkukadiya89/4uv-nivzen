@@ -166,7 +166,7 @@ class ToDoController extends Controller
             }
 
         }
-        return Redirect(config('constants.ADMIN_URL') . 'prospects');
+        return Redirect(config('constants.ADMIN_URL') . 'todos');
     }
 
     public function viewTodo($id) {

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\Process\Process;
 
 class PermissionController extends Controller
 {
@@ -91,11 +92,25 @@ class PermissionController extends Controller
     public function create()
     {
         $title = 'Create permission';
-        return view('admin.role-permission.permission.create',
-            [
-                'title' =>$title
-            ]
-        );
+        // Define the path to the Models directory
+        $path = app_path('Models');
+
+        // Run the shell command to list model files
+        $process = Process::fromShellCommandline("dir /b /a-d *.php", $path);
+        $process->run();
+
+        // Handle errors
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        // Parse the output
+        $models = array_map(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME);
+        }, explode("\n", trim($process->getOutput())));
+
+        return view('admin.role-permission.permission.create', compact('title', 'models'));
+        //return view('admin.role-permission.permission.create', ['title' =>$title]);
     }
 
     public function store(Request $request)
@@ -116,7 +131,8 @@ class PermissionController extends Controller
         } else {
             Permission::create([
                 'name' => $request->permission_name,
-                'guard_name' => 'backend'
+                'guard_name' => 'backend',
+                'model_name' => $request->model_name
             ]);
         }
 
@@ -130,7 +146,23 @@ class PermissionController extends Controller
 
     public function edit(Permission $permission)
     {
-        return view('admin.role-permission.permission.edit', ['permission' => $permission,'title'=> 'Edit Permission']);
+        // Define the path to the Models directory
+        $path = app_path('Models');
+
+        // Run the shell command to list model files
+        $process = Process::fromShellCommandline("dir /b /a-d *.php", $path);
+        $process->run();
+
+        // Handle errors
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        // Parse the output
+        $models = array_map(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME);
+        }, explode("\n", trim($process->getOutput())));
+        return view('admin.role-permission.permission.edit', ['permission' => $permission,'title'=> 'Edit Permission','models' => $models]);
     }
 
     public function update(Request $request, Permission $permission)
@@ -150,7 +182,8 @@ class PermissionController extends Controller
         } else {
             $permission->update([
                 'name' => $request->permission_name,
-                'guard_name' => 'backend'
+                'guard_name' => 'backend',
+                'model_name' => $request->model_name
             ]);
         }
 

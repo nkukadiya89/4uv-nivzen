@@ -28,7 +28,7 @@
                 </div>
                 <div class="p-2">
                     <!--begin::Button-->
-                    <a href="{{ route('support-create') }}" class="btn btn-primary">
+                    <a href="{{ route('support-add-form') }}" class="btn btn-primary">
                         <i class="la la-plus"></i>New Support</a>
                     <!--end::Button-->
                 </div>
@@ -89,11 +89,10 @@ $(document).ready(function() {
       toastr.info("{{ session('success-message') }}");
     @endif
 
-    var url = '{{config('
-    constants.ADMIN_URL ')}}support/list-ajax';
+    var url = '{{config('constants.ADMIN_URL ')}}support/list-ajax';
     DataTables.init('#datatable_ajax', url);
 
-// When "Select All" checkbox is clicked
+    // When "Select All" checkbox is clicked
     $('#select-all').click(function() {
         var isChecked = $(this).prop('checked'); // Check if "Select All" is checked
 
