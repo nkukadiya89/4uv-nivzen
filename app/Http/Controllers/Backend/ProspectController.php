@@ -119,8 +119,8 @@ class ProspectController extends Controller
 
         $validator = Validator::make($inputs, [
             'name' => 'required',
-            'email' => 'required',
-            'mobile_no' => 'required',
+            'email' => 'required|email|unique:prospects,email',
+            'mobile_no' => 'required|digits:10|numeric',
             'address' => 'required',
             'area' => 'required',
             'city' => 'required',
@@ -129,8 +129,7 @@ class ProspectController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return json_encode($validator->errors());
-
+            return response()->json(['errors' => $validator->errors()], 422);
         } else {
             $prospect = new Prospect();
             $prospect->name= $request->name;
@@ -164,8 +163,8 @@ class ProspectController extends Controller
 
                 $validator = Validator::make($inputs, [
                     'name' => 'required',
-                    'email' => 'required|email|unique:prospects,email',
-                    'mobile_no' => 'required',
+                    'email' => 'required|unique:prospects,email,"'.$id.'"',
+                    'mobile_no' => 'required|digits:10|numeric',
                     'address' => 'required',
                     'area' => 'required',
                     'city' => 'required',
@@ -174,7 +173,7 @@ class ProspectController extends Controller
                 ]);
 
                 if ($validator->fails()) {
-                    return json_encode($validator->errors());
+                    return response()->json(['errors' => $validator->errors()], 422);
                 } else {
                     $prospect->name= $request->name;
                     $prospect->email= $request->email;

@@ -58,8 +58,8 @@
                             <div class="form-group">
                                 <label for="phone">Mobile No<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="phone" id="phone" class="form-control"
-                                        value={{ $distributor->phone }} required>
+                                    <input type="text" name="phone" id="phone" class="form-control required"
+                                        value="{{ $distributor->phone }}" placeholder="phone" >
                                 </div>
                             </div>
                         </div>
@@ -76,19 +76,18 @@
                             <div class="form-group">
                                 <label for="email">Email ID<span class="required">*</span></label>
                                 <div>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        value="{{ $distributor->email }}" required>
+                                    <input type="email" name="email" id="email" class="form-control required"
+                                        value="{{ $distributor->email }}" placeholder="Email">
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
                                 <label for="address1">Address<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="address1" id="address1" class="form-control"
-                                        value="{{ $distributor->address1 }}" required>
+                                    <input type="text" name="address1" id="address1" class="form-control required"
+                                        value="{{ $distributor->address1 }}" placeholder="Address">
                                 </div>
                             </div>
                         </div>
@@ -97,20 +96,18 @@
                             <div class="form-group">
                                 <label for="address2">Area<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="address2" id="address2" class="form-control"
-                                        value="{{ $distributor->address2 }}" required>
+                                    <input type="text" name="address2" id="address2" class="form-control required"
+                                        value="{{ $distributor->address2 }}" placeholder="Area">
                                 </div>
                             </div>
                         </div>
-
-
 
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
                                 <label for="city">City<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="city" id="city" class="form-control"
-                                        value="{{ $distributor->city }}" required>
+                                    <input type="text" name="city" id="city" class="form-control required"
+                                        value="{{ $distributor->city }}" placeholder="City">
                                 </div>
                             </div>
                         </div>
@@ -119,8 +116,8 @@
                             <div class="form-group">
                                 <label for="state">State<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="state" id="state" class="form-control"
-                                        value="{{ $distributor->state }}" required>
+                                    <input type="text" name="state" id="state" class="form-control required"
+                                        value="{{ $distributor->state }}" placeholder="State">
                                 </div>
                             </div>
                         </div>
@@ -129,8 +126,8 @@
                             <div class="form-group">
                                 <label for="country">Country<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="country" id="country" class="form-control"
-                                        value="{{ $distributor->country }}" required>
+                                    <input type="text" name="country" id="country" class="form-control required"
+                                        value="{{ $distributor->country }}" placeholder="Country">
                                 </div>
                             </div>
                         </div>
@@ -139,7 +136,8 @@
                             <div class="form-group">
                                 <label for="type">Type<span class="required">*</span></label>
                                 <div>
-                                    <select name="type" id="type" class="form-control" required>
+                                    <select name="type" id="type" class="form-control city custom-select required" placeholder="User Type">
+                                        <option value="">Select User Type</option>
                                         <option value="User"
                                             {{ old('type', $distributor->type ?? '') == 'User' ? 'selected' : '' }}>User
                                         </option>
@@ -172,7 +170,8 @@
                             <div class="form-group">
                                 <label for="goal_for">Goal For<span class="required">*</span></label>
                                 <div>
-                                    <select name="goal_for" id="goal_for" class="form-control" required>
+                                    <select name="goal_for" id="goal_for" class="form-control city custom-select required" placeholder="Goal For">
+                                        <option value="">Select Goal For</option>
                                         <option value="User" {{ $distributor->goal_for == 'User' ? 'selected' : '' }}>
                                             User</option>
                                         <option value="3A" {{ $distributor->goal_for == '3A' ? 'selected' : '' }}>3A

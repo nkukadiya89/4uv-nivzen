@@ -59,8 +59,8 @@
                             <div class="form-group">
                                 <label for="phone">Mobile No<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="phone" id="phone" class="form-control"
-                                        value="{{ old('phone') }}">
+                                    <input type="text" name="phone" id="phone" class="form-control required"
+                                        value="{{ old('phone') }}" placeholder="phone">
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             <div class="form-group">
                                 <label for="dob">Date of Birth<span class="required">*</span></label>
                                 <div>
-                                    <input class="form-control" type="date" placeholder="Birth date" name="dob"
+                                    <input class="form-control required" type="date" placeholder="Birth date" name="dob"
                                         value="{{ old('dob') }}" autocomplete="off" />
                                 </div>
                             </div>
@@ -77,8 +77,8 @@
                             <div class="form-group">
                                 <label for="email">Email ID<span class="required">*</span></label>
                                 <div>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        value="{{ old('email') }}">
+                                    <input type="email" name="email" id="email" class="form-control required"
+                                        value="{{ old('email') }}" placeholder="Email">
                                 </div>
                             </div>
                         </div>
@@ -87,8 +87,8 @@
                             <div class="form-group">
                                 <label for="address1">Address<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="address1" id="address1" class="form-control"
-                                        value="{{ old('address1') }}">
+                                    <input type="text" name="address1" id="address1" class="form-control required"
+                                        value="{{ old('address1') }}" placeholder="Address">
                                 </div>
                             </div>
                         </div>
@@ -96,8 +96,8 @@
                             <div class="form-group">
                                 <label for="address2">Area<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="address2" id="address2" class="form-control"
-                                        value="{{ old('address2') }}">
+                                    <input type="text" name="address2" id="address2" class="form-control required"
+                                        value="{{ old('address2') }}" placeholder="Area">
                                 </div>
                             </div>
                         </div>
@@ -106,8 +106,8 @@
                             <div class="form-group">
                                 <label for="city">City<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="city" id="city" class="form-control"
-                                        value="{{ old('city') }}">
+                                    <input type="text" name="city" id="city" class="form-control required"
+                                        value="{{ old('city') }}" placeholder="City">
                                 </div>
                             </div>
                         </div>
@@ -115,8 +115,8 @@
                             <div class="form-group">
                                 <label for="state">State<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="state" id="state" class="form-control"
-                                        value="{{ old('state') }}">
+                                    <input type="text" name="state" id="state" class="form-control required"
+                                        value="{{ old('state') }}" placeholder="State">
                                 </div>
                             </div>
                         </div>
@@ -124,8 +124,8 @@
                             <div class="form-group">
                                 <label for="country">Country<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="country" id="country" class="form-control"
-                                        value="{{ old('country') }}">
+                                    <input type="text" name="country" id="country" class="form-control required"
+                                        value="{{ old('country') }}" placeholder="Country">
                                 </div>
                             </div>
                         </div>
@@ -134,7 +134,8 @@
                             <div class="form-group">
                                 <label for="type">Type<span class="required">*</span></label>
                                 <div>
-                                    <select name="type" id="type" class="form-control" required>
+                                    <select name="type" id="type" class="form-control city custom-select required" placeholder="User Type">
+                                        <option value="">Select User Type</option>
                                         <option value="User"
                                             {{ old('type', $distributor->type ?? '') == 'User' ? 'selected' : '' }}>User
                                         </option>
@@ -167,15 +168,13 @@
                             <div class="form-group">
                                 <label for="goal_for">Goal For<span class="required">*</span></label>
                                 <div>
-                                    <select name="goal_for" id="goal_for" class="form-control" required>
-                                        <option value="User" {{ old('goal_for') == 'User' ? 'selected' : '' }}>User
-                                        </option>
+                                    <select name="goal_for" id="goal_for" class="form-control city custom-select required" placeholder="Goal For">
+                                        <option value="">Select Goal For</option>
+                                        <option value="User" {{ old('goal_for') == 'User' ? 'selected' : '' }}>User</option>
                                         <option value="3A" {{ old('goal_for') == '3A' ? 'selected' : '' }}>3A</option>
                                         <option value="6A" {{ old('goal_for') == '6A' ? 'selected' : '' }}>6A</option>
-                                        <option value="6A2" {{ old('goal_for') == '6A2' ? 'selected' : '' }}>6A2
-                                        </option>
-                                        <option value="6A2-3" {{ old('goal_for') == '6A2-3' ? 'selected' : '' }}>6A2-3
-                                        </option>
+                                        <option value="6A2" {{ old('goal_for') == '6A2' ? 'selected' : '' }}>6A2</option>
+                                        <option value="6A2-3" {{ old('goal_for') == '6A2-3' ? 'selected' : '' }}>6A2-3</option>
                                     </select>
                                 </div>
                             </div>

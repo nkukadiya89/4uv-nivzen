@@ -30,23 +30,14 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div class="row">
+
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label for="support_name">Subject<span class="required">*</span></label>
-                                <div>
-                                    <input type="text" class="form-control @error('support_name') is-invalid @enderror"
-                                        id="support_name" name="support_name"
-                                        value="{{ old('support_name', $supportRequest->support_name) }}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <div class="form-group">
-                                <label for="from_user_id">>From User<span class="required">*</span></label>
+                                <label for="from_user_id">From User<span class="required">*</span></label>
                                 <div>
                                     <select
-                                        class="form-control city custom-select @error('from_user_id') is-invalid @enderror"
-                                        id="from_user_id" name="from_user_id">
+                                            class="form-control city custom-select required"
+                                        id="from_user_id" name="from_user_id" placeholder="From User">
                                         <option value="">Select From User</option>
                                         @foreach($users as $user)
                                         <option value="{{ $user->id }}"
@@ -56,9 +47,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                @error('from_user_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
                         <div class="col-12 col-md-4 col-lg-3">
@@ -67,20 +55,27 @@
                                 <label for="to_user_id">To User<span class="required">*</span></label>
                                 <div>
                                     <select
-                                        class="form-control city custom-select @error('to_user_id') is-invalid @enderror"
-                                        id="to_user_id" name="to_user_id">
+                                            class="form-control city custom-select required"
+                                        id="to_user_id" name="to_user_id" placeholder="To User">
                                         <option value="">Select To User</option>
                                         @foreach($users as $user)
-                                        <option value="{{ $user->id }}"
-                                            {{ old('to_user_id', $supportRequest->to_user_id) == $user->id ? 'selected' : '' }}>
-                                            {{ $user->firstname }} {{$user->lastname}}
-                                        </option>
+                                            <option value="{{ $user->id }}"
+                                                {{ old('to_user_id', $supportRequest->to_user_id) == $user->id ? 'selected' : '' }}>
+                                                {{ $user->firstname }} {{$user->lastname}}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                @error('to_user_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group">
+                                <label for="support_name">Subject<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" class="form-control required"
+                                           id="support_name" name="support_name"
+                                           value="{{ old('support_name', $supportRequest->support_name) }}" placeholder="Subject">
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
@@ -88,13 +83,10 @@
                             <div class="form-group">
                                 <label for="description">Description<span class="required">*</span></label>
                                 <div>
-                                    <textarea class="form-control @error('description') is-invalid @enderror"
+                                    <textarea class="form-control required"
                                         id="description" name="description"
-                                        rows="3">{{ old('description', $supportRequest->description) }}</textarea>
+                                        rows="3" placeholder="Description">{{ old('description', $supportRequest->description) }}</textarea>
                                 </div>
-                                @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
                     </div>

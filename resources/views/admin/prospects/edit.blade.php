@@ -40,8 +40,8 @@
                             <div class="form-group">
                                 <label for="email">Email ID<span class="required">*</span></label>
                                 <div>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        value="{{ $prospect->email }}" required>
+                                    <input type="email" name="email" id="email" class="form-control required"
+                                        value="{{ $prospect->email }}" placeholder="Email">
                                 </div>
                             </div>
                         </div>
@@ -50,8 +50,8 @@
                             <div class="form-group">
                                 <label for="mobile_no">Mobile No<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control"
-                                        value="{{ $prospect->mobile_no }}" required>
+                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control required"
+                                        value="{{ $prospect->mobile_no }}" placeholder="Mobile">
                                 </div>
                             </div>
                         </div>
@@ -60,8 +60,8 @@
                             <div class="form-group">
                                 <label for="address">Address<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="address" id="address" class="form-control"
-                                        value="{{ $prospect->address }}" required>
+                                    <input type="text" name="address" id="address" class="form-control required"
+                                        value="{{ $prospect->address }}" placeholder="Address">
                                 </div>
                             </div>
                         </div>
@@ -70,8 +70,8 @@
                             <div class="form-group">
                                 <label for="area">Area<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="area" id="area" class="form-control"
-                                        value="{{ $prospect->area }}" required>
+                                    <input type="text" name="area" id="area" class="form-control required"
+                                        value="{{ $prospect->area }}" placeholder="Area">
                                 </div>
                             </div>
                         </div>
@@ -80,8 +80,8 @@
                             <div class="form-group">
                                 <label for="city">City<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="city" id="city" class="form-control"
-                                        value="{{ $prospect->city }}" required>
+                                    <input type="text" name="city" id="city" class="form-control required"
+                                        value="{{ $prospect->city }}" placeholder="City">
                                 </div>
                             </div>
                         </div>
@@ -90,8 +90,8 @@
                             <div class="form-group">
                                 <label for="state">State<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="state" id="state" class="form-control"
-                                        value="{{ $prospect->state }}" required>
+                                    <input type="text" name="state" id="state" class="form-control required"
+                                        value="{{ $prospect->state }}" placeholder="State">
                                 </div>
                             </div>
                         </div>
@@ -100,8 +100,8 @@
                             <div class="form-group">
                                 <label for="country">Country<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="country" id="country" class="form-control"
-                                        value="{{ $prospect->country }}" required>
+                                    <input type="text" name="country" id="country" class="form-control required"
+                                        value="{{ $prospect->country }}" placeholder="Country">
                                 </div>
                             </div>
                         </div>

@@ -164,7 +164,7 @@ class UsersController extends Controller
         $randomPassword = Str::random(10);
         $hashedPassword = Hash::make($randomPassword);
         $validator = Validator::make($inputs, [
-            'phone' => 'required',
+            'phone' => 'required|digits:10|numeric',
             'email' => 'required|email|unique:users,email',
             'dob' => 'required',
             'firstname' => 'required',
@@ -174,11 +174,13 @@ class UsersController extends Controller
             'city' => 'required',
             'state' => 'required',
             'country' => 'required',
+            'pincode' => 'digits:6|numeric',
             'status' => 'required',
         ]);
 
         if ($validator->fails()) {
-            return json_encode($validator->errors());
+            //return json_encode($validator->errors());
+            return response()->json(['errors' => $validator->errors()], 422);
 
         } else {
 
@@ -236,12 +238,14 @@ class UsersController extends Controller
                     'lastname' => 'required',
                     'email' => 'required|unique:users,email,"'.$id.'"',
                     'dob' => 'required',
-                    'phone' => 'required',
-                    'roles' => 'required'
+                    'phone' => 'required|digits:10|numeric',
+                    'roles' => 'required',
+                    'pincode' => 'digits:6|numeric',
                 ]);
 
                 if ($validator->fails()) {
-                    return json_encode($validator->errors());
+                    //return json_encode($validator->errors());
+                    return response()->json(['errors' => $validator->errors()], 422);
                 } else {
                     $user->name = $request->firstname.' '.$request->lastname;
                     $user->firstname = $request->firstname;

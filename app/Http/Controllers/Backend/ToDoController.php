@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ToDo;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class ToDoController extends Controller
     public function anyListAjax(Request $request) {
         $data = $request->all();
 
-        $sortColumn = array('name','date', 'time');
+        $sortColumn = array('name','datetime');
         $query = new ToDo();
 
 
@@ -58,10 +59,9 @@ class ToDoController extends Controller
             //$data[$key][$index++] = $val['id'];
             $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
             $data[$key][$index++] = $val['name'];
-            $data[$key][$index++] = $val['date'];
-            $data[$key][$index++] = $val['time'];
+            $data[$key][$index++] = $val['datetime'];
             $data[$key][$index++] = $val['note'];
-            $data[$key][$index++] = $val['is_completed'] == 1 ? 'Completed' : 'Pending';
+            //$data[$key][$index++] = $val['is_completed'] == 1 ? 'Completed' : 'Pending';
 
             //$data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
@@ -89,7 +89,8 @@ class ToDoController extends Controller
 
     public function showTodoForm () {
         $title = 'Add To Do';
-        return view('admin.todos.add', compact('title'));
+        $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
+        return view('admin.todos.add', compact('title','users'));
     }
 
     public function addTodo(Request $request) {
@@ -98,23 +99,20 @@ class ToDoController extends Controller
 
         $validator = Validator::make($inputs, [
             'name' => 'required|string|max:255',
-            'date' => 'nullable|date',
-            'time' => 'nullable|date_format:H:i',
-            'customer_list' => 'nullable|string',
+            'datetime' => 'required|date',
+            'user_id' => 'required|exists:users,id',
             'note' => 'nullable|string',
+            'action' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
-            return json_encode($validator->errors());
-
+            return response()->json(['errors' => $validator->errors()], 422);
         } else {
             $todo = new ToDo();
             $todo->name= $request->name;
-            $todo->date= $request->date;
-            $todo->time= $request->time;
-            $todo->customer_list= $request->customer_list;
+            $todo->datetime= $request->datetime;
+            $todo->user_id = $request->user_id;
             $todo->note= $request->note;
-            $todo->user_id = auth()->id();
             $todo->save();
 
             if ($todo->save()) {
@@ -129,7 +127,7 @@ class ToDoController extends Controller
 
     public function editTodo(Request $request, $id)
     {
-
+        $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
         $todo = ToDo::find($id);
         $title = 'Edit Todo';
         $inputs  = $request->all();
@@ -138,19 +136,18 @@ class ToDoController extends Controller
 
                 $validator = Validator::make($inputs, [
                     'name' => 'required|string|max:255',
-                    'date' => 'nullable|date',
-                    'time' => 'nullable|date_format:H:i',
-                    'customer_list' => 'nullable|string',
+                    'datetime' => 'required|date',
+                    'user_id' => 'required|exists:users,id',
                     'note' => 'nullable|string',
+                    'action' => 'nullable|string|max:255',
                 ]);
 
                 if ($validator->fails()) {
-                    return json_encode($validator->errors());
+                    return response()->json(['errors' => $validator->errors()], 422);
                 } else {
                     $todo->name= $request->name;
-                    $todo->date= $request->date;
-                    $todo->time= $request->time;
-                    $todo->customer_list= $request->customer_list;
+                    $todo->datetime= $request->datetime;
+                    $todo->user_id = $request->user_id;
                     $todo->note= $request->note;
 
                     if ($todo->save()) {
@@ -161,7 +158,7 @@ class ToDoController extends Controller
                     return redirect()->back()->with("success", " Todo updated successfully !");
                 }
             } else {
-                return view('admin.todos.edit', compact('title', 'todo'));
+                return view('admin.todos.edit', compact('title', 'todo','users'));
                 //return view('admin.distributors.edit', compact('distributor', 'title'));
             }
 

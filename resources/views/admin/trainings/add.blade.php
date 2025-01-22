@@ -32,7 +32,7 @@
                         </div>
                         <div class="form-group">
                             <label for="video">Video Upload<span class="required">*</span></label>
-                            <input type="file" name="video" id="video" class="form-control" required>
+                            <input type="file" name="video" id="video" class="form-control">
                         </div>
                         <div id="questions-section">
                             @foreach (old('questions', []) as $index => $question)
@@ -86,12 +86,12 @@
                     <h4>Question ${questionCount}</h4>
                     <div class="form-group">
                         <label>Enter Question</label>
-                        <input type="text" name="questions[${questionCount}][question]" class="form-control" required>
+                        <input type="text" name="questions[${questionCount}][question]" class="form-control">
                     </div>
                     <div id="answers-${questionCount}" class="answers-section">
                         <div class="form-group">
                             <label>Option 1</label>
-                            <input type="text" name="questions[${questionCount}][options][0]" class="form-control" required>
+                            <input type="text" name="questions[${questionCount}][options][0]" class="form-control">
                             <label>
                                 <input type="radio" name="questions[${questionCount}][correct]" value="0"> Correct
                             </label>
@@ -109,7 +109,7 @@
                 let answerHtml = `
                 <div class="form-group">
                     <label>Option ${answerCount + 1}</label>
-                    <input type="text" name="questions[${questionId}][options][${answerCount}]" class="form-control" required>
+                    <input type="text" name="questions[${questionId}][options][${answerCount}]" class="form-control">
                     <label>
                         <input type="radio" name="questions[${questionId}][correct]" value="${answerCount}"> Correct
                     </label>

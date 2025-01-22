@@ -199,6 +199,24 @@ $(document).ready(function() {
                             } else {
                                 // Log if the field is not found
                                 console.warn('Field not found in form:', key);
+                                $.each(errors, function(key, messages) {
+                                    // For each error field, process the array of messages
+                                    $.each(messages, function(index, message) {
+                                        // Ensure we don't duplicate error elements
+                                        let inputElement = $('#' + key);
+                                        let errorElementId = key + '_error';
+
+                                        // Check if the error message block already exists
+                                        if ($('#' + errorElementId).length === 0) {
+                                            // Add error styling and message
+                                            inputElement.closest('.form-group').addClass('is-invalid');
+                                            inputElement.after('<div id="' + errorElementId + '" class="help-block invalid-feedback">' + message + '</div>');
+                                        }
+
+                                        // Show the error message
+                                        $('#' + errorElementId).show();
+                                    });
+                                });
                             }
                         });
                     } else {
@@ -316,6 +334,24 @@ $(document).ready(function() {
                             } else {
                                 // Log if the field is not found
                                 console.warn('Field not found in form:', key);
+                                $.each(errors, function(key, messages) {
+                                    // For each error field, process the array of messages
+                                    $.each(messages, function(index, message) {
+                                        // Ensure we don't duplicate error elements
+                                        let inputElement = $('#' + key);
+                                        let errorElementId = key + '_error';
+
+                                        // Check if the error message block already exists
+                                        if ($('#' + errorElementId).length === 0) {
+                                            // Add error styling and message
+                                            inputElement.closest('.form-group').addClass('is-invalid');
+                                            inputElement.after('<div id="' + errorElementId + '" class="help-block invalid-feedback">' + message + '</div>');
+                                        }
+
+                                        // Show the error message
+                                        $('#' + errorElementId).show();
+                                    });
+                                });
                             }
                         });
                     } else {

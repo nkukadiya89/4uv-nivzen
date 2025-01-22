@@ -328,10 +328,16 @@ class TrainingController extends Controller
 
     public function viewTraining($id) {
 
-        $training = Training::find($id);
+        $training = Training::with('videoLessons.quizzes')->find($id);
         $title = 'View Training ';
-        $videoPaths = json_decode($training->video_path);
-        return view('admin.trainings.view', compact('title', 'training', 'videoPaths'));
+        $videoPaths = $training->videoLessons->pluck('video_url');
+        // Calculate the total question count
+        $totalQuestions = $training->videoLessons->flatMap(function ($lesson) {
+            return $lesson->quizzes;
+        })->count();
+//        dd($totalQuestions);
+//        exit;
+        return view('admin.trainings.view', compact('title', 'training', 'videoPaths','totalQuestions'));
     }
 
     public function deleteTraining($id)
@@ -364,7 +370,7 @@ class TrainingController extends Controller
 
         if ($action === 'Delete') {
             // Perform delete operation
-            TrainingPrograms::whereIn('id', $ids)->delete();
+            Training::whereIn('id', $ids)->delete();
             return response('TRUE');
             //return response()->json(['message' => 'Records deleted successfully.']);
         }

@@ -12,12 +12,10 @@ class ToDo extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'todos';
     protected $fillable = [
-        'user_id',
         'name',
-        'date',
-        'time',
-        'is_completed',
-        'customer_list',
+        'datetime',
+        'user_id',
         'note',
+        'action'
     ];
 }

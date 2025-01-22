@@ -46,37 +46,31 @@
                         </div>
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label for="date">Date<span class="required">*</span></label>
+                                <label for="datetime">Date & Time<span class="required">*</span></label>
                                 <div>
-                                    <input type="date" class="form-control" id="date" name="date"
-                                        value="{{ old('date') }}">
-                                </div>
-                                @error('date')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <div class="form-group">
-                                <label for="time">Time<span class="required">*</span></label>
-                                <div>
-                                    <input type="time" class="form-control" id="time" name="time"
-                                        value="{{ old('time') }}">
+                                    <input type="datetime-local" class="form-control required" id="datetime" name="datetime"
+                                        value="{{ old('datetime') }}" placeholder="Date Time">
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label for="customer_list">Customer List<span class="required">*</span></label>
+                                <label for="user_id">Customer List<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" class="form-control" id="customer_list" name="customer_list"
-                                        value="{{ old('customer_list') }}">
+                                    <select class="form-control city custom-select required" name="user_id"
+                                            id="user_id" placeholder="Customer">
+                                        <option value="">Select User</option>
+                                        @foreach ($users as $res)
+                                            <option value="{{$res->id}}">{{$res->firstname}} {{$res->lastname}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 ">
                             <div class="form-group">
-                                <label for="note">Note<span class="required">*</span></label>
+                                <label for="note">Note</label>
                                 <div>
                                     <textarea class="form-control" id="note" name="note"
                                         rows="3">{{ old('note') }}</textarea>

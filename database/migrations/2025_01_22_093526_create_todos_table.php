@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('todos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->date('date')->nullable();
-            $table->time('time')->nullable();
-            $table->boolean('is_completed')->default(false);
-            $table->string('customer_list')->nullable();
+            $table->datetime('datetime');
+            $table->unsignedBigInteger('user_id'); // Customer list (foreign key)
             $table->text('note')->nullable();
+            $table->string('action')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

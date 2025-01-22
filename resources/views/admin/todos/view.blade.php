@@ -59,21 +59,13 @@
 
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label class="customlbl">Date</label>
+                                <label class="customlbl">Date & Time</label>
                                 <div>
-                                    {{$todo->date ?? ''}}
+                                    {{$todo->datetime ?? ''}}
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <div class="form-group">
-                                <label class="customlbl">Time</label>
-                                <div>
-                                    {{$todo->time ?? ''}}
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">

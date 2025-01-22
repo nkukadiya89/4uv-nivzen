@@ -48,8 +48,8 @@
                             <div class="form-group">
                                 <label for="email">Email<span class="required">*</span></label>
                                 <div>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        value="{{ old('email') }}" placeholder="Email" required>
+                                    <input type="email" name="email" id="email" class="form-control required"
+                                        value="{{ old('email') }}" placeholder="Email" >
                                 </div>
                                 @error('email')
                                   <span class="text-danger">{{ $message }}</span>
@@ -61,8 +61,8 @@
                             <div class="form-group">
                                 <label for="mobile_no">Mobile No<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control"
-                                        value="{{ old('mobile_no') }}" placeholder="Mobile No" required>
+                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control required"
+                                        value="{{ old('mobile_no') }}" placeholder="Mobile No" >
                                 </div>
                             </div>
                         </div>
@@ -70,8 +70,8 @@
                             <div class="form-group">
                                 <label for="address">Address<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="address" id="address" class="form-control"
-                                        value="{{ old('address') }}" placeholder="Address" required>
+                                    <input type="text" name="address" id="address" class="form-control required"
+                                        value="{{ old('address') }}" placeholder="Address" >
                                 </div>
                             </div>
                         </div>
@@ -80,8 +80,8 @@
                             <div class="form-group">
                                 <label for="area">Area<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="area" id="area" class="form-control"
-                                        value="{{ old('area') }}" placeholder="Area" required>
+                                    <input type="text" name="area" id="area" class="form-control required"
+                                        value="{{ old('area') }}" placeholder="Area" >
                                 </div>
                             </div>
                         </div>
@@ -90,8 +90,8 @@
                             <div class="form-group">
                                 <label for="city">City<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="city" id="city" class="form-control"
-                                        value="{{ old('city') }}" placeholder="City" required>
+                                    <input type="text" name="city" id="city" class="form-control required"
+                                        value="{{ old('city') }}" placeholder="City" >
                                 </div>
                             </div>
                         </div>
@@ -100,8 +100,8 @@
                             <div class="form-group">
                                 <label for="state">State<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="state" id="state" class="form-control"
-                                        value="{{ old('state') }}" placeholder="State" required>
+                                    <input type="text" name="state" id="state" class="form-control required"
+                                        value="{{ old('state') }}" placeholder="State" >
                                 </div>
                             </div>
                         </div>
@@ -110,8 +110,8 @@
                             <div class="form-group">
                                 <label for="country">Country<span class="required">*</span></label>
                                 <div>
-                                    <input type="text" name="country" id="country" class="form-control"
-                                        value="{{ old('country') }}" placeholder="Country" required>
+                                    <input type="text" name="country" id="country" class="form-control required"
+                                        value="{{ old('country') }}" placeholder="Country" >
                                 </div>
                             </div>
                         </div>

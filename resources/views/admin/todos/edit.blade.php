@@ -37,65 +37,44 @@
                         </div>
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label for="date">Date<span class="required">*</span></label>
+                                <label for="datetime">Date & Time<span class="required">*</span></label>
                                 <div>
-                                    <input type="date" name="date" id="date" class="form-control"
-                                        value="{{ $todo->date }}" required>
+                                    <input type="datetime-local" class="form-control required" id="datetime" name="datetime" value="{{ old('datetime', $todo->datetime) }}" placeholder="Date Time">
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label for="time">Time<span class="required">*</span></label>
+                                <label for="user_id">Customer List<span class="required">*</span></label>
                                 <div>
-                                    <input type="time" name="time" id="time" class="form-control"
-                                        value="{{ $todo->time }}" required>
+                                    <select class="form-control city custom-select required" id="user_id" name="user_id" placeholder="Customer">
+                                        <option value="">Select a Customer</option>
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->id }}" {{ old('user_id', $todo->user_id) == $user->id ? 'selected' : '' }}>
+                                                {{ $user->firstname }} {{ $user->lastname }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-4 col-lg-3">
+                        <div class="col-12">
                             <div class="form-group">
-                                <label for="customer_list">Customer List<span class="required">*</span></label>
+                                <label for="note">Note</label>
                                 <div>
-                                    <input type="text" name="customer_list" id="customer_list" class="form-control"
-                                        value="{{ $todo->customer_list }}" required>
+                                    <textarea class="form-control required" id="note"
+                                        name="note" rows="3" placeholder="Note">{{ old('note', $todo->note) }}</textarea>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12 ">
-                            <div class="form-group">
-                                <label for="note">Note<span class="required">*</span></label>
-                                <div>
-                                    <textarea class="form-control @error('note') is-invalid @enderror" id="note"
-                                        name="note" rows="3">{{ old('note', $todo->note) }}</textarea>
-                                </div>
-                                @error('note')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-3">
 
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
 
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer d-flex justify-content-end">
 
-                    <a href="{{ route('distributors-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
+                    <a href="{{ route('todos-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
 
                 </div>

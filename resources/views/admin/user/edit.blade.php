@@ -45,7 +45,7 @@
                                             <div class="form-group ">
                                             <label for="firstname">First name<span class="required">*</span></label>
                                             <div>
-                                                <input id="firstname" type="text" class="form-control " id="firstname" name="firstname" value="{{ $user->firstname}}" placeholder="first name">
+                                                <input id="firstname" type="text" class="form-control required"  name="firstname" value="{{ $user->firstname}}" placeholder="first name">
                                             </div>
                                             </div>
                                         </div>
@@ -71,7 +71,7 @@
                                             <label  for="roles" >Roles<span class="required">*</span></label>
                                             <div>
 
-                                                <select name="roles" class="form-control required"  id="user_roles">
+                                                <select name="roles" class="form-control required"  id="user_roles"  placeholder="Role">
                                                     <option value="">Select Role</option>
                                                     @foreach ($roles as $role)
                                                     <option
@@ -107,7 +107,7 @@
                                             <div class="form-group">
                                             <label for="address1">Address<span class="required">*</span></label>
                                             <div>
-                                                <input id="address1" type="text" class="form-control required" name="address1" value="{{ $user->address1 }}" placeholder="address 1">
+                                                <input id="address1" type="text" class="form-control required" name="address1" value="{{ $user->address1 }}" placeholder="Address">
                                             </div>
                                             </div>
                                         </div>
@@ -115,7 +115,7 @@
                                             <div class="form-group">
                                             <label for="address2">Area</label>
                                             <div>
-                                                <input id="address2" type="text" class="form-control " name="address2" value="{{ $user->address2 }}" >
+                                                <input id="address2" type="text" class="form-control required" name="address2" value="{{ $user->address2 }}" placeholder="Area">
                                             </div>
                                             </div>
                                         </div>

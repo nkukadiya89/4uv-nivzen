@@ -112,7 +112,7 @@ class SupportRequestController extends Controller
         $requestNumber = 'REQ-' . strtoupper(uniqid());
 
         if ($validator->fails()) {
-            return json_encode($validator->errors());
+            return response()->json(['errors' => $validator->errors()], 422);
 
         } else {
             $supportRequest = new SupportRequest();
@@ -143,7 +143,7 @@ class SupportRequestController extends Controller
 
     public function editSupport(Request $request, $id)
     {
-        $users = User::all();
+        $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
         $supportRequest = SupportRequest::with(['fromUser', 'toUser'])->findOrFail($id);
         $title = 'Edit Support';
         $inputs  = $request->all();
@@ -154,11 +154,11 @@ class SupportRequestController extends Controller
                     'support_name' => 'required|string|max:255',
                     'from_user_id' => 'required|exists:users,id',
                     'to_user_id' => 'required|exists:users,id',
-                    'description' => 'nullable|string',
+                    'description' => 'required|string',
                 ]);
 
                 if ($validator->fails()) {
-                    return json_encode($validator->errors());
+                    return response()->json(['errors' => $validator->errors()], 422);
                 } else {
                     $supportRequest->support_name = $request->support_name;
                     $supportRequest->from_user_id = $request->from_user_id;

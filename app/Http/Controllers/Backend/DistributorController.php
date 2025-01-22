@@ -147,7 +147,7 @@ class DistributorController extends Controller
         $hashedPassword = Hash::make($randomPassword);
         $validator = Validator::make($inputs, [
             'enagic_id' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|digits:10|numeric',
             'email' => 'required|email|unique:users,email',
             'dob' => 'required',
             'firstname' => 'required',
@@ -166,7 +166,7 @@ class DistributorController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return json_encode($validator->errors());
+            return response()->json(['errors' => $validator->errors()], 422);
 
         } else {
 
@@ -213,8 +213,8 @@ class DistributorController extends Controller
 
                 $validator = Validator::make($inputs, [
                     'enagic_id' => 'required',
-                    'phone' => 'required',
-                    'email' => 'required|email|unique:users,email',
+                    'phone' => 'required|digits:10|numeric',
+                    'email' => 'required|unique:users,email,"'.$id.'"',
                     'dob' => 'required',
                     'firstname' => 'required',
                     'lastname' => 'required',
@@ -232,7 +232,7 @@ class DistributorController extends Controller
                 ]);
 
                 if ($validator->fails()) {
-                    return json_encode($validator->errors());
+                    return response()->json(['errors' => $validator->errors()], 422);
                 } else {
                     $distributor->enagic_id= $request->enagic_id;
                     $distributor->phone= $request->phone;

@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-12">
                         <div class="form-group">
-                            <label class="customlbl">Videos</label>
+                            <label class="customlbl">Video</label>
                             <div class="videoswrp">
                                 @if(!empty($videoPaths))
                                 @foreach($videoPaths as $video)
@@ -55,12 +55,20 @@
                                         <source src="{{ asset('storage/' . $video) }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
-
                                 </div>
                                 @endforeach
                                 @else
                                 <p>No videos uploaded for this training program.</p>
                                 @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 ">
+                        <div class="form-group">
+                            <label class="customlbl">Total Questions</label>
+                            <div>
+
+                                {{$totalQuestions ?? ''}}
                             </div>
                         </div>
                     </div>

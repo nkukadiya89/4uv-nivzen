@@ -56,10 +56,8 @@
                             <tr>
                                 <td><input type="checkbox" class="row-checkbox" id="select-all"></td>
                                 <th>Name</th>
-                                <th>Date</th>
-                                <th>Time</th>
+                                <th>DateTime</th>
                                 <th>Note</th>
-                                <th>Status</th>
                                 <th width="105" class="no-sort text-center">Actions</th>
                             </tr>
                         </thead>
@@ -69,10 +67,7 @@
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                         name="name"></td>
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input"
-                                        name="date"></td>
-                                <td><input type="text" class="form-control form-control-sm form-filter kt-input"
-                                        name="time"></td>
-                                <td></td>
+                                        name="datetime"></td>
                                 <td></td>
                                 <td>
                                     <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i
@@ -101,8 +96,7 @@ $(document).ready(function() {
       toastr.info("{{ session('success-message') }}");
     @endif
 
-    var url = '{{config('
-    constants.ADMIN_URL ')}}todos/list-ajax';
+    var url = '{{config('constants.ADMIN_URL ')}}todos/list-ajax';
     DataTables.init('#datatable_ajax', url);
 
     // When "Select All" checkbox is clicked
