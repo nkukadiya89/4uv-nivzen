@@ -28,6 +28,7 @@
                 </a>
 
             </li>
+
             @role(['Administrator'])
             <li class="menu-item {{ str_contains($current_url, 'roles') ? 'menu-item-active' : '' }} {{ str_contains($current_url, 'permissions') ? 'menu-item-active' : '' }}"
                 aria-haspopup="true">
@@ -52,8 +53,9 @@
                 </a>
             </li>
             @endrole
-            @role(['teacher','Administrator','admin', 'student', 'teacher','staff'])
-            <li class="menu-item {{ str_contains($current_url, 'users') ? 'menu-item-active' : '' }}  {{ str_contains($current_url, 'user') ? 'menu-item-active' : '' }}"
+
+            @role(['Administrator', 'GoldenAdmin', 'SuperAdmin', 'DistAdmin', 'Distributor'])
+            <li class="menu-item {{ str_contains($current_url, 'users') ? 'menu-item-active' : '' }}  {{ str_contains($current_url, 'users') ? 'menu-item-active' : '' }}"
                 aria-haspopup="true">
                 <a href="{{route('users-manage')}}" class="menu-link">
                     <span class="svg-icon menu-icon">
@@ -78,7 +80,7 @@
             @endrole
 
 
-            @role(['teacher','Administrator','admin', 'teacher'])
+            @role(['Administrator', 'GoldenAdmin', 'SuperAdmin', 'DistAdmin', 'Distributor'])
             <li class="menu-item {{ str_contains($current_url, 'distributors') ? 'menu-item-active' : '' }}"
                 aria-haspopup="true">
                 <a href="{{route('distributors-manage')}}" class="menu-link">
@@ -101,7 +103,7 @@
             </li>
             @endrole
 
-            @role(['Administrator'])
+            @role(['Administrator', 'GoldenAdmin', 'SuperAdmin', 'DistAdmin', 'Distributor'])
             <li class="menu-item {{ str_contains($current_url, 'prospects') ? 'menu-item-active' : '' }} "
                 aria-haspopup="true">
                 <a href="{{url('backend/prospects')}}" class="menu-link">
@@ -126,7 +128,7 @@
             </li>
             @endrole
 
-            @role(['teacher','Administrator','admin', 'teacher'])
+            @role(['Administrator', 'GoldenAdmin', 'SuperAdmin', 'DistAdmin', 'Distributor'])
             <li class="menu-item {{ str_contains($current_url, 'trainings') ? 'menu-item-active' : '' }}"
                 aria-haspopup="true">
                 <a href="{{route('trainings-manage')}}" class="menu-link">
@@ -149,7 +151,7 @@
             </li>
             @endrole
 
-            @role(['Administrator'])
+            @role(['Administrator', 'GoldenAdmin', 'SuperAdmin', 'DistAdmin', 'Distributor'])
             <li class="menu-item {{ str_contains($current_url, 'todos') ? 'menu-item-active' : '' }}"
                 aria-haspopup="true">
                 <a href="{{url('backend/todos')}}" class="menu-link">
@@ -174,7 +176,7 @@
             </li>
             @endrole
 
-            @role(['Administrator'])
+            @role(['Administrator', 'GoldenAdmin', 'SuperAdmin', 'DistAdmin', 'Distributor'])
             <li class="menu-item {{ str_contains($current_url, 'support') ? 'menu-item-active' : '' }}"
                 aria-haspopup="true">
                 <a href="{{url('backend/support')}}" class="menu-link">

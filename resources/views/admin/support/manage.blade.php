@@ -27,10 +27,10 @@
                 <div class="card-title">
                 </div>
                 <div class="p-2">
-                    <!--begin::Button-->
+                    @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('support add'))
                     <a href="{{ route('support-add-form') }}" class="btn btn-primary">
                         <i class="la la-plus"></i>New Support</a>
-                    <!--end::Button-->
+                    @endif
                 </div>
             </div>
 
@@ -42,7 +42,9 @@
                     <select class="form-control form-control-sm form-filter kt-input table-group-action-input"
                         title="Select Action" name="bulk_action" style="width: 150px;display: inline;">
                         <option value="">Select Action</option>
-                        <option value="Delete">Delete</option>
+                        @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('support delete'))
+                            <option value="Delete">Delete</option>
+                        @endif
                     </select>
                     <button href="javascript:;" type="button"
                         class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn"

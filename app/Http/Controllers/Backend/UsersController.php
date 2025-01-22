@@ -135,13 +135,17 @@ class UsersController extends Controller
             $action = '';
             $action .= '<div class="d-flex">';
 
-            
-            $action .= '<a class="btn btn-sm btn-clean btn-icon btn-icon-lg" rel="' . $val['id'] . '" href="' . config('constant.ADMIN_URL') . 'users/edit/' . $val['id'] . '" title="view"><i class="la la-edit"></i> </a>';
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->can('update user')) {
+                $action .= '<a class="btn btn-sm btn-clean btn-icon btn-icon-lg" rel="' . $val['id'] . '" href="' . config('constant.ADMIN_URL') . 'users/edit/' . $val['id'] . '" title="view"><i class="la la-edit"></i> </a>';
+            }
 
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->can('view user')) {
+                $action .= '<a class="btn btn-sm btn-clean btn-icon btn-icon-lg" rel="' . $val['id'] . '" href="' . config('constant.ADMIN_URL') . 'users/view/' . $val['id'] . '" title="view"><i class="la la-eye"></i> </a>';
+            }
 
-            $action .= '<a class="btn btn-sm btn-clean btn-icon btn-icon-lg" rel="' . $val['id'] . '" href="' . config('constant.ADMIN_URL') . 'users/view/' . $val['id'] . '" title="view"><i class="la la-eye"></i> </a>';
-
-            $action .= '<a title="Delete" id="delete_record" class="btn btn-sm btn-clean btn-icon btn-icon-lg delete_record" href="javascript:;" rel="' . $val['id'] . '" delete-url="' .  config('constant.ADMIN_URL') . 'users/delete/' . $val['id'] . '"><i class="la la-trash"></i></a>';
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->can('delete user')) {
+                $action .= '<a title="Delete" id="delete_record" class="btn btn-sm btn-clean btn-icon btn-icon-lg delete_record" href="javascript:;" rel="' . $val['id'] . '" delete-url="' . config('constant.ADMIN_URL') . 'users/delete/' . $val['id'] . '"><i class="la la-trash"></i></a>';
+            }
 
             $action .= '</div>';
             $data[$key][$index++] = $action;

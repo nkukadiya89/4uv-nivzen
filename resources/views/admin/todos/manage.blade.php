@@ -30,9 +30,9 @@
                     <div class="card-title">
                     </div>
                     <div class="p-2">
-                        <a href="{{ route('todo-add-form') }}" class="btn btn-primary">
-                            <i class="la la-plus"></i>New To Do</a>
-
+                        @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('todo add'))
+                          <a href="{{ route('todo-add-form') }}" class="btn btn-primary"><i class="la la-plus"></i>New To Do</a>
+                        @endif
                     </div>
                 </div>
 
@@ -43,7 +43,9 @@
                         <select class="form-control form-control-sm form-filter kt-input table-group-action-input"
                             title="Select Action" name="bulk_action" style="width: 150px;display: inline;">
                             <option value="">Select Action</option>
-                            <option value="Delete">Delete</option>
+                            @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('todo delete'))
+                             <option value="Delete">Delete</option>
+                            @endif
                         </select>
                         <button href="javascript:;" type="button"
                             class="btn btn-primary font-weight-bolder btn-sm table-group-action-submit submit-btn"

@@ -30,9 +30,10 @@
                     <div class="card-title">
                     </div>
                     <div class="p-2">
-                        <!--begin::Button-->
+                        @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('training add'))
                         <a href="{{ route('training-add-form') }}" class="btn btn-primary">
                             <i class="la la-plus"></i>New Training</a>
+                         @endif
                         <!--end::Button-->
                     </div>
                 </div>
@@ -44,7 +45,9 @@
                         <select class="form-control form-control-sm form-filter kt-input table-group-action-input"
                                 title="Select Action" name="bulk_action" style="width: 150px;display: inline;">
                             <option value="">Select Action</option>
-                            <option value="Delete">Delete</option>
+                            @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('training delete'))
+                                <option value="Delete">Delete</option>
+                            @endif
                         </select>
                         <button href="javascript:;" type="button" class="btn  btn-primary btn-sm" id="bulk_action_submit"><i
                                     class="fa fa-check"></i> Submit</button>
