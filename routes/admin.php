@@ -112,7 +112,10 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('trainings/add', [TrainingController::class,'showTrainingForm'])->name('training-add-form');
     Route::post('trainings/add', [TrainingController::class,'addTraining'])->name('training-add');
     Route::any('trainings/edit/{id}', [TrainingController::class,'editTraining'])->name('training-edit');
-    Route::post('trainings/{id}/remove-video', [TrainingController::class, 'removeVideo'])->name('trainings.remove_video');
+    //Route::post('trainings/{id}/remove-video', [TrainingController::class, 'removeVideo'])->name('training.remove_video');
+    Route::delete('/training/{trainingId}/video/{videoLessonId}', [TrainingController::class, 'deleteVideo'])->name('training.deleteVideo');
+    Route::delete('/delete-quiz/{id}', [TrainingController::class, 'deleteQuiz'])->name('training.deleteQuiz');
+    Route::delete('/delete-quiz-option/{id}', [TrainingController::class, 'deleteQuizOption'])->name('training.deleteQuizOption');
     Route::any('trainings/view/{id}', [TrainingController::class,'viewTraining'])->name('training-view');
     Route::get('trainings/delete/{id}', [TrainingController::class,'deleteTraining'])->name('training-delete');
     Route::post('trainings/bulk-action', [TrainingController::class, 'bulkAction'])->name('training.bulkAction');

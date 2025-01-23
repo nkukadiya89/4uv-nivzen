@@ -208,7 +208,7 @@ class TrainingController extends Controller
 
                 // If validation fails, return errors
                 if ($validator->fails()) {
-                    return redirect()->back()->withErrors($validator)->withInput();
+                    return response()->json(['errors' => $validator->errors()], 422);
                 }
 
                 // Update the training name
@@ -216,8 +216,21 @@ class TrainingController extends Controller
 
                 // Handle video update if a new video is uploaded
                 if ($request->hasFile('video')) {
+                    // Delete the old video file if it exists
+                    if ($training->video_url && Storage::exists('public/' . $training->video_url)) {
+                        Storage::delete('public/' . $training->video_url);
+                    }
+
+                    // Store the new video
                     $videoPath = $request->file('video')->store('trainings/' . uniqid() . '/videos', 'public');
-                    $training->video_url = $videoPath;  // Update video URL
+                    //$training->video_url = $videoPath;  // Update video URL
+
+                    $videoLesson = VideoLesson::create([
+                        'training_id' => $training->id,
+                        'title' => 'Video Lesson', // Add title if needed
+                        'description' => 'Lesson Description', // Add description if needed
+                        'video_url' => $videoPath,
+                    ]);
                 }
 
                 // Save updated training program
@@ -238,7 +251,7 @@ class TrainingController extends Controller
 //                            exit;
                             $videoLessonIds = $training->videoLessons->pluck('id')->toArray();
                             $quiz = Quiz::create([
-                                'video_lesson_id' => $videoLessonIds[0],
+                                'video_lesson_id' => $videoLesson ? $videoLesson->id : $videoLessonIds[0],
                                 'question' => $questionData['question']
                             ]);
 
@@ -301,35 +314,70 @@ class TrainingController extends Controller
         return redirect()->route('trainings.index')->with('error', 'Training program not found');
     }
 
-
-
-    public function removeVideo(Request $request, $id)
+    public function deleteVideo($trainingId, $videoLessonId)
     {
-        $training = Training::find($id);
-        if ($training && $request->has('video_path')) {
-            $videoPath = $request->video_path;
+        $training = Training::find($trainingId);
+        $videoLesson = $training->videoLessons()->find($videoLessonId);
 
-            // Remove video from storage
-            if (Storage::exists('public/' . $videoPath)) {
-                Storage::delete('public/' . $videoPath);
+        if ($videoLesson) {
+            // Step 1: Delete the video file if it exists
+            if ($videoLesson->video_url && Storage::exists('public/' . $videoLesson->video_url)) {
+                Storage::delete('public/' . $videoLesson->video_url);
             }
 
-            // Update the video_paths in the database
-            $videoPaths = json_decode($training->video_path, true);
-            $videoPaths = array_filter($videoPaths, function($path) use ($videoPath) {
-                return $path !== $videoPath;
+            // Step 2: Delete the associated quizzes and quiz options
+            $videoLesson->quizzes->each(function ($quiz) {
+                // Delete quiz options
+                $quiz->options()->delete();
+                // Delete the quiz
+                $quiz->delete();
             });
 
-            $training->video_path = json_encode(array_values($videoPaths));
-
-            // Save the updated record
-            $training->save();
+            // Step 3: Delete the video lesson
+            $videoLesson->delete();
 
             return response()->json(['success' => true]);
         }
 
-        return response()->json(['success' => false, 'message' => 'Video not found.']);
+        return response()->json(['success' => false, 'message' => 'Video lesson not found.']);
     }
+
+    public function deleteQuiz($quizId)
+    {
+        $quiz = Quiz::find($quizId);
+        if ($quiz) {
+            // Delete options
+            foreach ($quiz->options as $option) {
+                $option->delete();
+            }
+
+            // Delete quiz
+            $quiz->delete();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Quiz not found']);
+    }
+
+    public function deleteQuizOption($quizOptionId)
+    {
+        $quizOption = QuizOption::find($quizOptionId);
+        if ($quizOption) {
+            // Delete options
+//            foreach ($quiz->options as $option) {
+//                $option->delete();
+//            }
+
+            // Delete quiz
+            $quizOption->delete();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Quiz not found']);
+    }
+
 
     public function viewTraining($id) {
 
@@ -382,6 +430,34 @@ class TrainingController extends Controller
 
         return response()->json(['message' => 'Invalid action.'], 400);
     }
+
+//    public function removeVideo(Request $request, $id)
+//    {
+//        $training = Training::find($id);
+//        if ($training && $request->has('video_path')) {
+//            $videoPath = $request->video_path;
+//
+//            // Remove video from storage
+//            if (Storage::exists('public/' . $videoPath)) {
+//                Storage::delete('public/' . $videoPath);
+//            }
+//
+//            // Update the video_paths in the database
+//            $videoPaths = json_decode($training->video_path, true);
+//            $videoPaths = array_filter($videoPaths, function($path) use ($videoPath) {
+//                return $path !== $videoPath;
+//            });
+//
+//            $training->video_path = json_encode(array_values($videoPaths));
+//
+//            // Save the updated record
+//            $training->save();
+//
+//            return response()->json(['success' => true]);
+//        }
+//
+//        return response()->json(['success' => false, 'message' => 'Video not found.']);
+//    }
 //    public function addTraining(Request $request)
 //    {
 //

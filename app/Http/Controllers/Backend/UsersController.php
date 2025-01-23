@@ -22,17 +22,16 @@ use Spatie\Permission\Models\Role;
 class UsersController extends Controller
 {
 
-    public function __construct()
-    {
-        // $this->middleware('role:view user', ['only' => ['index']]);
-        // $this->middleware('role:create user', ['only' => ['create','store']]);
-        // $this->middleware('role:update user', ['only' => ['update','edit']]);
-        // $this->middleware('role:delete user', ['only' => ['destroy']]);
-    }
+//    public function __construct()
+//    {
+//        // $this->middleware('role:view user', ['only' => ['index']]);
+//        // $this->middleware('role:create user', ['only' => ['create','store']]);
+//        // $this->middleware('role:update user', ['only' => ['update','edit']]);
+//        // $this->middleware('role:delete user', ['only' => ['destroy']]);
+//    }
 
     public function index()
     {
-        $userId = Auth::id();
         $title = 'Manage Users';
         return view('admin.user.manage', compact( 'title'));
     }

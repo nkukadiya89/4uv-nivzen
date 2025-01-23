@@ -190,6 +190,7 @@ class TrainingProgramsController extends Controller
         // If the training program doesn't exist, redirect to the list page
         return redirect()->route('trainings.index')->with('error', 'Training program not found');
     }
+
     public function removeVideo(Request $request, $id)
     {
         $training = TrainingPrograms::find($id);
