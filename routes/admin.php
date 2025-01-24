@@ -119,6 +119,9 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::any('trainings/view/{id}', [TrainingController::class,'viewTraining'])->name('training-view');
     Route::get('trainings/delete/{id}', [TrainingController::class,'deleteTraining'])->name('training-delete');
     Route::post('trainings/bulk-action', [TrainingController::class, 'bulkAction'])->name('training.bulkAction');
+    Route::post('trainings/store-training-activity', [TrainingController::class, 'storeActivity'])->name('trainings-store-activity');
+    Route::get('trainings/get-quiz-questions', [TrainingController::class, 'getQuizQuestions'])->name('trainings-get-questions');
+    Route::post('trainings/submit-quiz-answers', [TrainingController::class, 'submitQuizAnswers'])->name('trainings-submit-answers');
 
     // Manage Prospects modules
     Route::get('prospects', [ProspectController::class, 'index'])->name('prospects-manage');

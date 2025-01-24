@@ -7,6 +7,9 @@ use App\Models\Training;
 use App\Models\VideoLesson;
 use App\Models\Quiz;
 use App\Models\QuizOption;
+use App\Models\UserQuizAnswer;
+use App\Models\UserQuizResult;
+use App\Models\UserTrainingActivity;
 use App\Rules\AtLeastOneCorrectAnswer;
 
 use Illuminate\Http\Request;
@@ -383,6 +386,7 @@ class TrainingController extends Controller
 
         $training = Training::with('videoLessons.quizzes')->find($id);
         $title = 'View Training ';
+
         $videoPaths = $training->videoLessons->pluck('video_url');
         // Calculate the total question count
         $totalQuestions = $training->videoLessons->flatMap(function ($lesson) {
@@ -430,6 +434,95 @@ class TrainingController extends Controller
 
         return response()->json(['message' => 'Invalid action.'], 400);
     }
+
+    // Store training activity when a video lesson is completed
+    public function storeActivity(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'training_id' => 'required|exists:trainings,id',
+            'video_lesson_id' => 'required|exists:video_lessons,id',
+            'completed_at' => 'required|date',
+        ]);
+
+        // Store the activity in the database
+        UserTrainingActivity::create([
+            'user_id' => $validated['user_id'],
+            'training_id' => $validated['training_id'],
+            'video_lesson_id' => $validated['video_lesson_id'],
+            'completed_at' => $validated['completed_at'],
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    // Fetch quiz questions for a given video lesson
+    public function getQuizQuestions(Request $request)
+    {
+        $videoLessonId = $request->query('video_lesson_id');
+
+        // Fetch the quiz questions related to the video lesson
+        $quizzes = Quiz::where('video_lesson_id', $videoLessonId)
+            ->with('options')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'questions' => $quizzes,
+        ]);
+    }
+
+    public function submitQuizAnswers(Request $request)
+    {
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'video_lesson_id' => 'required|exists:video_lessons,id',
+            'answers' => 'required|array',
+            'answers.*.quiz_id' => 'required|exists:quizzes,id',
+            'answers.*.option_id' => 'required|exists:quiz_options,id',
+        ]);
+
+        $userId = $data['user_id'];
+        $videoLessonId = $data['video_lesson_id'];
+        $answers = $data['answers'];
+
+        $correctAnswers = 0;
+
+        foreach ($answers as $answer) {
+            $quizOption = QuizOption::find($answer['option_id']);
+            if ($quizOption && $quizOption->is_correct) {
+                $correctAnswers++;
+            }
+
+            // Save user answers
+            UserQuizAnswer::create([
+                'user_id' => $userId,
+                'quiz_id' => $answer['quiz_id'],
+                'option_id' => $answer['option_id'],
+                'is_correct' => $quizOption->is_correct ?? false,
+            ]);
+        }
+
+        // Calculate and save results
+        $totalQuestions = count($answers);
+        $score = ($correctAnswers / $totalQuestions) * 100;
+
+        UserQuizResult::create([
+            'user_id' => $userId,
+            'video_lesson_id' => $videoLessonId,
+            'total_questions' => $totalQuestions,
+            'correct_answers' => $correctAnswers,
+            'score' => $score,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quiz submitted successfully!',
+            'score' => $score,
+        ]);
+    }
+
 
 //    public function removeVideo(Request $request, $id)
 //    {

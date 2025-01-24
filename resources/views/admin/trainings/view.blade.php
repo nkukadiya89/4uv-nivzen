@@ -72,6 +72,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-12 ">
+                        <div id="quiz-container">
+                            <!-- Quiz questions will be dynamically loaded here -->
+                        </div>
+                        <button id="submit-quiz" class="btn btn-primary" style="display: none;">Submit Answers</button>
+                    </div>
                 </div>
 
             </div>
@@ -85,11 +91,157 @@
 $(document).ready(function() {
 
     @if(Session::has('success-message'))
-    toastr.info("{{ session('success-message') }}");
+      toastr.info("{{ session('success-message') }}");
     @endif
 
+    let quizzes = [];
+    var video = document.getElementsByTagName('video')[0];
 
+    video.onended = function(e) {
+        console.log("finish");
+
+        var url = '{{config('constants.ADMIN_URL ')}}trainings/store-training-activity';
+        var videoLessonId = {{ $training->videoLessons->first()->id ?? 'null' }};
+        var completedAt = new Date().toISOString().slice(0, 19).replace("T", " ");
+        $.ajax({
+            url: '/backend/trainings/store-training-activity', // The route to store the training activity
+            method: 'POST',
+            data: {
+                user_id: {{ Auth::user()->id }}, // Get the logged-in user ID
+                training_id: {{ $training->id }}, // Current training ID
+                video_lesson_id: videoLessonId, // Current video lesson ID
+                completed_at: completedAt, // The completion timestamp
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Training activity recorded!');
+                    // Optionally, show the quiz questions and options here
+                    loadQuizQuestions(response.video_lesson_id); // Load the questions after video completion
+                } else {
+                    alert('Failed to record the activity.');
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('An error occurred while recording the activity.');
+            }
+        });
+    };
+
+
+    // Function to load quiz questions and options
+    function loadQuizQuestions(videoLessonId) {
+        var videoLessonId = {{ $training->videoLessons->first()->id ?? 'null' }};
+        $.ajax({
+            url: '/backend/trainings/get-quiz-questions', // Route to fetch quiz questions based on video lesson ID
+            method: 'GET',
+            data: { video_lesson_id: videoLessonId },
+            success: function(response) {
+                if (response.success) {
+                    // Show the quiz questions and options
+                    displayQuiz(response.questions);
+                    // Attach event listener to radio buttons
+                    $('input[type="radio"]').on('change', checkAllAnswers);
+
+                    // Initially disable the submit button
+                    $('#submit-quiz').prop('disabled', true).show();
+                } else {
+                    alert('Failed to load quiz questions.');
+                    $('#submit-quiz').hide();
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('An error occurred while loading quiz questions.');
+                $('#submit-quiz').hide();
+            }
+        });
+    }
+
+// Function to display quiz questions and options
+    function displayQuiz(questions) {
+        quizzes = questions; // Store quizzes for submission
+        let html = '';
+        questions.forEach((quiz, index) => {
+            html += `
+                        <div class="quiz">
+                            <p>${index + 1}. ${quiz.question}</p>
+                            ${quiz.options
+            .map(
+                option => `
+                                <label>
+                                    <input type="radio" name="quiz_${quiz.id}" value="${option.id}" />
+                                    ${option.option}
+                                </label>
+                            `
+            )
+            .join('')}
+                        </div>`;
+         });
+        document.getElementById('quiz-container').innerHTML = html;
+    }
+
+    // Function to check if all questions have a selected answer
+    function checkAllAnswers() {
+        const totalQuestions = $('.quiz-question').length; // Total number of questions
+        const answeredQuestions = $('.quiz-question input[type="radio"]:checked').length; // Total answered questions
+
+        // Enable submit button only if all questions are answered
+        if (answeredQuestions === totalQuestions) {
+            $('#submit-quiz').prop('disabled', false); // Enable button
+        } else {
+            $('#submit-quiz').prop('disabled', true); // Disable button
+        }
+    }
+    $('#submit-quiz').on('click', function () {
+        const answers = [];
+
+        // Iterate over quizzes and collect selected options
+        quizzes.forEach(function (quiz) {
+            const selectedOption = $(`input[name="quiz_${quiz.id}"]:checked`);
+            if (selectedOption.length) {
+                answers.push({
+                    quiz_id: quiz.id,
+                    option_id: selectedOption.val(),
+                });
+            }
+        });
+
+        if (answers.length < quizzes.length) {
+            alert('Please answer all questions.');
+            return;
+        }
+
+        // Submit the quiz answers via AJAX
+        $.ajax({
+            url: '/backend/trainings/submit-quiz-answers',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                user_id: {{ Auth::user()->id }},
+                video_lesson_id: {{ $training->videoLessons->first()->id ?? 'null' }},
+                answers: answers,
+            }),
+            success: function (data) {
+                if (data.success) {
+                    alert('Quiz submitted successfully!');
+                } else {
+                    alert(data.message || 'Failed to submit quiz.');
+                }
+            },
+            error: function (xhr) {
+                console.error('Error submitting quiz:', xhr.responseText);
+            },
+        });
+    });
 });
+
 </script>
 @stop
 @stop
