@@ -1,397 +1,247 @@
 @extends('admin.layouts.master')
+
 @section('content')
-<div class="d-flex flex-column flex-column-fluid" id="kt_content">
-    <!--begin::Subheader-->
-    <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
-        <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
-            <!--begin::Info-->
-            <div class="d-flex align-items-center flex-wrap mr-1">
-                <!--begin::Page Heading-->
-                <div class="d-flex align-items-baseline flex-wrap mr-5">
-                    <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">{{$title}}</h5>
-                    <!--end::Page Title-->
+    <div class="d-flex flex-column flex-column-fluid" id="kt_content">
+        <!-- Subheader -->
+        <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
+            <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+                <div class="d-flex align-items-center flex-wrap mr-1">
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">{{ $title }}</h5>
                 </div>
-                <!--end::Page Heading-->
             </div>
-            <!--end::Info-->
-
         </div>
-    </div>
-    <!--end::Subheader-->
-    <!--begin::Entry-->
-    <div class="p-6 flex-fill">
-        <!--begin::Container-->
-        <div class="card card-custom gutter-b example example-compact">
-            <!--begin::Form-->
-            <form class="form-horizontal" id="frmEdit" action="{{ route('training-edit',$training->id) }}" method="POST" enctype="multipart/form-data">
-                <div class="card-body">
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label" for="name">Name<span class="required">*</span></label>
-                        <div class="col-lg-6">
-                            <input id="name" type="text" class="form-control required" name="name" placeholder="Name"
-                                value="{{$training->name}}">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label" for="video">Upload Video</label>
-                        <div class="col-lg-6">
-                            <input type="file" name="video" id="video" class="form-control">
-                            @foreach($videoPaths as $videoPath)
-                                <p id="current-video">Current Video: <a href="{{ asset('storage/' . $videoPath) }}" target="_blank">View Video</a></p>
-                                @if ($training->videoLessons)
-                                @foreach($training->videoLessons as $videoLesson)
-                                    <button
-                                            type="button"
-                                            class="delete-video"
-                                            data-training-id="{{ $training->id }}"
-                                            data-video-id="{{ $videoLesson->id }}"
-                                            data-url="{{ route('training.deleteVideo', ['trainingId' => $training->id, 'videoLessonId' => $videoLesson->id]) }}"
-                                    >
-                                        Delete Video
-                                    </button>
-                                @endforeach
-                                @endif
+        <!-- Main Content -->
+        <div class="p-6 flex-fill">
+            <div class="card card-custom gutter-b example example-compact">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
                             @endforeach
-                            @error('video')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        </ul>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-lg-3 col-form-label" for="name">Questions</label>
-                        <div class="col-lg-6">
-                            <div id="questions-section">
-                            @foreach ($training->quizzes as $index => $quiz) <!-- Loop through existing quizzes -->
-                                <div class="question-group" id="question-{{ $index }}">
-                                    <h4 class="d-flex justify-content-between align-items-center">
-                                        Question {{ $index + 1 }}
-                                        <button type="button" class="btn btn-sm btn-danger delete-quiz" data-question-id="{{ $index }}" data-quiz-id="{{ $quiz->id }}" data-video-lesson-id="{{ $videoLesson->id }}" data-url="{{ route('training.deleteQuiz', ['id' => $quiz->id]) }}">Remove Question</button>
-                                    </h4>
-                                    <!-- Access the video lesson associated with this quiz -->
-                                    @php
-                                        $videoLesson = $training->videoLessons->firstWhere('id', $quiz->video_lesson_id);
-                                    @endphp
+                @endif
+                <form class="form-horizontal" id="frmEdit" method="POST" action="{{ route('training-edit', $training->id ?? null) }}" enctype="multipart/form-data">
+                    @csrf
+                    @if(isset($training))
+                        @method('PUT')
+                    @endif
+                    <div class="card-body">
+                        <!-- Training Name -->
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label" for="trainingName">Training Name</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="name" id="trainingName" class="form-control required" placeholder="Enter training name" value="{{ $training->name ?? '' }}" />
+                            </div>
+                        </div>
+                        <div id="video-section">
+                            <!-- Existing Videos -->
+                            @if(isset($training->videoLessons) && count($training->videoLessons) > 0)
+                                @foreach($training->videoLessons as $videoIndex => $video)
+                                    <div class="video-container mb-4 border p-3 rounded">
 
-                                    @if ($videoLesson)
-                                        <input type="hidden" name="questions[{{ $index }}][video_lesson_id]" value="{{ $videoLesson->id }}">
-                                    @else
-                                        <p class="text-danger">No associated video lesson for this quiz.</p>
-                                    @endif
-                                    <div class="form-group">
-                                        <label>Enter Question</label>
-                                        <input type="hidden" name="questions[{{ $index }}][quiz_id]" value="{{ $quiz->id }}">
-                                        <input type="text" name="questions[{{ $index }}][question]" class="form-control" value="{{ old("questions.$index.question", $quiz->question) }}">
-                                        @error("questions.$index.question")
-                                        <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div id="answers-{{ $index }}" class="answers-section">
-                                    @foreach ($quiz->options as $key => $option) <!-- Loop through the options for each question -->
-                                        <div class="form-group row align-items-center" id="option-{{$index}}-{{$key}}">
-                                            <div class="col-lg-2">
-                                            <label>Option {{ $key + 1 }}</label>
-                                            </div>
-                                            <div class="col-lg-4">
-                                            <input type="text" name="questions[{{ $index }}][options][{{ $key }}]" class="form-control" value="{{ old("questions.$index.options.$key", $option->option) }}">
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label>
-                                                    <input type="radio" name="questions[{{ $index }}][correct]" value="{{ $key }}" {{ old("questions.$index.correct") == $key ? 'checked' : ($quiz->correct_option == $key ? 'checked' : '') }}> Correct
-                                                </label>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <button type="button" class="btn btn-sm btn-danger delete-answer" data-question-id="{{ $index }}" data-option-id="{{$key}}" data-url="{{ route('training.deleteQuizOption', ['id' => $option->id]) }}">Remove Option</button>
+                                        <h4 class="mb-3">Video {{ $videoIndex + 1 }}</h4>
+                                        <input type="hidden" name="videos[{{ $videoIndex }}][id]" value="{{ $video->id }}">
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 form-label">Video Title</label>
+                                            <div class="col-lg-6">
+                                                <input type="text" name="videos[{{ $videoIndex }}][title]" class="form-control required" placeholder="Enter video title" value="{{ $video->title }}" />
                                             </div>
                                         </div>
-                                        @endforeach
-                                        @error("questions.$index.correct")
-                                        <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 form-label">Video Description</label>
+                                            <div class="col-lg-6">
+                                                <textarea name="videos[{{ $videoIndex }}][description]" class="form-control" rows="3" placeholder="Enter video description">{{ $video->description }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 form-label">Upload Video</label>
+                                            <div class="col-lg-6">
+                                                <input type="file" name="videos[{{ $videoIndex }}][video]" class="form-control" accept="video/*" />
+                                                <p id="current-video">Current Video: <a href="{{ asset('storage/' . $video->video_url) }}" target="_blank">View Video</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 form-label">Upload Thumbnail</label>
+                                            <div class="col-lg-6">
+                                                <input type="file" name="videos[{{ $videoIndex }}][thumbnail]" class="form-control" accept="image/*" />
+                                                @if($video->thumbnail_url)
+                                                    <div class="mt-2">
+                                                        <img id="current-thumnail" src="{{ asset('storage/' . $video->thumbnail_url) }}" alt="Thumbnail" class="img-thumbnail" width="100"></p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="mcq-section mb-4">
+                                            <h5 class="mb-3">Questions</h5>
+                                            @foreach($video->quizzes as $quizIndex => $quiz)
+                                                <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][id]" value="{{ $quiz->id }}">
+                                                <div id="question-container-{{ $videoIndex }}-{{ $quizIndex }}" class="mb-4 border p-3 rounded">
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-12">
+                                                            <h4>Question {{ $quizIndex + 1 }}</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-lg-3 col-form-label">Question:</label>
+                                                        <div class="col-lg-9">
+                                                            <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][question]" class="form-control" placeholder="Enter question" value="{{ $quiz->question }}" required />
+                                                        </div>
+                                                    </div>
+                                                    @foreach($quiz->options as $optionIndex => $option)
+                                                        <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][id]" value="{{ $option->id }}">
+                                                        <div class="form-group row mb-3">
+                                                            <label class="col-lg-3 col-form-label">Option {{ $optionIndex + 1 }}:</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][option]" class="form-control" placeholder="Enter option" value="{{ $option->option }}" required />
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][correct_option]" value="{{ $optionIndex }}" {{ $option->is_correct ? 'checked' : '' }} />
+                                                                    <label class="form-check-label">Correct</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endforeach
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="addQuestion({{ $videoIndex }})">Add Question</button>
+                                        </div>
                                     </div>
-                                    <button type="button" class="btn btn-secondary add-answer" data-question="{{ $index }}">Add Answer Option</button>
-                                </div>
                                 @endforeach
-                            </div>
-                            <button type="button" class="btn btn-primary mt-2" id="add-question">Add New Question</button>
+                            @endif
                         </div>
+                        <!-- Add Video Button -->
+                        <button type="button" class="btn btn-success mb-4" onclick="addVideo()">Add Another Video</button>
                     </div>
-                    <!-- Questions Form -->
-
-
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer d-flex justify-content-end">
-
-                    <a href="{{ route('trainings-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-
-                </div>
-                <!-- /.card-footer -->
-            </form>
-            <!--end::Form-->
+                    <div class="card-footer d-flex justify-content-end">
+                        <a href="{{ route('trainings-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <!--end::Container-->
     </div>
-    <!--end::Entry-->
-</div>
+@endsection
 
 @section('custom_js')
-<script>
-$('#description').summernote({
-    height: 200,
-});
-$(document).ready(function() {
+    <script>
+        let videoIndex = {{ isset($training->videoLessons) ? count($training->videoLessons) : 0 }};
+        let questionIndex = {};
+        let optionIndex = {};
 
-    @if(Session::has('success-message'))
-       toastr.info("{{ session('success-message') }}");
-    @endif
+        // Initialize indexes for existing videos, questions, and options
+        @if(isset($training->videoLessons))
+                @foreach($training->videoLessons as $videoIndexKey => $video)
+            questionIndex[{{ $videoIndexKey }}] = {{ count($video->quizzes) }};
+        optionIndex[{{ $videoIndexKey }}] = {};
+        @foreach($video->quizzes as $quizIndexKey => $quiz)
+            optionIndex[{{ $videoIndexKey }}][{{ $quizIndexKey }}] = {{ count($quiz->options) }};
+        @endforeach
+        @endforeach
+        @endif
 
-    let questionCount = {{ count($training->quizzes) }}; // Count the existing questions
-
-    $('#add-question').click(function () {
-        questionCount++;
-        let questionHtml = `
-                <div class="question-group" id="question-${questionCount}">
-                    <h4 class="d-flex justify-content-between align-items-center">
-        Question ${questionCount}
-        <button type="button" class="btn btn-sm btn-danger remove-question" data-question="${questionCount}">Remove Question</button>
-    </h4>
-                    <div class="form-group">
-                        <label>Enter Question</label>
-                        <input type="text" name="questions[${questionCount}][question]" class="form-control required" >
+        // Add Video Function
+        function addVideo() {
+            let videoHTML = `
+            <div class="video-container mb-4 border p-3 rounded">
+                <h4 class="mb-3">Video ${videoIndex + 1}</h4>
+                <div class="form-group row">
+                    <label class="col-lg-3 form-label">Video Title</label>
+                    <div class="col-lg-6">
+                        <input type="text" name="videos[${videoIndex}][title]" class="form-control required" placeholder="Enter video title" />
                     </div>
-                    <div id="answers-${questionCount}" class="answers-section">
-                        <div class="form-group row">
-                        <div class="col-lg-2">
-                            <label>Option 1</label>
-                            </div>
-                            <div class="col-lg-4">
-                            <input type="text" name="questions[${questionCount}][options][0]" class="form-control required" >
-                            </div>
-                            <div class="col-lg-3">
-                                <label>
-                                    <input type="radio" name="questions[${questionCount}][correct]" value="0"> Correct
-                                </label>
-                            </div>
-                            <div class="col-lg-3">
-                <button type="button" class="btn btn-danger btn-sm delete-option" data-option-id="${questionCount}-0" data-question-id="${questionCount}">
-                    Remove Option
-                </button>
-            </div>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-3 form-label">Video Description</label>
+                    <div class="col-lg-6">
+                        <textarea name="videos[${videoIndex}][description]" class="form-control" rows="3" placeholder="Enter video description"></textarea>
                     </div>
-                    <button type="button" class="btn btn-secondary add-answer" data-question="${questionCount}">Add Answer Option</button>
                 </div>
-            `;
-        $('#questions-section').append(questionHtml);
-    });
-
-    $(document).on('click', '.add-answer', function () {
-        let questionId = $(this).data('question');
-        let answerCount = $(`#answers-${questionId} .form-group`).length;
-        let answerHtml = `
-                <div  class="form-group row align-items-center" id="option-${questionId}-${answerCount}">
-                <div class="col-lg-2">
-                    <label>Option ${answerCount + 1}</label>
-                 </div>
-                 <div class="col-lg-4">
-                    <input type="text" name="questions[${questionId}][options][${answerCount}]" class="form-control required" >
-                  </div>
-                  <div class="col-lg-3">
-                    <label>
-                        <input type="radio" name="questions[${questionId}][correct]" value="${answerCount}"> Correct
-                    </label>
-                  </div>
-                  <div class="col-lg-3">
-                <button type="button" class="btn btn-danger btn-sm delete-option" data-option-id="${questionId}-${answerCount}" data-question-id="${questionId}">
-                    Remove Option
-                </button>
+                <div class="form-group row">
+                    <label class="col-lg-3 form-label">Upload Video</label>
+                    <div class="col-lg-6">
+                        <input type="file" name="videos[${videoIndex}][video]" class="form-control" accept="video/*" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-3 form-label">Upload Thumbnail</label>
+                    <div class="col-lg-6">
+                        <input type="file" name="videos[${videoIndex}][thumbnail]" class="form-control" accept="image/*" />
+                    </div>
+                </div>
+                <div class="mcq-section mb-4">
+                    <h5 class="mb-3">Questions</h5>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addQuestion(${videoIndex})">Add Question</button>
+                    <div id="question-container-${videoIndex}-0" class="question-container"></div>
+                </div>
             </div>
+        `;
+            document.getElementById('video-section').insertAdjacentHTML('beforeend', videoHTML);
+            questionIndex[videoIndex] = 0; // Reset question index for new video
+            videoIndex++;
+        }
+
+        // Add Question Function
+        // Add Question Function
+        function addQuestion(videoIdx) {
+            let questionHTML = `
+    <div id="question-container-${videoIdx}-${questionIndex[videoIdx]}" class="mb-4 border p-3 rounded">
+        <div class="form-group row">
+            <div class="col-lg-12">
+                <h4>Question ${questionIndex[videoIdx] + 1}</h4>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-3 col-form-label">Question:</label>
+            <div class="col-lg-9">
+                <input type="text" name="videos[${videoIdx}][quizzes][${questionIndex[videoIdx]}][question]" class="form-control" placeholder="Enter question" required />
+            </div>
+        </div>
+        <div class="options-section" id="options-section-${videoIdx}-${questionIndex[videoIdx]}">
+            <!-- Dynamic Options will be inserted here -->
+                <div class="form-group row">
+                <label class="col-lg-3 col-form-label">Option 1:</label>
+                <div class="col-lg-6">
+                <input type="text" name="videos[${videoIdx}][quizzes][${questionIndex[videoIdx]}][options][0][option]" class="form-control" placeholder="Enter option" required />
                 </div>
-            `;
-        $(`#answers-${questionId}`).append(answerHtml);
-    });
-
-    // Remove Question
-    $(document).on('click', '.remove-question', function () {
-        $(this).closest('.question-group').remove();
-        reindexQuestions();
-    });
-
-    $(document).on('click', '.delete-option', function () {
-        const optionId = $(this).data('option-id');
-        const questionId = $(this).data('question-id');
-
-        if (confirm('Are you sure you want to delete this option?')) {
-            $('#option-' + optionId).remove();
-            reindexOptions(questionId);
-        }
-    });
-    // Reindex Questions
-    function reindexQuestions() {
-        $('#questions-section .question-group').each(function (index) {
-            let newQuestionIndex = index + 1; // Start numbering at 1
-            $(this).attr('id', `question-${newQuestionIndex}`);
-            $(this).find('.question-header').text(`Question ${newQuestionIndex}`);
-
-            // Update question input fields and options
-            $(this).find('input, label').each(function () {
-                let nameAttr = $(this).attr('name');
-                if (nameAttr) {
-                    // Update question index in name attribute
-                    let updatedName = nameAttr.replace(/questions\[\d+\]/, `questions[${newQuestionIndex - 1 }]`);
-                    $(this).attr('name', updatedName);
-                }
-
-                // Update value of radio button
-                let valueAttr = $(this).attr('value');
-                if ($(this).is('input[type="radio"]') && valueAttr !== undefined) {
-                    let newValue = $(this).closest('.answers-section').find('.form-group').index($(this).closest('.form-group'));
-                    $(this).attr('value', newValue);
-                }
-            });
-
-            // Update data-question attribute
-            $(this).find('.add-answer, .remove-question').data('question', newQuestionIndex - 1);
-        });
-
-        // Update the global question count
-        questionCount = $('#questions-section .question-group').length;
-    }
-
-    function reindexOptions(questionId) {
-        const answersSection = $('#answers-' + questionId);
-
-        answersSection.children('.form-group').each(function (index) {
-            const optionId = `${questionId}-${index}`;
-            const optionElement = $(this);
-
-            // Update the wrapper div's ID
-            optionElement.attr('id', 'option-' + optionId);
-
-            // Update the label
-            optionElement.find('label:first').text(`Option ${index + 1}`);
-
-            // Update the text input's name attribute
-            optionElement.find('input[type="text"]').attr('name', `questions[${questionId}][options][${index}]`);
-
-            // Update the radio button's name and value attributes
-            const radioButton = optionElement.find('input[type="radio"]');
-            radioButton.attr('name', `questions[${questionId}][correct]`);
-            radioButton.attr('value', index);
-        });
-    }
-});
-$(document).on('click', '.delete-video', function () {
-    if (confirm('Are you sure you want to delete this video and its associated questions?')) {
-        const url = $(this).data('url');
-        const videoId = $(this).data('video-id');
-        $.ajax({
-            url: url,
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert('Video and associated questions deleted successfully!');
-                    // Optionally, remove the video and its related questions from the DOM
-                    $('#current-video').remove();
-                    $('.question-group').remove();
-                } else {
-                    alert('Failed to delete video and questions.');
-                }
-            },
-            error: function () {
-                alert('An error occurred while deleting the video and questions.');
-            }
-        });
-    }
-});
-// Delete Question (Optional)
-$(document).on('click', '.delete-quiz', function () {
-    const $button = $(this);
-    const questionId = $button.data('question-id');
-    const quizId = $(this).data('quiz-id');
-    const videoLessonId = $(this).data('video-lesson-id');
-    const url = $(this).data('url');
-
-    if (confirm('Are you sure you want to delete this question?')) {
-        $.ajax({
-            url: url,
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert('Question deleted successfully!');
-
-                    // Remove question from DOM
-                    //questionId.remove();
-                    $('#question-' + questionId).remove();
-                    //$(this).closest('.question-group').remove();
-                } else {
-                    alert('Failed to delete question.');
-                }
-            },
-            error: function () {
-                alert('An error occurred while deleting the question.');
-            }
-        });
-    }
-});
-$(document).on('click', '.delete-answer', function () {
-    const optionId = $(this).data('option-id');
-    const questionId = $(this).data('question-id');
-    const url = $(this).data('url');
-    // Example AJAX call to delete the option from the server
-    $.ajax({
-        url: url,
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            if (response.success) {
-                alert('Option deleted successfully!');
-                // Reindex remaining options under the question
-                $(`#option-${questionId}-${optionId}`).remove();
-                reIndexAnswerOptions(questionId);
-            } else {
-                alert('Failed to delete the option.');
-            }
-        },
-        error: function (xhr) {
-            console.error(xhr.responseText);
-            alert('An error occurred while deleting the option.');
-        }
-    });
-});
-function reIndexAnswerOptions(questionId) {
-    const options = $(`#answers-${questionId} .form-group.row`);
-
-    options.each(function (index) {
-        const optionGroup = $(this);
-        const optionLabel = optionGroup.find('label').first();  // Label for the option (e.g., "Option 1")
-        const optionInput = optionGroup.find('input[type="text"]');  // Input field for the option
-        const radioInput = optionGroup.find('input[type="radio"]');  // Radio button for the correct answer
-
-        // Reindex the option label
-        optionLabel.text(`Option ${index + 1}`);
-
-        // Update the input field name
-        optionInput.attr('name', `questions[${questionId}][options][${index}]`);
-
-        // Update the radio button values and name
-        radioInput.attr('value', index);
-        radioInput.attr('name', `questions[${questionId}][correct]`);
-    });
-
+                <div class="col-lg-3">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="videos[${videoIdx}][quizzes][${questionIndex[videoIdx]}][correct_option]" value="0" />
+                <label class="form-check-label">Correct</label>
+                </div>
+                </div>
+                </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="addOption(${videoIdx}, ${questionIndex[videoIdx]})">Add Option</button>
+                </div>
+                `;
+    document.getElementById(`question-container-${videoIdx}-0`).insertAdjacentHTML('beforeend', questionHTML);
+    questionIndex[videoIdx]++;
 }
-</script>
-@stop
+
+// Add Option Function
+function addOption(videoIdx, questionIdx) {
+    let optionCount = document.querySelectorAll(`#options-section-${videoIdx}-${questionIdx} .form-group`).length + 1;
+
+    let optionHTML = `
+                <div class="form-group row">
+                <label class="col-lg-3 col-form-label">Option ${optionCount}:</label>
+                <div class="col-lg-6">
+                <input type="text" name="videos[${videoIdx}][quizzes][${questionIdx}][options][${optionCount - 1}][option]" class="form-control" placeholder="Enter option" required />
+                </div>
+                <div class="col-lg-3">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="videos[${videoIdx}][quizzes][${questionIdx}][correct_option]" value="${optionCount - 1}" />
+                <label class="form-check-label">Correct</label>
+                </div>
+                </div>
+                </div>
+                `;
+
+    document.getElementById(`options-section-${videoIdx}-${questionIdx}`).insertAdjacentHTML('beforeend', optionHTML);
+}
+    </script>
 
 @stop

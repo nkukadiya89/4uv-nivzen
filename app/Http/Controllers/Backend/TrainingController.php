@@ -114,208 +114,196 @@ class TrainingController extends Controller
     {
         $inputs = $request->all();
 
+        // Preprocess data to add `is_correct` to options
+        if (!empty($inputs['videos'])) {
+            foreach ($inputs['videos'] as &$video) {
+                if (!empty($video['quizzes'])) {
+                    foreach ($video['quizzes'] as &$quiz) {
+                        $correctOptionIndex = $quiz['correct_option'] ?? null;
+
+                        if (!empty($quiz['options'])) {
+                            foreach ($quiz['options'] as $index => &$option) {
+                                // Set is_correct based on correct_option index
+                                $option['is_correct'] = ($index == $correctOptionIndex);
+                            }
+                        }
+                        // Remove correct_option to avoid conflicts
+                        unset($quiz['correct_option']);
+                    }
+                }
+            }
+        }
+
+        // Validation
         $validator = Validator::make($inputs, [
             'name' => 'required|string|max:255',
-            'video' => 'required|mimes:mp4,avi,mkv|max:204800',
-            'questions' => 'required|array',
-            'questions.*.question' => 'required|string',
-            'questions.*.options' => 'required|array',
-            'questions.*.correct' => 'required|integer|in:0,1,2,3',
+            'videos' => 'required|array',
+            'videos.*.title' => 'required|string|max:255',
+            'videos.*.description' => 'nullable|string',
+            'videos.*.video' => 'required|file|mimes:mp4,mov,avi,flv|max:204800',
+            'videos.*.thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'videos.*.quizzes' => 'nullable|array',
+            'videos.*.quizzes.*.question' => 'required|string',
+            'videos.*.quizzes.*.options' => 'required|array|min:2',
+            'videos.*.quizzes.*.options.*.option' => 'required|string',
+            'videos.*.quizzes.*.options.*.is_correct' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
-            //return response()->json($validator->errors(), 422); // Return validation errors as JSON
-            //return response()->json(['errors' => $validator->errors()], 422);
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Start a transaction to ensure atomicity
+        $validated = $validator->validated();
+
+        // Database transaction
         DB::beginTransaction();
 
         try {
-            // Upload the video
-            $videoPath = $request->file('video')->store('trainings/' . uniqid() . '/videos', 'public'); // Organized video path
+            $training = Training::create(['name' => $validated['name']]);
 
-            // Create the training
-            $training = Training::create([
-                'name' => $request->input('name'),
-            ]);
+            foreach ($validated['videos'] as $videoData) {
+                $videoPath = $videoData['video']->store('videos', 'public');
+                $thumbnailPath = isset($videoData['thumbnail'])
+                    ? $videoData['thumbnail']->store('thumbnails', 'public')
+                    : null;
 
-            // Create video lesson and link to training
-            $videoLesson = VideoLesson::create([
-                'training_id' => $training->id,
-                'title' => 'Video Lesson', // Add title if needed
-                'description' => 'Lesson Description', // Add description if needed
-                'video_url' => $videoPath,
-            ]);
-
-            // Save questions and options
-            foreach ($request->input('questions') as $index => $questionData) {
-                $quiz = Quiz::create([
-                    'video_lesson_id' => $videoLesson->id,
-                    'question' => $questionData['question'],
+                $videoLesson = VideoLesson::create([
+                    'training_id' => $training->id,
+                    'title' => $videoData['title'],
+                    'description' => $videoData['description'] ?? '',
+                    'video_url' => $videoPath,
+                    'thumbnail_url' => $thumbnailPath,
                 ]);
-                $correctAnswers = (array) $questionData['correct'];
-                foreach ($questionData['options'] as $key => $option) {
-                    QuizOption::create([
-                        'quiz_id' => $quiz->id,
-                        'option' => $option,
-                        'is_correct' => in_array($key, $correctAnswers), // Simplified the logic
-                    ]);
+
+                if (isset($videoData['quizzes'])) {
+                    foreach ($videoData['quizzes'] as $quizData) {
+                        $quiz = Quiz::create([
+                            'video_lesson_id' => $videoLesson->id,
+                            'question' => $quizData['question'],
+                        ]);
+
+                        foreach ($quizData['options'] as $optionData) {
+                            QuizOption::create([
+                                'quiz_id' => $quiz->id,
+                                'option' => $optionData['option'],
+                                'is_correct' => $optionData['is_correct'],
+                            ]);
+                        }
+                    }
                 }
             }
 
-            // Commit the transaction
             DB::commit();
-            if ($training->save()) {
-                Session::flash('success-message', $request->name . " created successfully !");
-                $data['success'] = true;
-
-                return response()->json($data);
-            }
-            return redirect()->back()->with("success", " Prospect added successfully !");
-            //return redirect()->back()->with("success", "Training added successfully!");
-            //return redirect()->route('trainings-manage')->with('success', 'Prospect added successfully!');
-
+            return redirect()->back()->with("success", " Training Program added successfully !");
+            //return response()->json(['message' => 'Training created successfully'], 201);
         } catch (\Exception $e) {
-            // Rollback transaction in case of error
             DB::rollBack();
-
-            // Log the error and return a general failure response
             \Log::error('Error adding training: ' . $e->getMessage());
-
-            return redirect()->back()->with("error", "There was an issue adding the training.");
+            return response()->json(['error' => 'There was an issue adding the training.'], 500);
         }
     }
+
     public function editTraining(Request $request, $id)
     {
-        // Find the training program by ID along with related video lessons and quizzes
-        $training = Training::with('videoLessons.quizzes')->find($id);
+        // Fetch the training with its related videos, quizzes, and options
+        //$training = Training::with(['videoLessons.quizzes.options'])->findOrFail($id);
+        $training = Training::with(['videoLessons.quizzes' => function ($query) {
+            $query->orderBy('id'); // Order quizzes by ID
+        }, 'videoLessons.quizzes.options' => function ($query) {
+            $query->orderBy('id'); // Order options by ID
+        }])->find($id);
         $title = 'Edit Training';
 
-        // If the training program exists
-        if ($training) {
-            // If the form has been submitted (POST request)
-            if ($request->isMethod('post')) {
-                $inputs = $request->all();
+        // If it's a GET request (view the form)
+        if ($request->isMethod('get')) {
+            // Return the edit view with the training data
+            return view('admin.trainings.edit', compact('title', 'training'));
+        }
 
-                // Validate inputs
-                $validator = Validator::make($inputs, [
-                    'name' => 'required|string|max:255',
-                    'video' => 'nullable|mimes:mp4,avi,mov|max:204800',
-                    'questions' => 'required|array',
-                    'questions.*.question' => 'required|string',
-                    'questions.*.options' => 'required|array',
-                    'questions.*.correct' => 'required|integer|in:0,1,2,3',
-                ]);
-
-                // If validation fails, return errors
-                if ($validator->fails()) {
-                    return response()->json(['errors' => $validator->errors()], 422);
-                }
-
+        // If it's a POST or PUT request (form submission)
+        if ($request->isMethod('post') || $request->isMethod('put')) {
+            // Validate the incoming request
+            $inputs  = $request->all();
+            $validator = Validator::make($inputs, [
+                'name' => 'required|string|max:255',
+                'videos.*.title' => 'required|string|max:255',
+                'videos.*.description' => 'nullable|string|max:255',
+                'videos.*.quizzes.*.question' => 'required|string|max:255',
+                'videos.*.quizzes.*.options.*.option' => 'required|string|max:255',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            } else {
                 // Update the training name
-                $training->name = $request->name;
+                $training->name = $request->input('name');
+                //$training->save();
 
-                // Handle video update if a new video is uploaded
-                if ($request->hasFile('video')) {
-                    // Delete the old video file if it exists
-                    if ($training->video_url && Storage::exists('public/' . $training->video_url)) {
-                        Storage::delete('public/' . $training->video_url);
+                // Process each video
+                foreach ($request->input('videos', []) as $videoIndex => $videoData) {
+                    // Update existing video (do not replace video file)
+                    $video = isset($videoData['id']) ? VideoLesson::find($videoData['id']) : new VideoLesson();
+                    $video->training_id = $training->id;
+                    $video->title = $videoData['title'];
+                    $video->description = $videoData['description'];
+
+                    // Check if a new video is uploaded
+                    if ($request->hasFile("videos.{$videoIndex}.video")) {
+                        $videoFile = $request->file("videos.{$videoIndex}.video");
+                        $videoPath = $videoFile->store('videos', 'public'); // Store the new video file
+                        $video->video_url = $videoPath; // Save the video URL or path
                     }
 
-                    // Store the new video
-                    $videoPath = $request->file('video')->store('trainings/' . uniqid() . '/videos', 'public');
-                    //$training->video_url = $videoPath;  // Update video URL
+                    // Check if a new thumbnail is uploaded
+                    if ($request->hasFile("videos.{$videoIndex}.thumbnail")) {
+                        $thumbnailFile = $request->file("videos.{$videoIndex}.thumbnail");
+                        $thumbnailPath = $thumbnailFile->store('thumbnails', 'public'); // Store the new thumbnail
+                        $video->thumbnail_url = $thumbnailPath; // Save the thumbnail path
+                    }
 
-                    $videoLesson = VideoLesson::create([
-                        'training_id' => $training->id,
-                        'title' => 'Video Lesson', // Add title if needed
-                        'description' => 'Lesson Description', // Add description if needed
-                        'video_url' => $videoPath,
-                    ]);
-                }
+                    // Save the video data (without replacing the video or thumbnail if not uploaded)
+                    $video->save();
 
-                // Save updated training program
-                if ($training->save()) {
-                    // Update or create quizzes
-                    foreach ($request->input('questions') as $index => $questionData) {
-                        // Check if video_lesson_id exists
-                        if (!isset($questionData['video_lesson_id'])) {
-                            // Create new video lesson and quiz since video_lesson_id is not present
-                            // Create the VideoLesson (if not already created)
-//                            $videoLesson = VideoLesson::create([
-//                                'name' => 'Video Lesson', // Assuming you need a name for the video lesson
-//                                // Add any other necessary fields here
-//                            ]);
+                    // Process quizzes for the video (update only questions and answers)
+                    if (isset($videoData['quizzes']) && is_array($videoData['quizzes'])) {
+                        foreach ($videoData['quizzes'] as $quizIndex => $quizData) {
+                            // Update existing quiz or create a new one
+                            $quiz = isset($quizData['id']) ? Quiz::find($quizData['id']) : new Quiz();
+                            $quiz->video_lesson_id = $video->id;
+                            $quiz->question = $quizData['question'];
+                            $quiz->save();
 
-                            // Now create the quiz for the new video lesson
-//                            dd($training->videoLessons->pluck('id')->toArray());
-//                            exit;
-                            $videoLessonIds = $training->videoLessons->pluck('id')->toArray();
-                            $quiz = Quiz::create([
-                                'video_lesson_id' => $videoLesson ? $videoLesson->id : $videoLessonIds[0],
-                                'question' => $questionData['question']
-                            ]);
-
-                            // Handle the quiz options for the newly created quiz
-                            foreach ($questionData['options'] as $key => $option) {
-                                QuizOption::create([
-                                    'quiz_id' => $quiz->id,
-                                    'option' => $option,
-                                    'is_correct' => (int) ($key == $questionData['correct']) // Correct option logic
-                                ]);
-                            }
-                        } else {
-                            // Find the associated VideoLesson and update the quiz if video_lesson_id exists
-                            $videoLesson = VideoLesson::find($questionData['video_lesson_id']);
-
-                            if ($videoLesson) {
-                                // If quiz_id exists in the request, update or create a new quiz
-                                $quiz = Quiz::updateOrCreate(
+                            // Process options for the quiz (update only options)
+                            foreach ($quizData['options'] as $optionIndex => $optionData) {
+                                $option = QuizOption::updateOrCreate(
                                     [
-                                        'video_lesson_id' => $videoLesson->id,
-                                        'id' => $questionData['quiz_id'] ?? null, // Use quiz_id if provided, otherwise create new quiz
+                                        'quiz_id' => $quiz->id,
+                                        'id' => $optionData['id'] ?? null,
                                     ],
                                     [
-                                        'question' => $questionData['question']
+                                        'option' => $optionData['option'],
+                                        'is_correct' => ($quizData['correct_option'] == $optionIndex),
                                     ]
                                 );
-
-                                // Now handle the quiz options (update or create)
-                                foreach ($questionData['options'] as $key => $option) {
-                                    QuizOption::updateOrCreate(
-                                        [
-                                            'quiz_id' => $quiz->id,
-                                            'option' => $option, // Ensure uniqueness for each option
-                                        ],
-                                        [
-                                            'is_correct' => (int) ($key == $questionData['correct']) // Correct option logic
-                                        ]
-                                    );
-                                }
                             }
                         }
                     }
-
-                    // Flash success message and return success response
-                    Session::flash('success-message', $request->name . " updated successfully!");
-                    return response()->json(['success' => true]);
-                    //return redirect()->route('trainings.index')->with('success', 'Training updated successfully!');
                 }
 
-                // If save fails, return a failure message
-                return redirect()->back()->with('error', 'Failed to update the training program.');
-            }
+                if ($training->save()) {
+                    Session::flash('success-message', $training->name . " updated successfully !");
+                    $data['success'] = true;
 
-            // If it's a GET request, show the edit form with the current data
-            $videoPaths = $training->videoLessons->pluck('video_url');
-            return view('admin.trainings.edit', compact('title', 'training', 'videoPaths'));
+                    return response()->json($data);
+                }
+                return redirect()->back()->with("success", " Training updated successfully !");
+
+            }
         }
 
-        // If training program doesn't exist, redirect to the list page
-        return redirect()->route('trainings.index')->with('error', 'Training program not found');
+        // If none of the above conditions are met, redirect to the list page
+        return redirect(config('constants.ADMIN_URL') . 'trainings');
     }
+
 
     public function deleteVideo($trainingId, $videoLessonId)
     {
