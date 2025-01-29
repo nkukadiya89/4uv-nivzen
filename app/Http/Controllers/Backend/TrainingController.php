@@ -194,7 +194,13 @@ class TrainingController extends Controller
             }
 
             DB::commit();
-            return redirect()->back()->with("success", " Training Program added successfully !");
+
+            return response()->json([
+                'success' => true,
+                'message' => $validated['name'] . " created successfully!",
+            ]);
+
+            //return redirect()->back()->with("success", " Training Program added successfully !");
             //return response()->json(['message' => 'Training created successfully'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
