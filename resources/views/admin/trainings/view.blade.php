@@ -24,6 +24,7 @@
         <div class="card card-custom gutter-b">
             <div class="card-header align-content-center">
                 <div class="card-title">
+                    {{$training->name ?? ''}}
                 </div>
                 <div class="p-2">
                     <!--begin::Button-->
@@ -34,45 +35,36 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 ">
+                    <div class="col-4">
                         <div class="form-group">
-                            <label class="customlbl">Name</label>
-                            <div>
-
-                                {{$training->name ?? ''}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label class="customlbl">Video</label>
+                            <label class="customlbl">Video Playlist</label>
                             <div class="videoswrp">
-                                @if(!empty($videoPaths))
-                                @foreach($videoPaths as $video)
-                                <div class="video-item">
-                                    <!-- Create a video thumbnail preview -->
-                                    <video width="300" height="200" controls>
-                                        <source src="{{ asset('storage/' . $video) }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </div>
-                                @endforeach
+                                @if(!empty($videoLessons))
+                                    <ul id="video-playlist" class="list-unstyled">
+                                        @foreach($videoLessons as $index => $video)
+                                            @php
+                                                $thumbnail = !empty($video->thumbnail_url) ? asset('storage/' . $video->thumbnail_url) : asset('storage/default_image.png');
+                                            @endphp
+                                            <li class="video-item" id="video-{{ $index }}" onclick="loadVideo({{ $index }})" style="cursor: pointer; display: flex; align-items: center; margin-bottom: 10px;">
+                                                <img src="{{ $thumbnail }}" alt="Thumbnail" width="100" height="75" style="margin-right: 10px;">
+                                                <div>
+                                                    <strong>{{ $video->title }}</strong>
+                                                    <p>{{ $video->description }}</p>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 @else
-                                <p>No videos uploaded for this training program.</p>
+                                    <p>No videos uploaded for this training program.</p>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 ">
-                        <div class="form-group">
-                            <label class="customlbl">Total Questions</label>
-                            <div>
-
-                                {{$totalQuestions ?? ''}}
-                            </div>
+                    <div class="col-8">
+                        <h3 id="video-title"></h3>
+                        <div id="video-container">
+                            <!-- Video player will be dynamically loaded here -->
                         </div>
-                    </div>
-                    <div class="col-12 ">
                         <div id="quiz-container">
                             <!-- Quiz questions will be dynamically loaded here -->
                         </div>
@@ -88,118 +80,136 @@
 </div>
 @section('custom_js')
 <script>
-$(document).ready(function() {
 
-    @if(Session::has('success-message'))
-      toastr.info("{{ session('success-message') }}");
-    @endif
-
+    let currentVideoIndex = 0;
+    const videoLessons = @json($videoLessons);
+    const videoContainer = document.getElementById('video-container');
+    const quizContainer = document.getElementById('quiz-container');
+    const submitButton = document.getElementById('submit-quiz');
     let quizzes = [];
-    var video = document.getElementsByTagName('video')[0];
 
-    video.onended = function(e) {
-        console.log("finish");
+    function loadVideo(index) {
+        currentVideoIndex = index;
 
-        var url = '{{config('constants.ADMIN_URL ')}}trainings/store-training-activity';
-        var videoLessonId = {{ $training->videoLessons->first()->id ?? 'null' }};
-        var completedAt = new Date().toISOString().slice(0, 19).replace("T", " ");
-        $.ajax({
-            url: '/backend/trainings/store-training-activity', // The route to store the training activity
-            method: 'POST',
-            data: {
-                user_id: {{ Auth::user()->id }}, // Get the logged-in user ID
-                training_id: {{ $training->id }}, // Current training ID
-                video_lesson_id: videoLessonId, // Current video lesson ID
-                completed_at: completedAt, // The completion timestamp
-            },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('Training activity recorded!');
-                    // Optionally, show the quiz questions and options here
-                    loadQuizQuestions(response.video_lesson_id); // Load the questions after video completion
-                } else {
-                    alert('Failed to record the activity.');
-                }
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-                alert('An error occurred while recording the activity.');
-            }
-        });
-    };
+        // Load video player
+        if (videoLessons[index]) {
+            document.getElementById('video-title').innerText = videoLessons[index].title;
+            videoContainer.innerHTML = `
+                    <video width="100%" height="400" controls id="videoPlayer-${index}">
+                        <source src="{{ asset('storage/') }}/${videoLessons[index].video_url}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
 
+            const videoElement = document.getElementById(`videoPlayer-${index}`);
 
-    // Function to load quiz questions and options
+            // Hide the quiz submit button until the video ends
+            submitButton.style.display = 'none';
+
+            // Handle video end event
+            videoElement.onended = function() {
+                console.log("Video finished");
+
+                var videoLessonId = videoLessons[index].id;
+                var completedAt = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+                $.ajax({
+                    url: '/backend/trainings/store-training-activity',
+                    method: 'POST',
+                    data: {
+                        user_id: {{ Auth::user()->id }},
+                        training_id: {{ $training->id }},
+                        video_lesson_id: videoLessonId,
+                        completed_at: completedAt
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            //alert('Training activity recorded!');
+                            loadQuizQuestions(videoLessonId);
+                        } else {
+                           // alert('Failed to record the activity.');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        alert('An error occurred while recording the activity.');
+                    }
+                });
+            };
+        } else {
+            videoContainer.innerHTML = `<p><strong>Training Completed! No more videos available.</strong></p>`;
+            document.getElementById('video-title').innerText = "Training Completed";
+        }
+    }
+
     function loadQuizQuestions(videoLessonId) {
-        var videoLessonId = {{ $training->videoLessons->first()->id ?? 'null' }};
         $.ajax({
-            url: '/backend/trainings/get-quiz-questions', // Route to fetch quiz questions based on video lesson ID
+            url: '/backend/trainings/get-quiz-questions',
             method: 'GET',
             data: { video_lesson_id: videoLessonId },
             success: function(response) {
                 if (response.success) {
-                    // Show the quiz questions and options
                     displayQuiz(response.questions);
-                    // Attach event listener to radio buttons
                     $('input[type="radio"]').on('change', checkAllAnswers);
-
-                    // Initially disable the submit button
                     $('#submit-quiz').prop('disabled', true).show();
                 } else {
-                    alert('Failed to load quiz questions.');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Failed to load quiz questions.",
+                    });
+                    //alert('Failed to load quiz questions.');
                     $('#submit-quiz').hide();
                 }
             },
             error: function(xhr) {
-                console.error(xhr.responseText);
-                alert('An error occurred while loading quiz questions.');
+                //console.error(xhr.responseText);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "An error occurred while loading quiz questions.",
+                });
+                //alert('An error occurred while loading quiz questions.');
                 $('#submit-quiz').hide();
             }
         });
     }
 
-// Function to display quiz questions and options
     function displayQuiz(questions) {
-        quizzes = questions; // Store quizzes for submission
+        quizzes = questions;
         let html = '';
         questions.forEach((quiz, index) => {
             html += `
-                        <div class="quiz">
-                            <p>${index + 1}. ${quiz.question}</p>
-                            ${quiz.options
-            .map(
-                option => `
-                                <label>
-                                    <input type="radio" name="quiz_${quiz.id}" value="${option.id}" />
-                                    ${option.option}
-                                </label>
-                            `
-            )
-            .join('')}
-                        </div>`;
-         });
-        document.getElementById('quiz-container').innerHTML = html;
+                    <div class="quiz">
+                        <p>${index + 1}. ${quiz.question}</p>
+                        ${quiz.options.map(option => `
+                            <label>
+                                <input type="radio" name="quiz_${quiz.id}" value="${option.id}" />
+                                ${option.option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+    });
+        quizContainer.innerHTML = html;
     }
 
-    // Function to check if all questions have a selected answer
     function checkAllAnswers() {
-        const totalQuestions = $('.quiz-question').length; // Total number of questions
-        const answeredQuestions = $('.quiz-question input[type="radio"]:checked').length; // Total answered questions
+        const totalQuestions = $('.quiz').length;
+        const answeredQuestions = $('.quiz input[type="radio"]:checked').length;
 
-        // Enable submit button only if all questions are answered
         if (answeredQuestions === totalQuestions) {
-            $('#submit-quiz').prop('disabled', false); // Enable button
+            $('#submit-quiz').prop('disabled', false);
         } else {
-            $('#submit-quiz').prop('disabled', true); // Disable button
+            $('#submit-quiz').prop('disabled', true);
         }
     }
+
     $('#submit-quiz').on('click', function () {
         const answers = [];
-
-        // Iterate over quizzes and collect selected options
         quizzes.forEach(function (quiz) {
             const selectedOption = $(`input[name="quiz_${quiz.id}"]:checked`);
             if (selectedOption.length) {
@@ -215,7 +225,6 @@ $(document).ready(function() {
             return;
         }
 
-        // Submit the quiz answers via AJAX
         $.ajax({
             url: '/backend/trainings/submit-quiz-answers',
             method: 'POST',
@@ -225,23 +234,222 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({
                 user_id: {{ Auth::user()->id }},
-                video_lesson_id: {{ $training->videoLessons->first()->id ?? 'null' }},
+                video_lesson_id: videoLessons[currentVideoIndex].id,
                 answers: answers,
             }),
             success: function (data) {
                 if (data.success) {
-                    alert('Quiz submitted successfully!');
+                    swal.fire(
+                        'Done!',
+                        'Quiz submitted successfully!',
+                        'success'
+                    );
+                    quizContainer.innerHTML = ""; // Clear quiz container
+                    submitButton.style.display = 'none'; // Hide submit button
+                    loadVideo(currentVideoIndex + 1);
+                    //alert('Quiz submitted successfully!');
                 } else {
-                    alert(data.message || 'Failed to submit quiz.');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: data.message || 'Failed to submit quiz.',
+                    });
+                    //alert(data.message || 'Failed to submit quiz.');
                 }
             },
             error: function (xhr) {
                 console.error('Error submitting quiz:', xhr.responseText);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: xhr.responseText || 'Failed to submit quiz.',
+                });
             },
         });
     });
-});
 
+    $(document).ready(function() {
+        loadVideo(currentVideoIndex);
+    });
+     {{--$(document).ready(function() {--}}
+
+    {{--@if(Session::has('success-message'))--}}
+      {{--toastr.info("{{ session('success-message') }}");--}}
+    {{--@endif--}}
+
+    {{--let quizzes = [];--}}
+    {{--var video = document.getElementsByTagName('video')[0];--}}
+
+    {{--video.onended = function(e) {--}}
+        {{--console.log("finish");--}}
+
+        {{--var url = '{{config('constants.ADMIN_URL ')}}trainings/store-training-activity';--}}
+        {{--var videoLessonId = {{ $training->videoLessons->first()->id ?? 'null' }};--}}
+        {{--var completedAt = new Date().toISOString().slice(0, 19).replace("T", " ");--}}
+        {{--$.ajax({--}}
+            {{--url: '/backend/trainings/store-training-activity', // The route to store the training activity--}}
+            {{--method: 'POST',--}}
+            {{--data: {--}}
+                {{--user_id: {{ Auth::user()->id }}, // Get the logged-in user ID--}}
+                {{--training_id: {{ $training->id }}, // Current training ID--}}
+                {{--video_lesson_id: videoLessonId, // Current video lesson ID--}}
+                {{--completed_at: completedAt, // The completion timestamp--}}
+            {{--},--}}
+            {{--headers: {--}}
+                {{--'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
+            {{--},--}}
+            {{--success: function(response) {--}}
+                {{--if (response.success) {--}}
+                    {{--alert('Training activity recorded!');--}}
+                    {{--// Optionally, show the quiz questions and options here--}}
+                    {{--loadQuizQuestions(response.video_lesson_id); // Load the questions after video completion--}}
+                {{--} else {--}}
+                    {{--alert('Failed to record the activity.');--}}
+                {{--}--}}
+            {{--},--}}
+            {{--error: function(xhr) {--}}
+                {{--console.error(xhr.responseText);--}}
+                {{--alert('An error occurred while recording the activity.');--}}
+            {{--}--}}
+        {{--});--}}
+    {{--};--}}
+
+
+    {{--// Function to load quiz questions and options--}}
+    {{--function loadQuizQuestions(videoLessonId) {--}}
+        {{--var videoLessonId = {{ $training->videoLessons->first()->id ?? 'null' }};--}}
+        {{--$.ajax({--}}
+            {{--url: '/backend/trainings/get-quiz-questions', // Route to fetch quiz questions based on video lesson ID--}}
+            {{--method: 'GET',--}}
+            {{--data: { video_lesson_id: videoLessonId },--}}
+            {{--success: function(response) {--}}
+                {{--if (response.success) {--}}
+                    {{--// Show the quiz questions and options--}}
+                    {{--displayQuiz(response.questions);--}}
+                    {{--// Attach event listener to radio buttons--}}
+                    {{--$('input[type="radio"]').on('change', checkAllAnswers);--}}
+
+                    {{--// Initially disable the submit button--}}
+                    {{--$('#submit-quiz').prop('disabled', true).show();--}}
+                {{--} else {--}}
+                    {{--alert('Failed to load quiz questions.');--}}
+                    {{--$('#submit-quiz').hide();--}}
+                {{--}--}}
+            {{--},--}}
+            {{--error: function(xhr) {--}}
+                {{--console.error(xhr.responseText);--}}
+                {{--alert('An error occurred while loading quiz questions.');--}}
+                {{--$('#submit-quiz').hide();--}}
+            {{--}--}}
+        {{--});--}}
+    {{--}--}}
+
+{{--// Function to display quiz questions and options--}}
+    {{--function displayQuiz(questions) {--}}
+        {{--quizzes = questions; // Store quizzes for submission--}}
+        {{--let html = '';--}}
+        {{--questions.forEach((quiz, index) => {--}}
+            {{--html += `--}}
+                        {{--<div class="quiz">--}}
+                            {{--<p>${index + 1}. ${quiz.question}</p>--}}
+                            {{--${quiz.options--}}
+            {{--.map(--}}
+                {{--option => `--}}
+                                {{--<label>--}}
+                                    {{--<input type="radio" name="quiz_${quiz.id}" value="${option.id}" />--}}
+                                    {{--${option.option}--}}
+                                {{--</label>--}}
+                            {{--`--}}
+            {{--)--}}
+            {{--.join('')}--}}
+                        {{--</div>`;--}}
+         {{--});--}}
+        {{--document.getElementById('quiz-container').innerHTML = html;--}}
+    {{--}--}}
+
+    {{--// Function to check if all questions have a selected answer--}}
+    {{--function checkAllAnswers() {--}}
+        {{--const totalQuestions = $('.quiz-question').length; // Total number of questions--}}
+        {{--const answeredQuestions = $('.quiz-question input[type="radio"]:checked').length; // Total answered questions--}}
+
+        {{--// Enable submit button only if all questions are answered--}}
+        {{--if (answeredQuestions === totalQuestions) {--}}
+            {{--$('#submit-quiz').prop('disabled', false); // Enable button--}}
+        {{--} else {--}}
+            {{--$('#submit-quiz').prop('disabled', true); // Disable button--}}
+        {{--}--}}
+    {{--}--}}
+    {{--$('#submit-quiz').on('click', function () {--}}
+        {{--const answers = [];--}}
+
+        {{--// Iterate over quizzes and collect selected options--}}
+        {{--quizzes.forEach(function (quiz) {--}}
+            {{--const selectedOption = $(`input[name="quiz_${quiz.id}"]:checked`);--}}
+            {{--if (selectedOption.length) {--}}
+                {{--answers.push({--}}
+                    {{--quiz_id: quiz.id,--}}
+                    {{--option_id: selectedOption.val(),--}}
+                {{--});--}}
+            {{--}--}}
+        {{--});--}}
+
+        {{--if (answers.length < quizzes.length) {--}}
+            {{--alert('Please answer all questions.');--}}
+            {{--return;--}}
+        {{--}--}}
+
+        {{--// Submit the quiz answers via AJAX--}}
+        {{--$.ajax({--}}
+            {{--url: '/backend/trainings/submit-quiz-answers',--}}
+            {{--method: 'POST',--}}
+            {{--headers: {--}}
+                {{--'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),--}}
+            {{--},--}}
+            {{--contentType: 'application/json',--}}
+            {{--data: JSON.stringify({--}}
+                {{--user_id: {{ Auth::user()->id }},--}}
+                {{--video_lesson_id: {{ $training->videoLessons->first()->id ?? 'null' }},--}}
+                {{--answers: answers,--}}
+            {{--}),--}}
+            {{--success: function (data) {--}}
+                {{--if (data.success) {--}}
+                    {{--alert('Quiz submitted successfully!');--}}
+                {{--} else {--}}
+                    {{--alert(data.message || 'Failed to submit quiz.');--}}
+                {{--}--}}
+            {{--},--}}
+            {{--error: function (xhr) {--}}
+                {{--console.error('Error submitting quiz:', xhr.responseText);--}}
+            {{--},--}}
+        {{--});--}}
+    {{--});--}}
+{{--});--}}
+     {{--let currentVideoIndex = 0;--}}
+     {{--const videoLessons = @json($videoLessons);  // Pass video lessons from backend to JS--}}
+     {{--const videoContainer = document.getElementById('video-container');--}}
+     {{--const quizContainer = document.getElementById('quiz-container');--}}
+     {{--const submitButton = document.getElementById('submit-quiz');--}}
+     {{--// Load and play the selected video--}}
+     {{--function loadVideo(index) {--}}
+         {{--currentVideoIndex = index;--}}
+
+         {{--// Show video player with the selected video--}}
+         {{--videoContainer.innerHTML = `--}}
+            {{--<video width="100%" height="400" controls id="videoPlayer-${index}">--}}
+                {{--<source src="{{ asset('storage/') }}/${videoLessons[index].video_url}" type="video/mp4">--}}
+                {{--Your browser does not support the video tag.--}}
+            {{--</video>--}}
+        {{--`;--}}
+         {{--const videoElement = document.getElementById(`videoPlayer-${index}`);--}}
+         {{--//videoElement.play();--}}
+
+
+
+         {{--// Hide the quiz submit button until the video ends--}}
+         {{--submitButton.style.display = 'none';--}}
+     {{--}--}}
+
+     {{--loadVideo(currentVideoIndex);--}}
 </script>
 @stop
 @stop

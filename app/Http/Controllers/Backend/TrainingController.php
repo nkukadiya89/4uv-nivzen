@@ -378,17 +378,29 @@ class TrainingController extends Controller
 
     public function viewTraining($id) {
 
+//        $training = Training::with('videoLessons.quizzes')->find($id);
+//        $title = 'View Training ';
+//
+//        $videoPaths = $training->videoLessons->pluck('video_url');
+//        // Calculate the total question count
+//        $totalQuestions = $training->videoLessons->flatMap(function ($lesson) {
+//            return $lesson->quizzes;
+//        })->count();
+//        return view('admin.trainings.view', compact('title', 'training', 'videoPaths','totalQuestions'));
         $training = Training::with('videoLessons.quizzes')->find($id);
-        $title = 'View Training ';
 
-        $videoPaths = $training->videoLessons->pluck('video_url');
-        // Calculate the total question count
+        if (!$training) {
+            return redirect()->route('trainings.index')->with('error', 'Training not found.');
+        }
+
+        $title = 'View Training';
+
+        $videoLessons = $training->videoLessons;  // Assume videoLessons has title, description, video_url, and thumbnail_url
         $totalQuestions = $training->videoLessons->flatMap(function ($lesson) {
             return $lesson->quizzes;
         })->count();
-//        dd($totalQuestions);
-//        exit;
-        return view('admin.trainings.view', compact('title', 'training', 'videoPaths','totalQuestions'));
+
+        return view('admin.trainings.view', compact('title', 'training', 'videoLessons', 'totalQuestions'));
     }
 
     public function deleteTraining($id)

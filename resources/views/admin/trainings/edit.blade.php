@@ -184,14 +184,8 @@
 
         // Remove a video
         function removeVideo(trainingId, videoIndex) {
-//            const videoContainer = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
-//            if (videoContainer) {
-//                videoContainer.remove();
-//            }
-            console.log("Video Index:", videoIndex);
             const videoContainer = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
 
-            console.log("Video Container:", videoContainer);
             if (!videoContainer) {
                 console.error("Video container not found!");
                 return;
@@ -202,23 +196,39 @@
             const videoLessonId = videoIdInput ? videoIdInput.value : null;
 
             if (videoLessonId) {
-                if (confirm("Are you sure you want to delete this video?")) {
-                    $.ajax({
-                        url: `/backend/training/${trainingId}/video/${videoLessonId}`,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function (response) {
-                            console.log(response.message);
-                            videoContainer.remove(); // Remove from DOM
-                        },
-                        error: function (xhr) {
-                            console.error("Error deleting video:", xhr.responseText);
-                            alert("Error deleting video. Please try again.");
-                        }
-                    });
-                }
+                swal.fire({
+                    title: 'Are you sure You want to delete this record?',
+                    text: '',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then(function(result) {
+                    if (result.value) {
+                        $.ajax({
+                            url: `/backend/training/${trainingId}/video/${videoLessonId}`,
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response) {
+                                console.log(response.message);
+                                swal.fire(
+                                    'Deleted!',
+                                    'Your record has been deleted.',
+                                    'success'
+                                );
+                                videoContainer.remove(); // Remove from DOM
+                            },
+                            error: function (xhr) {
+                                console.error("Error deleting video:", xhr.responseText);
+                                swal("Error!", "Error deleting video. Please try again.", "error");
+                            }
+                        });
+
+                    }
+                });
             } else {
                 videoContainer.remove();
             }
@@ -265,10 +275,6 @@
 
         // Remove a question from a specific video
         function removeQuestion(videoIndex, questionIndex) {
-//            const questionContainer = document.getElementById(`question-container-${videoIndex}-${questionIndex}`);
-//            if (questionContainer) {
-//                questionContainer.remove();
-//            }
             const questionContainer = document.getElementById(`question-container-${videoIndex}-${questionIndex}`);
 
             if (!questionContainer) {
@@ -281,23 +287,38 @@
             const questionId = questionIdInput ? questionIdInput.value : null;
 
             if (questionId) {
-                if (confirm("Are you sure you want to delete this question and all its options?")) {
-                    $.ajax({
-                        url: `/backend/delete-quiz/${questionId}`,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function (response) {
-                            console.log(response.message);
-                            questionContainer.remove(); // Remove from DOM
-                        },
-                        error: function (xhr) {
-                            console.error("Error deleting question:", xhr.responseText);
-                            alert("Error deleting question. Please try again.");
-                        }
-                    });
-                }
+                swal.fire({
+                    title: 'Are you sure you want to delete this question and all its options?',
+                    text: '',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then(function(result) {
+                    if (result.value) {
+                        $.ajax({
+                            url: `/backend/delete-quiz/${questionId}`,
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response) {
+                                swal.fire(
+                                    'Deleted!',
+                                    'Your record has been deleted.',
+                                    'success'
+                                );
+                                questionContainer.remove(); // Remove from DOM
+                            },
+                            error: function (xhr) {
+                                console.error("Error deleting question:", xhr.responseText);
+                                swal("Error!", "Error deleting question. Please try again.", "error");
+                            }
+                        });
+
+                    }
+                });
             } else {
                 questionContainer.remove();
             }
@@ -305,25 +326,7 @@
 
         // Add a new option to a specific question
         function addOption(videoIndex, questionIndex) {
-//            const questionContainer = document.getElementById(`question-container-${videoIndex}-${questionIndex}`);
-//            const optionSection = questionContainer.querySelector('.option-section');
-//            const optionCount = questionContainer.querySelectorAll('.option-container').length || 0;
-//
-//            const optionTemplate = `
-//                <div class="form-group row option-container" data-option-index="${optionCount}">
-//                    <label class="col-lg-2 col-form-label">Option ${optionCount + 1}:</label>
-//                    <div class="col-lg-4">
-//                        <input type="text" name="videos[${videoIndex}][quizzes][${questionIndex}][options][${optionCount}][option]" class="form-control" placeholder="Enter option" required />
-//                    </div>
-//                    <div class="col-lg-3">
-//                        <input type="radio" name="videos[${videoIndex}][quizzes][${questionIndex}][correct_option]" value="${optionCount}"> Correct
-//                    </div>
-//                    <div class="col-lg-3">
-//                      <button type="button" class="btn btn-sm btn-danger" onclick="removeOption( ${videoIndex}, ${questionIndex}, ${optionCount})">Remove Option</button>
-//                    </div>
-//                </div>
-//              `;
-//            optionSection.insertAdjacentHTML('beforeend', optionTemplate);
+
 
             const questionContainer = document.getElementById(`question-container-${videoIndex}-${questionIndex}`);
 
@@ -366,10 +369,6 @@
 
         // Remove an option (optional - not mandatory)
         function removeOption(videoIndex, questionIndex, optionIndex) {
-//            const optionContainer = document.querySelector(`#question-container-${videoIndex}-${questionIndex} .option-container[data-option-index="${optionIndex}"]`);
-//            if (optionContainer) {
-//                optionContainer.remove();
-//            }
             let optionContainer = $(`.option-container[data-option-index="${optionIndex}"]`);
 
             if (optionContainer.length === 0) {
@@ -385,24 +384,39 @@
             }
 
             let optionId = optionInput.val(); // Get option ID from the hidden input
-            console.log("Option ID:", optionId); // Debugging line
 
             if (optionId) {
-                if (confirm("Are you sure you want to delete this answer?")) {
-                    $.ajax({
-                        url: `/backend/delete-quiz-option/${optionId}`,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function (response) {
-                            optionContainer.remove(); // Remove from DOM
-                        },
-                        error: function (xhr) {
-                            alert("Error deleting answer. Please try again.");
-                        }
-                    });
-                }
+                swal.fire({
+                    title: 'Are you sure you want to delete this answer?',
+                    text: '',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then(function(result) {
+                    if (result.value) {
+                        $.ajax({
+                            url: `/backend/delete-quiz-option/${optionId}`,
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response) {
+                                swal.fire(
+                                    'Deleted!',
+                                    'Your record has been deleted.',
+                                    'success'
+                                );
+                                optionContainer.remove(); // Remove from DOM
+                            },
+                            error: function (xhr) {
+                                swal("Error!", "Error deleting answer. Please try again.", "error");
+                            }
+                        });
+
+                    }
+                });
             } else {
                 optionContainer.remove(); // Remove from DOM if not saved in the database
             }
