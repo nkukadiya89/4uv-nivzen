@@ -24,9 +24,21 @@ class AuthenticateController extends BaseController {
     public function loginValidate(Request $request) {
 
         $this->validator($request);
-     
-        if(Auth::guard('backend')->attempt($request->only('email','password'),$request->filled('remember'))){
-            //Authentication passed...
+
+        // Find user by email
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // User not found
+            return response()->json([
+                'status' => 'FALSE',
+                'message' => 'User not found. Please check your email or register an account.'
+            ]);
+        }
+
+        // Attempt to authenticate the user
+        if (Auth::guard('backend')->attempt($request->only('email', 'password'), $request->filled('remember'))) {
+            // Authentication passed...
 
             // Get the authenticated user
             $user = Auth::guard('backend')->user();
@@ -48,10 +60,9 @@ class AuthenticateController extends BaseController {
                 'status' => 'TRUE',
                 'redirect_url' => config('constants.ADMIN_URL').'dashboard'
             ]);
+        }
 
-        } 
-
-        //Authentication failed...
+        // Authentication failed...
         return $this->loginFailed();
     }
 
