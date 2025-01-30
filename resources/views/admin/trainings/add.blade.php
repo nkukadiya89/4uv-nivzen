@@ -27,7 +27,7 @@
                         <!-- Training Name -->
                         <div class="form-group row">
 
-                            <label class="col-lg-3 col-form-label" for="trainingName" >Training Name</label>
+                            <label class="col-lg-3 col-form-label" for="trainingName" >Training Name<span class="required">*</span></label>
                             <div class="col-lg-6">
                                <input type="text" name="name" id="trainingName" class="form-control required" placeholder="Enter training name"  />
                             </div>
@@ -64,11 +64,12 @@
             // Create new video container
             const videoDiv = document.createElement("div");
             videoDiv.className = "video-container mb-4 border p-3 rounded";
+            videoDiv.setAttribute("id", `video-${videoIndex}`);
             videoDiv.innerHTML = `
-        <h4 class="mb-3">Video ${videoIndex + 1}</h4>
+        <h4 class="d-flex justify-content-between align-items-center">Video ${videoIndex + 1} <button type="button" class="btn btn-danger btn-sm " onclick="removeVideo(${videoIndex})">Remove</button></h4>
         <!-- Video Title -->
                 <div class="form-group row">
-                      <label class="col-lg-3 form-label">Video Title</label>
+                      <label class="col-lg-3 form-label">Video Title<span class="required">*</span></label>
                       <div class="col-lg-6">
                          <input type="text" name="videos[${videoIndex}][title]" class="form-control required" placeholder="Enter video title"  />
                       </div>
@@ -82,7 +83,7 @@
                 </div>
                 <!-- Video File -->
                 <div class="form-group row">
-                         <label class="col-lg-3 form-label">Upload Video</label>
+                         <label class="col-lg-3 form-label">Upload Video<span class="required">*</span></label>
                          <div class="col-lg-6">
                             <input type="file" name="videos[${videoIndex}][video]" class="form-control required" accept="video/*"  />
                         </div>
@@ -108,6 +109,14 @@
     optionIndex[videoIndex] = {};
     videoIndex++;
 }
+function removeVideo(index) {
+     let videoElement = document.getElementById(`video-${index}`);
+    if (videoElement) {
+        videoElement.remove();
+    } else {
+        console.warn(`Video element with ID video-${index} not found.`);
+    }
+}
 
 function addQuestion(videoId) {
     const questionsContainer = document.getElementById(`questions-container-${videoId}`);
@@ -120,23 +129,22 @@ function addQuestion(videoId) {
     const questionDiv = document.createElement("div");
     questionDiv.id = `question-container-${videoId}-${questionId}`;
     questionDiv.classList.add("mb-4", "border", "p-3", "rounded"); // Add spacing and styling
-
     questionDiv.innerHTML = `
                 <div class="form-group row">
                 <div class="col-lg-12">
-                <h4>Question ${questionId + 1}</h4>
+                <h4>Question ${questionId + 1} <button type="button" class="btn btn-danger btn-sm float-right" onclick="removeQuestion(${videoId}, ${questionId})">Remove</button></h4>
                 </div>
                 </div>
 
                 <div class="form-group row">
-                <label class="col-lg-3 col-form-label" for="question-${videoId}-${questionId}">Question:</label>
+                <label class="col-lg-3 col-form-label" for="question-${videoId}-${questionId}">Question<span class="required">*</span></label>
                 <div class="col-lg-9">
                 <input type="text"
                 id="question-${videoId}-${questionId}"
                 name="videos[${videoId}][quizzes][${questionId}][question]"
-                class="form-control"
+                class="form-control required"
                 placeholder="Enter question"
-                required />
+                 />
                 </div>
                 </div>
 
@@ -148,7 +156,9 @@ function addQuestion(videoId) {
     questionsContainer.appendChild(questionDiv);
 }
 
-
+function removeQuestion(videoIdx, questionIdx) {
+    document.getElementById(`question-container-${videoIdx}-${questionIdx}`).remove();
+}
 function addOption(videoId, questionId) {
     const optionsContainer = document.querySelector(`#question-container-${videoId}-${questionId} .options-container`);
 
@@ -167,10 +177,10 @@ function addOption(videoId, questionId) {
     const optionDiv = document.createElement("div");
     optionDiv.classList.add("form-group", "row", "mb-3"); // Add Bootstrap styling
     optionDiv.innerHTML = `
-                <label class="col-lg-3 col-form-label" for="option-${videoId}-${questionId}-${optionId}">
+                <label class="col-lg-2 col-form-label" for="option-${videoId}-${questionId}-${optionId}">
                 Option ${optionId + 1}:
                 </label>
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                 <input type="text"
                 id="option-${videoId}-${questionId}-${optionId}"
                 name="videos[${videoId}][quizzes][${questionId}][options][${optionId}][option]"
@@ -190,10 +200,16 @@ function addOption(videoId, questionId) {
                 </label>
                 </div>
                 </div>
+                <div class="col-lg-3">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeOption(${videoId}, ${questionId}, ${optionId})">Remove</button>
+                </div>
                 `;
 
     // Append the new option
     optionsContainer.appendChild(optionDiv);
+}
+function removeOption(videoIdx, questionIdx, optionIdx) {
+    document.getElementById(`option-${videoIdx}-${questionIdx}-${optionIdx}`).remove();
 }
     </script>
 @stop

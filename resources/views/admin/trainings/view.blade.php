@@ -37,7 +37,6 @@
                 <div class="row">
                     <div class="col-4">
                         <div class="form-group">
-                            <label class="customlbl">Video Playlist</label>
                             <div class="videoswrp">
                                 @if(!empty($videoLessons))
                                     <ul id="video-playlist" class="list-unstyled">
@@ -45,10 +44,10 @@
                                             @php
                                                 $thumbnail = !empty($video->thumbnail_url) ? asset('storage/' . $video->thumbnail_url) : asset('storage/default_image.png');
                                             @endphp
-                                            <li class="video-item" id="video-{{ $index }}" onclick="loadVideo({{ $index }})" style="cursor: pointer; display: flex; align-items: center; margin-bottom: 10px;">
+                                            <li class="video-item" id="video-{{ $index }}" onclick="loadVideo({{ $index }})" style="cursor: pointer; display: flex;  margin-bottom: 10px;">
                                                 <img src="{{ $thumbnail }}" alt="Thumbnail" width="100" height="75" style="margin-right: 10px;">
                                                 <div>
-                                                    <strong>{{ $video->title }}</strong>
+                                                    <h5>{{ $video->title }}</h5>
                                                     <p>{{ $video->description }}</p>
                                                 </div>
                                             </li>

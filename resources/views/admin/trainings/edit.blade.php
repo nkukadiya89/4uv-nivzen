@@ -30,7 +30,7 @@
                     <div class="card-body">
                         <!-- Training Name -->
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label" for="trainingName">Training Name</label>
+                            <label class="col-lg-3 col-form-label" for="trainingName">Training Name<span class="required">*</span></label>
                             <div class="col-lg-6">
                                 <input type="text" name="name" id="trainingName" class="form-control required" placeholder="Enter training name" value="{{ $training->name ?? '' }}" />
                             </div>
@@ -44,7 +44,7 @@
                                         <button type="button" class="btn btn-sm btn-danger" onclick="removeVideo({{$training->id}}, {{ $videoIndex }})">Remove Video</button></h4>
                                         <input type="hidden" name="videos[{{ $videoIndex }}][id]" value="{{ $video->id }}">
                                         <div class="form-group row">
-                                            <label class="col-lg-3 form-label">Video Title</label>
+                                            <label class="col-lg-3 form-label">Video Title<span class="required">*</span></label>
                                             <div class="col-lg-6">
                                                 <input type="text" name="videos[{{ $videoIndex }}][title]" class="form-control required" placeholder="Enter video title" value="{{ $video->title }}" />
                                             </div>
@@ -56,7 +56,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-lg-3 form-label">Upload Video</label>
+                                            <label class="col-lg-3 form-label">Upload Video<span class="required">*</span></label>
                                             <div class="col-lg-6">
                                                 <input type="file" name="videos[{{ $videoIndex }}][video]" class="form-control" accept="video/*" />
                                                 <p id="current-video">Current Video: <a href="{{ asset('storage/' . $video->video_url) }}" target="_blank">View Video</a></p>
@@ -82,9 +82,9 @@
                                                 <div id="question-container-{{ $videoIndex }}-{{ $quizIndex }}" class="question-container mb-4 border p-3 rounded" data-question-index="{{ $quizIndex }}">
                                                     <div class="form-group row">
                                                         <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][id]" value="{{ $quiz->id }}">
-                                                        <label class="col-lg-2 col-form-label">Question: {{$quizIndex + 1}}</label>
+                                                        <label class="col-lg-2 col-form-label">Question: {{$quizIndex + 1}}<span class="required">*</span></label>
                                                         <div class="col-lg-7">
-                                                            <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][question]" class="form-control" placeholder="Enter question" value="{{ $quiz->question }}" required />
+                                                            <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][question]" class="form-control required" placeholder="Enter question" value="{{ $quiz->question }}"  />
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion({{ $videoIndex }}, {{ $quizIndex }})">Remove Question</button>
@@ -96,7 +96,7 @@
                                                             <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][id]" value="{{ $option->id }}">
                                                             <label class="col-lg-2 col-form-label">Option {{ $optionIndex + 1 }}:</label>
                                                             <div class="col-lg-4">
-                                                                <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][option]" class="form-control" placeholder="Enter option" value="{{ $option->option }}" required />
+                                                                <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][option]" class="form-control required" placeholder="Enter option" value="{{ $option->option }}"  />
                                                             </div>
                                                             <div class="col-lg-3">
                                                                 <input type="radio" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][correct_option]" value="{{ $optionIndex }}" {{ $option->is_correct ? 'checked' : '' }}> Correct
@@ -132,9 +132,6 @@
 
 @section('custom_js')
     <script>
-        $(document).ready(function () {
-
-        });
         let videoCount = document.querySelectorAll('.video-container').length || 0;
 
         // Add a new video
@@ -352,7 +349,7 @@
         <div class="form-group row option-container" data-option-index="${optionCount}">
             <label class="col-lg-2 col-form-label">Option ${optionCount + 1}:</label>
             <div class="col-lg-4">
-                <input type="text" name="videos[${videoIndex}][quizzes][${questionIndex}][options][${optionCount}][option]" class="form-control" placeholder="Enter option" required />
+                <input type="text" name="videos[${videoIndex}][quizzes][${questionIndex}][options][${optionCount}][option]" class="form-control required" placeholder="Enter option"  />
             </div>
             <div class="col-lg-3">
                 <input type="radio" name="videos[${videoIndex}][quizzes][${questionIndex}][correct_option]" value="${optionCount}"> Correct
