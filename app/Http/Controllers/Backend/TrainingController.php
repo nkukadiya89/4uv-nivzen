@@ -444,6 +444,23 @@ class TrainingController extends Controller
     // Store training activity when a video lesson is completed
     public function storeActivity(Request $request)
     {
+//        // Validate the request
+//        $validated = $request->validate([
+//            'user_id' => 'required|exists:users,id',
+//            'training_id' => 'required|exists:trainings,id',
+//            'video_lesson_id' => 'required|exists:video_lessons,id',
+//            'completed_at' => 'required|date',
+//        ]);
+//
+//        // Store the activity in the database
+//        UserTrainingActivity::create([
+//            'user_id' => $validated['user_id'],
+//            'training_id' => $validated['training_id'],
+//            'video_lesson_id' => $validated['video_lesson_id'],
+//            'completed_at' => $validated['completed_at'],
+//        ]);
+//
+//        return response()->json(['success' => true]);
         // Validate the request
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -452,13 +469,21 @@ class TrainingController extends Controller
             'completed_at' => 'required|date',
         ]);
 
+        // Check for duplicate entry
+        $exists = UserTrainingActivity::where('user_id', $validated['user_id'])
+            ->where('training_id', $validated['training_id'])
+            ->where('video_lesson_id', $validated['video_lesson_id'])
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Activity already recorded for this video lesson.'
+            ], 409); // 409 Conflict status
+        }
+
         // Store the activity in the database
-        UserTrainingActivity::create([
-            'user_id' => $validated['user_id'],
-            'training_id' => $validated['training_id'],
-            'video_lesson_id' => $validated['video_lesson_id'],
-            'completed_at' => $validated['completed_at'],
-        ]);
+        UserTrainingActivity::create($validated);
 
         return response()->json(['success' => true]);
     }
@@ -470,7 +495,10 @@ class TrainingController extends Controller
 
         // Fetch the quiz questions related to the video lesson
         $quizzes = Quiz::where('video_lesson_id', $videoLessonId)
-            ->with('options')
+            ->with(['options' => function ($query) {
+                $query->orderBy('id', 'asc'); // Order options by ID in ascending order
+            }])
+            ->orderBy('id', 'asc')
             ->get();
 
         return response()->json([

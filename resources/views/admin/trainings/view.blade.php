@@ -35,7 +35,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-4 sticky-top">
                         <div class="form-group">
                             <div class="videoswrp">
                                 @if(!empty($videoLessons))
@@ -48,7 +48,7 @@
                                                 <img src="{{ $thumbnail }}" alt="Thumbnail" width="100" height="75" style="margin-right: 10px;">
                                                 <div>
                                                     <h5>{{ $video->title }}</h5>
-                                                    <p>{{ $video->description }}</p>
+                                                    <p class="d-inline-block text-truncate" style="max-width: 340px;">{{ $video->description }}</p>
                                                 </div>
                                             </li>
                                         @endforeach
@@ -64,7 +64,7 @@
                         <div id="video-container">
                             <!-- Video player will be dynamically loaded here -->
                         </div>
-                        <div id="quiz-container">
+                        <div class="mt-5" id="quiz-container">
                             <!-- Quiz questions will be dynamically loaded here -->
                         </div>
                         <button id="submit-quiz" class="btn btn-primary" style="display: none;">Submit Answers</button>
@@ -133,8 +133,8 @@
                         }
                     },
                     error: function(xhr) {
-                        console.error(xhr.responseText);
-                        alert('An error occurred while recording the activity.');
+                        //console.error(xhr.responseText);
+                        //alert('An error occurred while recording the activity.');
                     }
                 });
             };
