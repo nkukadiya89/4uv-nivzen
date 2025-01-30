@@ -214,7 +214,7 @@ class UsersController extends Controller
             $user->syncRoles($request->roles);
             if ($user->save()) {
                 Mail::to($user->email)->send(new UserRegister($user, $randomPassword));
-                Session::flash('success-message', $request->title . " created successfully !");
+                Session::flash('success-message', $request->firstname . " created successfully !");
                 $data['success'] = true;
 
                 return response()->json($data);
