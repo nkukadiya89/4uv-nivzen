@@ -64,13 +64,11 @@ var KTLogin = function() {
                         data: $('#kt_login_signin_form').serialize(),
 
                         success: function(response, status, xhr, $form) {
-                            console.log(response.status);
                             if(response.status == 'TRUE') {
                                 window.location.href = response.redirect_url;
-
                             } else {
                                 swal.fire({
-                                    text: "Sorry, These credentials do not match our records.",
+                                    text: response.message,
                                     icon: "error",
                                     buttonsStyling: false,
                                     confirmButtonText: "Ok, got it!",

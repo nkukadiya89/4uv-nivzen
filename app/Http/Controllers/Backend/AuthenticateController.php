@@ -27,7 +27,22 @@ class AuthenticateController extends BaseController {
      
         if(Auth::guard('backend')->attempt($request->only('email','password'),$request->filled('remember'))){
             //Authentication passed...
-          
+
+            // Get the authenticated user
+            $user = Auth::guard('backend')->user();
+
+            // Check if the user's status is active
+            if ($user->status !== 1) {
+                // If the user's status is not active, log them out and return a failure response
+                Auth::guard('backend')->logout();
+
+                return response()->json([
+                    'status' => 'FALSE',
+                    'message' => 'Your account is not active. Please contact support.'
+                ]);
+            }
+
+            // Proceed if the user is active
             Session::flash('success-message', "Welcome to 4uv dashboard!");
             return response()->json([
                 'status' => 'TRUE',
