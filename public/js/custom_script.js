@@ -271,7 +271,9 @@ $(document).ready(function() {
                     if (data.success == true)  {
 
                         $('#i_num_available_error').hide();
-                        if ($("#redirect_url").length == 1) {
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url; // Redirect to the dashboard
+                        } else if ($("#redirect_url").length == 1) {
                             window.location.href = $("#redirect_url").val();
                         } else {
                             window.location = strstr($("#frmEdit").attr("action"), '/edit/', true);

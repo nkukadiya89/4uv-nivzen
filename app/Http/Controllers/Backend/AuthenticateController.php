@@ -211,10 +211,11 @@ class AuthenticateController extends BaseController {
 
 
                     if ($user->save()) {
-                        Session::flash('success-message', $user->name . " updated successfully !");
+                        Session::flash('success-message',  " profile updated successfully !");
                         $data['success'] = true;
-                        return redirect('/backend/dashboard')->with('success', 'Profile updated successfully!');
-                        //return response()->json($data);
+                        $data['redirect_url'] = route('backend.dashboard');
+
+                        return response()->json($data);
                     }
                     return redirect()->back()->with("success", " User updated successfully !");
                 }
