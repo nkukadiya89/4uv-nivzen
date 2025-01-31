@@ -1,3 +1,33 @@
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px; }
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; }
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #094e8f; }
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #094e8f; }
+
+/* Firefox */
+::-moz-scrollbar {
+  width: 6px;
+  height: 6px; }
+
+::-moz-scrollbar-track {
+  background: #f1f1f1; }
+
+::-moz-scrollbar-thumb {
+  background: #094e8f; }
+
+::-moz-scrollbar-thumb:hover {
+  background: #094e8f; }
+
 .loginbg {
   background: url(../../images/loginbg.png) no-repeat center top;
   background-size: cover; }
@@ -134,6 +164,72 @@
   padding: 5px;
   padding-top: 44px;
   height: auto; }
+
+.trainingvideowrap {
+  display: flex;
+  gap: 32px; }
+  .trainingvideowrap .videosidebar {
+    background-color: #f7fbff;
+    width: 100%;
+    max-width: 360px;
+    padding: 16px;
+    border-radius: 10px;
+    overflow: auto;
+    height: 100%;
+    max-height: calc(100vh - 272px); }
+    .trainingvideowrap .videosidebar p {
+      margin: 0;
+      font-size: 14px; }
+    .trainingvideowrap .videosidebar h5 {
+      font-weight: 600;
+      font-size: 18px; }
+    .trainingvideowrap .videosidebar ul {
+      margin: 0;
+      padding: 0; }
+      .trainingvideowrap .videosidebar ul li {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 16px; }
+        .trainingvideowrap .videosidebar ul li .vidimg {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 5px;
+          border: 1px solid #e7ecf1;
+          padding: 0;
+          width: 100px;
+          height: 100px;
+          background: #fff; }
+          .trainingvideowrap .videosidebar ul li .vidimg img {
+            width: 100%;
+            height: auto; }
+  .trainingvideowrap .bigvideo {
+    width: 100%; }
+    .trainingvideowrap .bigvideo h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px; }
+    .trainingvideowrap .bigvideo .videobdr {
+      border: 1px solid #e7ecf1; }
+  .trainingvideowrap .quizbtnswrp {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e7ecf1;
+    display: flex;
+    justify-content: flex-end; }
+  .trainingvideowrap .quizitemswrap {
+    display: flex;
+    gap: 32px; }
+    .trainingvideowrap .quizitemswrap .quiz h5 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px; }
+    .trainingvideowrap .quizitemswrap .quiz label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-right: 10px; }
 
 @media (min-width: 992px) {
   .aside-fixed .aside {

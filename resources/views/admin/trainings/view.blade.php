@@ -21,7 +21,7 @@
     <!--end::Subheader-->
     <!--begin::Entry-->
     <div class="p-6 flex-fill">
-        <div class="card card-custom gutter-b">
+        <div class="card card-custom mb-0 gutter-b">
             <div class="card-header align-content-center">
                 <div class="card-title">
                     {{$training->name ?? ''}}
@@ -34,18 +34,17 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-4 sticky-top">
-                        <div class="form-group">
-                            <div class="videoswrp">
+                <div class="trainingvideowrap">
+                    <div class="videosidebar">
+                        
                                 @if(!empty($videoLessons))
-                                    <ul id="video-playlist" class="list-unstyled">
+                                    <ul id="video-playlist" >
                                         @foreach($videoLessons as $index => $video)
                                             @php
                                                 $thumbnail = !empty($video->thumbnail_url) ? asset('storage/' . $video->thumbnail_url) : asset('storage/default_image.png');
                                             @endphp
-                                            <li class="video-item" id="video-{{ $index }}" onclick="loadVideo({{ $index }})" style="cursor: pointer; display: flex;  margin-bottom: 10px;">
-                                                <img src="{{ $thumbnail }}" alt="Thumbnail" width="100" height="75" style="margin-right: 10px;">
+                                            <li  id="video-{{ $index }}" onclick="loadVideo({{ $index }})" >
+                                                <div class="vidimg"><img src="{{ $thumbnail }}" alt="Thumbnail"></div>
                                                 <div>
                                                     <h5>{{ $video->title }}</h5>
                                                     <p class="d-inline-block text-truncate" style="max-width: 340px;">{{ $video->description }}</p>
@@ -56,18 +55,19 @@
                                 @else
                                     <p>No videos uploaded for this training program.</p>
                                 @endif
-                            </div>
-                        </div>
+                         
                     </div>
-                    <div class="col-8">
+                    <div class="bigvideo">
                         <h3 id="video-title"></h3>
-                        <div id="video-container">
+                        <div id="video-container" class="videobdr">
                             <!-- Video player will be dynamically loaded here -->
                         </div>
-                        <div class="mt-5" id="quiz-container">
+                        <div class="mt-5 quizitemswrap" id="quiz-container">
                             <!-- Quiz questions will be dynamically loaded here -->
                         </div>
+                        <div class="quizbtnswrp">
                         <button id="submit-quiz" class="btn btn-primary" style="display: none;">Submit Answers</button>
+</div>
                     </div>
                 </div>
 
@@ -183,7 +183,7 @@
         questions.forEach((quiz, index) => {
             html += `
                     <div class="quiz">
-                        <p>${index + 1}. ${quiz.question}</p>
+                        <h5>${index + 1}. ${quiz.question}</h5>
                         ${quiz.options.map(option => `
                             <label>
                                 <input type="radio" name="quiz_${quiz.id}" value="${option.id}" />
@@ -350,7 +350,7 @@
         {{--questions.forEach((quiz, index) => {--}}
             {{--html += `--}}
                         {{--<div class="quiz">--}}
-                            {{--<p>${index + 1}. ${quiz.question}</p>--}}
+                            {{--<h5>${index + 1}. ${quiz.question}</h5>--}}
                             {{--${quiz.options--}}
             {{--.map(--}}
                 {{--option => `--}}

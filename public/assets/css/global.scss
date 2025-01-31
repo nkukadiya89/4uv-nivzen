@@ -1,3 +1,43 @@
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #094e8f;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #094e8f;
+  }
+  
+  
+  /* Firefox */
+  ::-moz-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-moz-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  ::-moz-scrollbar-thumb {
+    background: #094e8f;
+  }
+  
+  ::-moz-scrollbar-thumb:hover {
+    background: #094e8f;
+  }
+
 .loginbg {
     background: url(../../images/loginbg.png) no-repeat center top;
     background-size: cover;
@@ -202,7 +242,93 @@
         height: auto;
     }
 }
-
+.trainingvideowrap{
+    display: flex;
+    gap: 32px;
+    .videosidebar{
+        background-color: #f7fbff;
+        width: 100%;
+        max-width: 360px;
+        padding: 16px;
+        border-radius: 10px;
+        overflow: auto;
+        height: 100%;
+        max-height: calc(100vh - 272px);
+        p{
+            margin: 0;
+            font-size: 14px;
+        }
+        h5{
+            font-weight: 600;
+            font-size: 18px;
+        }
+        ul{
+            margin: 0;
+            padding: 0;
+            li{
+                display: flex
+                ;
+                    gap: 16px;
+                    align-items: flex-start;
+                    margin-bottom: 16px;
+                
+                .vidimg{
+                    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    border: 1px solid #e7ecf1;
+    padding: 0;
+    width: 100px;
+    height: 100px;
+    background: #fff;
+                    img{
+                        width: 100%;
+                        height: auto;
+                        
+                    }
+                }
+            }
+        }
+    }
+    .bigvideo{
+        width: 100%;
+        h3{
+            font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+        }
+        .videobdr{
+            border: 1px solid #e7ecf1;
+        }
+    }
+    .quizbtnswrp{
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e7ecf1;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .quizitemswrap {
+        display: flex;
+        gap: 32px;
+        .quiz{
+h5{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+label{
+    display: inline-flex
+    ;
+        align-items: center;
+        gap: 7px;
+        margin-right: 10px;
+}
+        }
+    }
+}
 @media (min-width: 992px) {
     .aside-fixed .aside {
         position: relative;
