@@ -312,7 +312,8 @@
     }
     .quizitemswrap {
         display: flex;
-        gap: 32px;
+            gap: 12px;
+            flex-direction: column;
         .quiz{
 h5{
     font-size: 18px;
@@ -325,6 +326,7 @@ label{
         align-items: center;
         gap: 7px;
         margin-right: 10px;
+        font-size: 16px;
 }
         }
     }

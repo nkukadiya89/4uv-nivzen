@@ -220,7 +220,8 @@
     justify-content: flex-end; }
   .trainingvideowrap .quizitemswrap {
     display: flex;
-    gap: 32px; }
+    gap: 12px;
+    flex-direction: column; }
     .trainingvideowrap .quizitemswrap .quiz h5 {
       font-size: 18px;
       font-weight: 600;
@@ -229,7 +230,8 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      margin-right: 10px; }
+      margin-right: 10px;
+      font-size: 16px; }
 
 @media (min-width: 992px) {
   .aside-fixed .aside {
