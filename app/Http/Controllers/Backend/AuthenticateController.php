@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\Models\User;
 use App\Models\Prospect;
 use App\Models\Training;
+use App\Models\UserTrainingActivity;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -220,12 +221,21 @@ class AuthenticateController extends BaseController {
         $prospectCount = Prospect::count();
         $demoCount = Training::count();
 
+        $trainingsAttended = UserTrainingActivity::where('user_id', $userId = auth()->id())
+            ->distinct('training_id')
+            ->count('training_id');
+
+        // Calculate remaining trainings
+        $trainingsToBeAttended = $demoCount - $trainingsAttended;
+        $trainingsToBeAttended = max($trainingsToBeAttended, 0);
         //return view('admin.auth.dashboard',compact('title'));
         return view('admin.auth.dashboard', compact(
             'title',
             'distributorCount',
             'prospectCount',
-            'demoCount'
+            'demoCount',
+            'trainingsAttended',
+            'trainingsToBeAttended'
         ));
     }
  }

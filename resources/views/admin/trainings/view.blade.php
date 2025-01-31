@@ -133,7 +133,7 @@
                         }
                     },
                     error: function(xhr) {
-                        //console.error(xhr.responseText);
+                        console.error(xhr.responseText);
                         //alert('An error occurred while recording the activity.');
                     }
                 });

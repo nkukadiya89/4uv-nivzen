@@ -479,7 +479,7 @@ class TrainingController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Activity already recorded for this video lesson.'
-            ], 409); // 409 Conflict status
+            ]); // 409 Conflict status
         }
 
         // Store the activity in the database
