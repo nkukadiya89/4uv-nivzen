@@ -165,14 +165,66 @@ class AuthenticateController extends BaseController {
         }
     } 
 
-    public function myProfile(Request $request) {
-        $inputs = $request->all();
-        $user = auth()->guard('admin')->user();
-        if($inputs) {
-            $id = $user->id;
-           
+//    public function myProfile(Request $request) {
+//        $inputs = $request->all();
+//        $user = Auth::guard('backend')->user();
+//
+//        return view('admin.auth.myprofile', array('title' => 'My Profile','user' => $user));
+//    }
+    public function updateProfile(Request $request) {
+        $user = Auth::guard('backend')->user();
+        $title = 'My Profile';
+        $inputs  = $request->all();
+
+        if ($user || !empty($user)) {
+            if($inputs) {
+
+                $validator = Validator::make($inputs, [
+                    'firstname' => 'required',
+                    'lastname' => 'required',
+                    'email' => 'required|unique:users,email,"'.$user->id.'"',
+                    'dob' => 'required',
+                    'phone' => 'required|digits:10|numeric',
+                    'pincode' => 'digits:6|numeric',
+                ]);
+
+                if ($validator->fails()) {
+                    //return json_encode($validator->errors());
+                    return response()->json(['errors' => $validator->errors()], 422);
+                } else {
+                    $user->name = $request->firstname.' '.$request->lastname;
+                    $user->firstname = $request->firstname;
+                    $user->lastname =  $request->lastname;
+                    $user->email =  $request->email;
+                    $user->dob =  $request->dob;
+                    $user->phone =  $request->phone;
+                    $user->feature_access = '1';
+                    $user->city = $request->city;
+                    $user->state = $request->state;
+                    $user->country = $request->country;
+                    $user->address1 = $request->address1;
+                    $user->address2 = $request->address2;
+                    $user->pincode = $request->pincode;
+                    $user->status =isset($request->status) && $request->status == 1 ? 1: 0;
+
+                    $user->save();
+
+
+                    if ($user->save()) {
+                        Session::flash('success-message', $user->name . " updated successfully !");
+                        $data['success'] = true;
+                        return redirect('/backend/dashboard')->with('success', 'Profile updated successfully!');
+                        //return response()->json($data);
+                    }
+                    return redirect()->back()->with("success", " User updated successfully !");
+                }
+            } else {
+                return view('admin.auth.myprofile', compact('user', 'title'));
+
+            }
+
         }
-        return view('admin.authenticate.myprofile', array('title' => 'My Profile','user' => $user));
+        return Redirect(config('constants.ADMIN_URL') . 'dashboard');
     }
 
 

@@ -35,6 +35,8 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
 
     // Manage dashboard
     Route::get('dashboard', [ AuthenticateController::class,'dashboard'])->name('backend.dashboard');
+    //Route::get('profile', [ AuthenticateController::class,'myProfile'])->name('my-profile');
+    Route::any('profile', [AuthenticateController::class,'updateProfile'])->name('profile');
     Route::post('logout', [ AuthenticateController::class,'logout'])->name('backend-logout');
 
     Route::resource('permissions', PermissionController::class);
