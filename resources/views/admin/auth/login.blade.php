@@ -47,7 +47,7 @@
                     <div class="login-form login-signin">
                         <div class="authpagename">
                             <a href="#" class="logo mb-5">
-                                4UV
+                                <img src="{{ asset('/images/logo.png') }}"  alt="logo" >
                             </a>
                             <h3>Sign In</h3>
                             <h5>The Distributor Portal</h5>

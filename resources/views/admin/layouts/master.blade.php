@@ -81,7 +81,7 @@
     <div id="kt_header_mobile" class="header-mobile align-items-center header-mobile-fixed">
         <!--begin::Logo-->
         <a href="/backend">
-            <h1>4UV</h1>
+            <img src="{{ asset('/images/logo.png') }}"  alt="logo" width="90px" height="90px">
         </a>
         <!--end::Logo-->
         <!--begin::Toolbar-->
@@ -128,7 +128,7 @@
                 <div class="brand flex-column-auto" id="kt_brand">
                     <!--begin::Logo-->
                     <a href="/backend" class="brand-logo">
-                        <h1>4UV</h1>
+                        <img src="{{ asset('/images/logo.png') }}"  alt="logo" width="90px" height="90px" >
                     </a>
                     <!--end::Logo-->
                     <!--begin::Toggle-->
