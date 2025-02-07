@@ -59,106 +59,156 @@
             addVideo(); // Call the addVideo function when the page loads
         };
         function addVideo() {
-            const videoSection = document.getElementById("video-section");
+    const videoSection = document.getElementById("video-section");
 
-            // Create new video container
-            const videoDiv = document.createElement("div");
-            videoDiv.className = "video-container mb-4 border p-3 rounded";
-            videoDiv.setAttribute("id", `video-${videoIndex}`);
-            videoDiv.innerHTML = `
-        <h4 class="d-flex justify-content-between align-items-center">Video ${videoIndex + 1} <button type="button" class="btn btn-danger btn-sm " onclick="removeVideo(${videoIndex})">Remove</button></h4>
-        <!-- Video Title -->
-                <div class="form-group row">
-                      <label class="col-lg-3 form-label">Video Title<span class="required">*</span></label>
-                      <div class="col-lg-6">
-                         <input type="text" name="videos[${videoIndex}][title]" class="form-control required" placeholder="Enter video title"  />
-                      </div>
-                </div>
-                <!-- Video Description -->
-                <div class="form-group row">
-                      <label class="col-lg-3 form-label">Video Description</label>
-                      <div class="col-lg-6">
-                           <textarea name="videos[${videoIndex}][description]" class="form-control" rows="3" placeholder="Enter video description"></textarea>
-                      </div>
-                </div>
-                <!-- Video File -->
-                <div class="form-group row">
-                         <label class="col-lg-3 form-label">Upload Video<span class="required">*</span></label>
-                         <div class="col-lg-6">
-                            <input type="file" name="videos[${videoIndex}][video]" class="form-control required" accept="video/*"  />
-                        </div>
-                </div>
-                <!-- Thumbnail -->
-                <div class="form-group row">
-                         <label class="col-lg-3 form-label">Upload Thumbnail</label>
-                         <div class="col-lg-6">
-                            <input type="file" name="videos[${videoIndex}][thumbnail]" class="form-control" accept="image/*" />
-                          </div>
-                </div>
-                <!-- MCQ Section -->
-                <div class="mcq-section mb-4">
-                <h5 class="mb-3">Questions</h5>
-                <div id="questions-container-${videoIndex}"></div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="addQuestion(${videoIndex})">Add Question</button>
-                </div>
-                `;
+    // Create a new video container
+    const videoDiv = document.createElement("div");
+    videoDiv.className = "video-container mb-4 border p-3 rounded";
+    videoDiv.setAttribute("id", `video-${videoIndex}`);
+
+    videoDiv.innerHTML = `
+        <h4 class="d-flex justify-content-between align-items-center">
+            Video ${videoIndex + 1}
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeVideo(${videoIndex})">Remove</button>
+        </h4>
+
+        <div class="form-group row">
+            <label class="col-lg-3 form-label">Video Title<span class="required">*</span></label>
+            <div class="col-lg-6">
+                <input type="text" name="videos[${videoIndex}][title]" class="form-control required" placeholder="Enter video title" />
+            </div>
+        </div>
+
+        <div class="mcq-section mb-4">
+            <h5 class="mb-3">Questions</h5>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addQuestion(${videoIndex})">Add Question</button>
+            <div id="questions-container-${videoIndex}"></div> <!-- Ensure this exists -->
+        </div>
+    `;
+
     videoSection.appendChild(videoDiv);
 
-    // Initialize question and option indexes for this video
+    // Initialize indexes properly
     questionIndex[videoIndex] = 0;
     optionIndex[videoIndex] = {};
     videoIndex++;
 }
+
 function removeVideo(index) {
      let videoElement = document.getElementById(`video-${index}`);
     if (videoElement) {
         videoElement.remove();
+        // Update the indexes of remaining videos
+        const videoContainers = document.querySelectorAll(".video-container");
+        videoIndex = 0; // Reset the video index
+        questionIndex = {}; // Reset question indexes
+        optionIndex = {}; // Reset option indexes
+
+        videoContainers.forEach((videoDiv, newIndex) => {
+            videoDiv.id = `video-${newIndex}`;
+            videoDiv.querySelector("h4").innerHTML = `Video ${newIndex + 1} <button type="button" class="btn btn-danger btn-sm" onclick="removeVideo(${newIndex})">Remove</button>`;
+
+            // Update name attributes of input fields
+            videoDiv.querySelectorAll("input, textarea").forEach(input => {
+                input.name = input.name.replace(/\[videos\]\[\d+\]/, `[videos][${newIndex}]`);
+            });
+
+            // Update questions container ID
+            const questionsContainer = videoDiv.querySelector(`[id^="questions-container-"]`);
+            if (questionsContainer) {
+                questionsContainer.id = `questions-container-${newIndex}`;
+            }
+
+            questionIndex[newIndex] = 0;
+            optionIndex[newIndex] = {};
+        });
+
+        videoIndex = videoContainers.length;
     } else {
         console.warn(`Video element with ID video-${index} not found.`);
     }
 }
 
-function addQuestion(videoId) {
-    const questionsContainer = document.getElementById(`questions-container-${videoId}`);
-    const questionId = questionIndex[videoId]++; // Increment question index for this video
+function addQuestion(videoIdx) {
+    console.log(`🔹 Adding question to video ${videoIdx}...`);
 
-    // Initialize option tracking for this question
-    optionIndex[videoId][questionId] = 0;
+    // Find the correct container
+    const questionsContainer = document.getElementById(`questions-container-${videoIdx}`);
+    if (!questionsContainer) {
+        console.error(`❌ Questions container for video ${videoIdx} not found!`);
+        return;
+    }
 
-    // Add a new question section
-    const questionDiv = document.createElement("div");
-    questionDiv.id = `question-container-${videoId}-${questionId}`;
-    questionDiv.classList.add("mb-4", "border", "p-3", "rounded"); // Add spacing and styling
-    questionDiv.innerHTML = `
-                <div class="form-group row">
-                <div class="col-lg-12">
-                <h4>Question ${questionId + 1} <button type="button" class="btn btn-danger btn-sm float-right" onclick="removeQuestion(${videoId}, ${questionId})">Remove</button></h4>
-                </div>
-                </div>
+    // Get current question count
+    const questionIdx = questionsContainer.children.length;
+    console.log(`🆕 New question index: ${questionIdx}`);
 
-                <div class="form-group row">
-                <label class="col-lg-3 col-form-label" for="question-${videoId}-${questionId}">Question<span class="required">*</span></label>
-                <div class="col-lg-9">
-                <input type="text"
-                id="question-${videoId}-${questionId}"
-                name="videos[${videoId}][quizzes][${questionId}][question]"
-                class="form-control required"
-                placeholder="Enter question"
-                 />
-                </div>
-                </div>
+    // Create question HTML
+    const questionHTML = `
+        <div id="question-container-${videoIdx}-${questionIdx}" class="question-item">
+            <label for="question-${videoIdx}-${questionIdx}">Question ${questionIdx + 1}:</label>
+            <input type="text" id="question-${videoIdx}-${questionIdx}" name="videos[${videoIdx}][quizzes][${questionIdx}][question]" required>
 
-                <div class="options-container">
-                <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addOption(${videoId}, ${questionId})">Add Option</button>
-                </div>
-                `;
+            <div id="options-container-${videoIdx}-${questionIdx}" class="options-container"></div>
 
-    questionsContainer.appendChild(questionDiv);
+            <button type="button" onclick="addOption(${videoIdx}, ${questionIdx})">Add Option</button>
+            <button type="button" onclick="removeQuestion(${videoIdx}, ${questionIdx})">Remove Question</button>
+        </div>
+    `;
+
+    // Append the question
+    questionsContainer.insertAdjacentHTML("beforeend", questionHTML);
+
+    console.log(`✅ Question ${questionIdx} added successfully to video ${videoIdx}.`);
 }
+
+
+
 
 function removeQuestion(videoIdx, questionIdx) {
+    console.log(`Removing question ${questionIdx} from video ${videoIdx}...`);
+
+    // Remove the question
     document.getElementById(`question-container-${videoIdx}-${questionIdx}`).remove();
+
+    // Update indexes for remaining questions
+    const questionsContainer = document.getElementById(`questions-container-${videoIdx}`);
+    const remainingQuestions = questionsContainer.querySelectorAll("[id^=question-container-]");
+
+    questionIndex[videoIdx] = 0; // Reset question index for this video
+    optionIndex[videoIdx] = {}; // Reset option index for reordering
+
+    remainingQuestions.forEach((questionDiv, newIdx) => {
+        const oldQuestionId = questionDiv.id.split("-").pop();
+
+        // Update the question div ID
+        questionDiv.id = `question-container-${videoIdx}-${newIdx}`;
+
+        // Update the heading number
+        const questionTitle = questionDiv.querySelector("h4");
+        questionTitle.innerHTML = `Question ${newIdx + 1}
+            <button type="button" class="btn btn-danger btn-sm float-right" onclick="removeQuestion(${videoIdx}, ${newIdx})">Remove</button>`;
+
+        // Update input field names
+        const inputField = questionDiv.querySelector("input[name^='videos']");
+        if (inputField) {
+            inputField.name = `videos[${videoIdx}][quizzes][${newIdx}][question]`;
+        }
+
+        // Update the options container ID
+        const optionsContainer = questionDiv.querySelector("[id^=options-container-]");
+        if (optionsContainer) {
+            optionsContainer.id = `options-container-${videoIdx}-${newIdx}`;
+        }
+
+        // Store new question index
+        questionIndex[videoIdx] = newIdx + 1;
+        optionIndex[videoIdx][newIdx] = optionIndex[videoIdx][oldQuestionId] || 0; // Preserve option count
+    });
+
+    console.log(`✅ Questions for video ${videoIdx} reordered.`);
 }
+
 function addOption(videoId, questionId) {
     const optionsContainer = document.querySelector(`#question-container-${videoId}-${questionId} .options-container`);
 
@@ -175,6 +225,7 @@ function addOption(videoId, questionId) {
 
     // Create the option element
     const optionDiv = document.createElement("div");
+    optionDiv.id = `option-${videoId}-${questionId}-${optionId}`;
     optionDiv.classList.add("form-group", "row", "mb-3"); // Add Bootstrap styling
     optionDiv.innerHTML = `
                 <label class="col-lg-2 col-form-label" for="option-${videoId}-${questionId}-${optionId}">
@@ -209,8 +260,60 @@ function addOption(videoId, questionId) {
     optionsContainer.appendChild(optionDiv);
 }
 function removeOption(videoIdx, questionIdx, optionIdx) {
-    document.getElementById(`option-${videoIdx}-${questionIdx}-${optionIdx}`).remove();
+    console.log(`🔹 Removing option ${optionIdx} from question ${questionIdx} (video ${videoIdx})...`);
+
+    // Find and remove the option element
+    const optionElement = document.getElementById(`option-${videoIdx}-${questionIdx}-${optionIdx}`);
+    if (!optionElement) {
+        console.error(`❌ Option element not found: option-${videoIdx}-${questionIdx}-${optionIdx}`);
+        return;
+    }
+    optionElement.remove();
+
+    // Find the options container
+    const optionsContainer = document.getElementById(`options-container-${videoIdx}-${questionIdx}`);
+    if (!optionsContainer) {
+        console.error(`❌ Options container not found: options-container-${videoIdx}-${questionIdx}`);
+        return;
+    }
+
+    // Get all remaining options
+    const remainingOptions = Array.from(optionsContainer.children);
+    console.log(`🔍 Remaining options count: ${remainingOptions.length}`);
+
+    // Renumber remaining options
+    remainingOptions.forEach((optionDiv, newIdx) => {
+        console.log(`🔄 Updating option ${newIdx}`);
+
+        // Update the option div ID
+        optionDiv.id = `option-${videoIdx}-${questionIdx}-${newIdx}`;
+
+        // Update label
+        const optionLabel = optionDiv.querySelector("label");
+        if (optionLabel) {
+            optionLabel.textContent = `Option ${newIdx}:`;
+            optionLabel.setAttribute("for", `option-input-${videoIdx}-${questionIdx}-${newIdx}`);
+        }
+
+        // Update input field
+        const inputField = optionDiv.querySelector("input");
+        if (inputField) {
+            inputField.name = `videos[${videoIdx}][quizzes][${questionIdx}][options][${newIdx}]`;
+            inputField.id = `option-input-${videoIdx}-${questionIdx}-${newIdx}`;
+        }
+
+        // Update remove button function
+        const removeBtn = optionDiv.querySelector("button");
+        if (removeBtn) {
+            removeBtn.setAttribute("onclick", `removeOption(${videoIdx}, ${questionIdx}, ${newIdx})`);
+        }
+    });
+
+    console.log(`✅ Options for question ${questionIdx} (video ${videoIdx}) successfully updated.`);
 }
+
+
+
     </script>
 @stop
 @stop
