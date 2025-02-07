@@ -130,84 +130,55 @@ function removeVideo(index) {
 }
 
 function addQuestion(videoIdx) {
-    console.log(`🔹 Adding question to video ${videoIdx}...`);
-
-    // Find the correct container
     const questionsContainer = document.getElementById(`questions-container-${videoIdx}`);
     if (!questionsContainer) {
         console.error(`❌ Questions container for video ${videoIdx} not found!`);
         return;
     }
 
-    // Get current question count
     const questionIdx = questionsContainer.children.length;
-    console.log(`🆕 New question index: ${questionIdx}`);
 
-    // Create question HTML
     const questionHTML = `
         <div id="question-container-${videoIdx}-${questionIdx}" class="question-item">
             <label for="question-${videoIdx}-${questionIdx}">Question ${questionIdx + 1}:</label>
-            <input type="text" id="question-${videoIdx}-${questionIdx}" name="videos[${videoIdx}][quizzes][${questionIdx}][question]" required>
+            <input type="text" id="question-${videoIdx}-${questionIdx}"
+                name="videos[${videoIdx}][quizzes][${questionIdx}][question]"
+                class="form-control" required>
 
+            <!-- ✅ Ensure this div is present -->
             <div id="options-container-${videoIdx}-${questionIdx}" class="options-container"></div>
 
-            <button type="button" onclick="addOption(${videoIdx}, ${questionIdx})">Add Option</button>
-            <button type="button" onclick="removeQuestion(${videoIdx}, ${questionIdx})">Remove Question</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addOption(${videoIdx}, ${questionIdx})">
+                Add Option
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(${videoIdx}, ${questionIdx})">
+                Remove Question
+            </button>
         </div>
     `;
 
-    // Append the question
     questionsContainer.insertAdjacentHTML("beforeend", questionHTML);
-
-    console.log(`✅ Question ${questionIdx} added successfully to video ${videoIdx}.`);
 }
 
 
 
 
 function removeQuestion(videoIdx, questionIdx) {
-    console.log(`Removing question ${questionIdx} from video ${videoIdx}...`);
-
-    // Remove the question
     document.getElementById(`question-container-${videoIdx}-${questionIdx}`).remove();
 
-    // Update indexes for remaining questions
     const questionsContainer = document.getElementById(`questions-container-${videoIdx}`);
-    const remainingQuestions = questionsContainer.querySelectorAll("[id^=question-container-]");
-
-    questionIndex[videoIdx] = 0; // Reset question index for this video
-    optionIndex[videoIdx] = {}; // Reset option index for reordering
+    const remainingQuestions = questionsContainer.querySelectorAll(".question-item");
 
     remainingQuestions.forEach((questionDiv, newIdx) => {
-        const oldQuestionId = questionDiv.id.split("-").pop();
-
-        // Update the question div ID
         questionDiv.id = `question-container-${videoIdx}-${newIdx}`;
-
-        // Update the heading number
-        const questionTitle = questionDiv.querySelector("h4");
-        questionTitle.innerHTML = `Question ${newIdx + 1}
-            <button type="button" class="btn btn-danger btn-sm float-right" onclick="removeQuestion(${videoIdx}, ${newIdx})">Remove</button>`;
-
-        // Update input field names
+        questionDiv.querySelector("label").innerHTML = `Question ${newIdx + 1}:`;
         const inputField = questionDiv.querySelector("input[name^='videos']");
         if (inputField) {
             inputField.name = `videos[${videoIdx}][quizzes][${newIdx}][question]`;
         }
-
-        // Update the options container ID
-        const optionsContainer = questionDiv.querySelector("[id^=options-container-]");
-        if (optionsContainer) {
-            optionsContainer.id = `options-container-${videoIdx}-${newIdx}`;
-        }
-
-        // Store new question index
-        questionIndex[videoIdx] = newIdx + 1;
-        optionIndex[videoIdx][newIdx] = optionIndex[videoIdx][oldQuestionId] || 0; // Preserve option count
     });
-
-    console.log(`✅ Questions for video ${videoIdx} reordered.`);
 }
+
 
 function addOption(videoId, questionId) {
     const optionsContainer = document.querySelector(`#question-container-${videoId}-${questionId} .options-container`);
@@ -291,7 +262,7 @@ function removeOption(videoIdx, questionIdx, optionIdx) {
         // Update label
         const optionLabel = optionDiv.querySelector("label");
         if (optionLabel) {
-            optionLabel.textContent = `Option ${newIdx}:`;
+            optionLabel.textContent = `Option ${newIdx + 1}:`;
             optionLabel.setAttribute("for", `option-input-${videoIdx}-${questionIdx}-${newIdx}`);
         }
 
