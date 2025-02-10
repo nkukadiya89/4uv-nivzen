@@ -40,12 +40,15 @@ class UsersController extends Controller
         $data = $request->all();
 
         $sortColumn = array('firstname','lastname','email','phone','dob', 'city', 'state', 'country', 'status');
-       
+
         $authUser = Auth::user();
         $query = User::manageableBy($authUser)->with('roles');
 
         $query = $query->where('id', '!=', auth()->id());
-        $query = $query->where('type', 'User');
+        //$query = $query->where('type', 'User');
+        $query = User::whereHas('roles', function ($query) {
+            $query->where('name', '!=', 'Distributor');
+        });
 
         if (isset($data['firstname']) && $data['firstname'] != '') {
             $query = $query->where('firstname', 'LIKE', '%' . $data['firstname'] . '%');
@@ -109,7 +112,7 @@ class UsersController extends Controller
         ;
         $arrUsers = $users->toArray();
         $data = array();
-       
+
         foreach ($arrUsers['data'] as $key => $val) {
             $index = 0;
 
@@ -285,7 +288,7 @@ class UsersController extends Controller
         return Redirect(config('constants.ADMIN_URL') . 'users');
     }
 
-   
+
     public function show(Request $request, $id)
     {
         $user = User::find($id);

@@ -29,7 +29,8 @@ class DistributorController extends Controller
         $query = new User();
 
         // Add condition to fetch only 'Distributor' type users
-        $query = $query->where('type', 'Distributor');
+        //$query = $query->where('type', 'Distributor');
+        $query = User::role('Distributor');
 
         if (isset($data['enagic_id']) && $data['enagic_id'] != '') {
             $query = $query->where('enagic_id', 'LIKE', '%' . $data['enagic_id'] . '%');
@@ -196,6 +197,8 @@ class DistributorController extends Controller
             $distributor->feature_access = '1';
 
             $distributor->save();
+            $distributor->syncRoles('Distributor');
+
             if ($distributor->save()) {
                 Mail::to($distributor->email)->send(new DistributorRegister($distributor, $randomPassword));
                 Session::flash('success-message', $request->title . " created successfully !");
