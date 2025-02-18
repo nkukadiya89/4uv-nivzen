@@ -30,8 +30,8 @@ class DistributorController extends Controller
 
         // Add condition to fetch only 'Distributor' type users
         //$query = $query->where('type', 'Distributor');
-        $query = User::role('Distributor');
-
+        $query = User::role('Distributor')->where('upline_id', auth()->id());
+       
         if (isset($data['enagic_id']) && $data['enagic_id'] != '') {
             $query = $query->where('enagic_id', 'LIKE', '%' . $data['enagic_id'] . '%');
         }
