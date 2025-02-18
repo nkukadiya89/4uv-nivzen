@@ -67,6 +67,8 @@
                                 <th>City</th>
                                 <th>State</th>
                                 <th>Country</th>
+                                <th>No. Of Demo</th>
+                                <th>No. Of Followup</th>
                                 <th width="105" class="no-sort text-center">Actions</th>
                             </tr>
                         </thead>
@@ -86,6 +88,10 @@
                                            name="state"></td>
                                 <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                            name="country"></td>
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                           name="1"></td>
+                                <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                           name="follow_up_count"></td>
                                 <td>
                                     <button class="btn btn-light-warning font-weight-bolder btn-sm filter-submit"><span><i
                                                 class="la la-search"></i><span>Search</span></span></button> &nbsp;

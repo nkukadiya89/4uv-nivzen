@@ -105,6 +105,54 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg-12">
+                            <h4>Statuses</h4>
+                            <table class="table" id="statuses_table">
+                                <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Remarks</th>
+                                    <th><button type="button" id="add_row" class="btn btn-sm btn-primary">+</button></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(isset($prospect) && $prospect->statuses->count() > 0)
+                                    @foreach($prospect->statuses as $index => $status)
+                                        <tr>
+                                            <input type="hidden" name="statuses[{{$index}}][id]" value="{{ $status->id ?? '' }}">
+                                            <td>
+                                                <select name="statuses[{{ $index }}][status]" class="form-control">
+                                                    <option value="Invitation" {{ $status->status == 'Invitation' ? 'selected' : '' }}>Invitation</option>
+                                                    <option value="Demo" {{ $status->status == 'Demo' ? 'selected' : '' }}>Demo</option>
+                                                    <option value="Followup" {{ $status->status == 'Followup' ? 'selected' : '' }}>Followup</option>
+                                                    <option value="Machine Purchased" {{ $status->status == 'Machine Purchased' ? 'selected' : '' }}>Machine Purchased</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="date" name="statuses[{{ $index }}][date]" class="form-control" value="{{ $status->date }}"></td>
+                                            <td><input type="text" name="statuses[{{ $index }}][remarks]" class="form-control" value="{{ $status->remarks }}"></td>
+                                            <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td>
+                                            <select name="statuses[0][status]" class="form-control">
+                                                <option value="Invitation">Invitation</option>
+                                                <option value="Demo">Demo</option>
+                                                <option value="Followup">Followup</option>
+                                                <option value="Machine Purchased">Machine Purchased</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="date" name="statuses[0][date]" class="form-control"></td>
+                                        <td><input type="text" name="statuses[0][remarks]" class="form-control"></td>
+                                        <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -132,6 +180,30 @@ $(document).ready(function() {
     @if(Session::has('success-message'))
     toastr.info("{{ session('success-message') }}");
     @endif
+});
+document.getElementById('add_row').addEventListener('click', function() {
+    let table = document.querySelector("#statuses_table tbody");
+    let rowCount = table.rows.length;
+    let row = table.insertRow();
+    row.innerHTML = `
+        <td>
+            <select name="statuses[${rowCount}][status]" class="form-control">
+                <option value="Invitation">Invitation</option>
+                <option value="Demo">Demo</option>
+                <option value="Followup">Followup</option>
+                <option value="Machine Purchased">Machine Purchased</option>
+            </select>
+        </td>
+        <td><input type="date" name="statuses[${rowCount}][date]" class="form-control"></td>
+        <td><input type="text" name="statuses[${rowCount}][remarks]" class="form-control"></td>
+        <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
+    `;
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove_row')) {
+        e.target.closest('tr').remove();
+    }
 });
 </script>
 @stop

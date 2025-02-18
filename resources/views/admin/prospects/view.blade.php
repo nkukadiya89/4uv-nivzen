@@ -102,6 +102,28 @@
                             </div>
                         </div>
 
+                        <div class="col-12">
+                            <h4>Status History</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Remarks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($prospect->statuses as $status)
+                                    <tr>
+                                        <td>{{ $status->status }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($status->date)->format('d-m-Y') }}</td>
+                                        <td>{{ $status->remarks }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
             </div>

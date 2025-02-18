@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Prospect;
+use App\Models\ProspectStatus;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,15 @@ class ProspectController extends Controller
 
         $sortColumn = array('name','email','mobile_no', 'city', 'state', 'country');
         $query = new Prospect();
+
+        $query = Prospect::withCount([
+            'statuses as demo_count' => function ($query) {
+                $query->where('status', 'Demo');
+            },
+            'statuses as follow_up_count' => function ($query) {
+                $query->where('status', 'Followup');
+            }
+        ]);
 
 
         if (isset($data['name']) && $data['name'] != '') {
@@ -83,7 +93,9 @@ class ProspectController extends Controller
             $data[$key][$index++] = $val['city'];
             $data[$key][$index++] = $val['state'];
             $data[$key][$index++] = $val['country'];
-
+// Add demo and follow-up counts
+            $data[$key][$index++] = $val['demo_count'];
+            $data[$key][$index++] = $val['follow_up_count'];
             //$data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
 
@@ -131,6 +143,10 @@ class ProspectController extends Controller
             'city' => 'required',
             'state' => 'required',
             'country' => 'required',
+            'statuses' => 'required|array', // Ensure statuses is an array
+            'statuses.*.status' => 'required|in:Invitation,Demo,Followup,Machine Purchased',
+            'statuses.*.date' => 'required|date',
+            'statuses.*.remarks' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -145,9 +161,17 @@ class ProspectController extends Controller
             $prospect->city= $request->city;
             $prospect->state= $request->state;
             $prospect->country= $request->country;
+            $prospect->created_by = auth()->id();
             $prospect->save();
 
             if ($prospect->save()) {
+                // Add prospect statuses
+                // Add prospect statuses with created_by
+                $statuses = collect($request->statuses)->map(function ($status) {
+                    return array_merge($status, ['created_by' => auth()->id()]);
+                })->toArray();
+
+                $prospect->statuses()->createMany($statuses);
                 Session::flash('success-message', $request->name . " created successfully !");
                 $data['success'] = true;
 
@@ -160,7 +184,9 @@ class ProspectController extends Controller
     public function editProspect(Request $request, $id)
     {
 
-        $prospect = Prospect::find($id);
+        $prospect = Prospect::with(['statuses' => function($query) {
+            $query->orderBy('id'); // Order statuses by id
+        }])->find($id);
         $title = 'Edit Prospect';
         $inputs  = $request->all();
         if ($prospect || !empty($prospect)) {
@@ -175,19 +201,56 @@ class ProspectController extends Controller
                     'city' => 'required',
                     'state' => 'required',
                     'country' => 'required',
+                    'statuses' => 'array', // Ensure statuses array exists
+                    'statuses.*.status' => 'required|string',
+                    'statuses.*.date' => 'nullable|date',
+                    'statuses.*.remarks' => 'nullable|string',
                 ]);
 
                 if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
                 } else {
-                    $prospect->name= $request->name;
-                    $prospect->email= $request->email;
-                    $prospect->mobile_no= $request->mobile_no;
-                    $prospect->address= $request->address;
-                    $prospect->area= $request->area;
-                    $prospect->city= $request->city;
-                    $prospect->state= $request->state;
-                    $prospect->country= $request->country;
+                    // Update prospect details
+                    $prospect->update([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'mobile_no' => $request->mobile_no,
+                        'address' => $request->address,
+                        'area' => $request->area,
+                        'city' => $request->city,
+                        'state' => $request->state,
+                        'country' => $request->country,
+                        'updated_by' => auth()->id()
+                    ]);
+
+
+                    if ($request->has('statuses')) {
+                        $existingStatusIds = $prospect->statuses->pluck('id')->toArray(); // Get existing status IDs
+
+                        foreach ($request->statuses as $status) {
+                            if (!empty($status['id']) && in_array($status['id'], $existingStatusIds)) {
+                                // Update existing status
+                                $prospect->statuses()->where('id', $status['id'])->update([
+                                    'status' => $status['status'],
+                                    'date' => $status['date'],
+                                    'remarks' => $status['remarks'],
+                                    'updated_by' => auth()->id()
+                                ]);
+                            } else {
+                                // Insert new status if it doesn't exist
+                                $prospect->statuses()->create([
+                                    'status' => $status['status'],
+                                    'date' => $status['date'],
+                                    'remarks' => $status['remarks'],
+                                    'created_by' => auth()->id()
+                                ]);
+                            }
+                        }
+
+                        // Remove statuses that were removed from the form
+                        $requestStatusIds = collect($request->statuses)->pluck('id')->filter()->toArray();
+                        //$prospect->statuses()->whereNotIn('id', $requestStatusIds)->delete();
+                    }
 
                     if ($prospect->save()) {
                         Session::flash('success-message', $prospect->name . " updated successfully !");
@@ -207,7 +270,9 @@ class ProspectController extends Controller
 
     public function viewProspect($id) {
 
-        $prospect = Prospect::find($id);
+        $prospect = Prospect::with(['statuses' => function($query) {
+            $query->orderBy('id'); // Order statuses by id
+        }])->find($id);
         $title = 'View Prospect ';
         return view('admin.prospects.view', compact('title', 'prospect'));
     }

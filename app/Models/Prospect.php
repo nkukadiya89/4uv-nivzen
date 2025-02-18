@@ -18,7 +18,15 @@ class Prospect extends Model
         'area',
         'city',
         'state',
-        'country'
+        'country',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
+
+    public function statuses()
+    {
+        return $this->hasMany(ProspectStatus::class);
+    }
 
 }
