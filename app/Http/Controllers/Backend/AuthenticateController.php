@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
 class AuthenticateController extends BaseController {
 
     public function index(Request $request) {
-      
+
         return view('admin.auth.login', array('title' => 'Login'));
     }
 
@@ -126,7 +126,7 @@ class AuthenticateController extends BaseController {
      */
     public function addUser(Request $request)
     {
-      
+
         $inputs = $request->all();
 
         $validator = Validator::make($inputs, [
@@ -160,10 +160,10 @@ class AuthenticateController extends BaseController {
             Session::flash('success-message',  "User created successfully! Plase login");
 
             $data['status'] = 'TRUE';
-           
+
             return response()->json($data);
         }
-    } 
+    }
 
 //    public function myProfile(Request $request) {
 //        $inputs = $request->all();
@@ -236,7 +236,7 @@ class AuthenticateController extends BaseController {
             $data['status'] = 'false';
             return response()->json($data);
          }
-        
+
          //get password reset token
         //  DB::table('password_reset_tokens')->insert([
         //      'email' => $request->email,
@@ -244,33 +244,37 @@ class AuthenticateController extends BaseController {
         //      'created_at' => Carbon::now()
         //  ]);
         //  $tokenData = DB::table('password_reset_tokens')->where('email', $request->email)->first();
-        
- 
+
+
         //  $event_name="Reset Password";
         //  $data['name'] = $user->firstname;
         //  $data['link'] = config('constants.ADMIN_URL').'/password/reset/'.Str::random(60).'?email='.$request->email;
         //  $data['site_url'] = config('constants.ADMIN_URL');
- 
+
         //  $to      = 'test.wld3@gmail.com';
         //  $subject = 'Request for password reset';
         //  $message = 'hello';
         //  $headers = 'From: webmaster@example.com'       . "\r\n" .
         //               'Reply-To: webmaster@example.com' . "\r\n" .
         //               'X-Mailer: PHP/' . phpversion();
-     
+
         //  mail($to, $subject, $message, $headers);
         //  $this->sendKlaviyoEmail($request->email, $event_name, $data);
- 
+
          $data['status'] = 'true';
 
-           
+
          return response()->json($data);
     }
 
     public function dashboard() {
 
         $title = 'Dashboard';
-        $distributorCount = User::where('type', 'Distributor')->count();;
+        //$distributorCount = User::where('type', 'Distributor')->count();
+        $distributorCount = User::role('Distributor')
+            ->where('upline_id', auth()->id())
+            ->where('id', '!=', auth()->id())
+            ->count();
         $prospectCount = Prospect::count();
         $demoCount = Training::count();
 

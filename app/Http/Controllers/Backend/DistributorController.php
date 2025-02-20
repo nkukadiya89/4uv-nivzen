@@ -31,7 +31,7 @@ class DistributorController extends Controller
         // Add condition to fetch only 'Distributor' type users
         //$query = $query->where('type', 'Distributor');
         $query = User::role('Distributor')->where('upline_id', auth()->id());
-       
+
         if (isset($data['enagic_id']) && $data['enagic_id'] != '') {
             $query = $query->where('enagic_id', 'LIKE', '%' . $data['enagic_id'] . '%');
         }
@@ -142,8 +142,13 @@ class DistributorController extends Controller
 
     public function showDistributorForm () {
         $title = 'Add Distributor';
-        //$users = User::where('id', '!=', auth()->id())->where('type', 'User')->pluck('name', 'id');
-        $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
+        //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
+        $users = User::role('Distributor')
+            ->where('upline_id', auth()->id())
+            ->where('id', '!=', auth()->id())
+            ->select('id', 'firstname', 'lastname')
+            ->get();
+
         return view('admin.distributors.add', compact('title', 'users'));
     }
 
@@ -268,7 +273,13 @@ class DistributorController extends Controller
                     return redirect()->back()->with("success", " Distributor updated successfully !");
                 }
             } else {
-                $users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
+                //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
+                $users = User::role('Distributor')
+                    ->where('upline_id', auth()->id())
+                    ->where('id', '!=', auth()->id())
+                    ->select('id', 'firstname', 'lastname')
+                    ->get();
+
                 return view('admin.distributors.edit', compact('title', 'distributor', 'users'));
                 //return view('admin.distributors.edit', compact('distributor', 'title'));
             }
