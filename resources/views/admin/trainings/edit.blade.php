@@ -40,8 +40,11 @@
                             @if(isset($training->videoLessons) && count($training->videoLessons) > 0)
                                 @foreach($training->videoLessons as $videoIndex => $video)
                                     <div class="video-container mb-4 border p-3 rounded" data-video-index="{{ $videoIndex }}">
-                                        <h4 class="d-flex justify-content-between align-items-center">Video {{ $videoIndex + 1 }}
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="removeVideo({{$training->id}}, {{ $videoIndex }})">Remove Video</button></h4>
+                                        <h4 class="d-flex justify-content-between align-items-center">
+                                            <p>Video <span class="video-index">{{ $videoIndex + 1 }}</span></p>
+                                            <button type="button" class="btn btn-danger btn-sm remove-video" data-training-id="{{$training->id}}" data-video-index="{{$videoIndex}}">Remove</button>
+                                        </h4>
+
                                         <input type="hidden" name="videos[{{ $videoIndex }}][id]" value="{{ $video->id }}">
                                         <div class="form-group row">
                                             <label class="col-lg-3 form-label">Video Title<span class="required">*</span></label>
@@ -73,52 +76,59 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="mcq-section mb-4">
-                                            <h5 class="d-flex justify-content-between align-items-center">Questions
-                                                <button type="button" class="btn btn-sm btn-primary" onclick="addQuestion({{ $videoIndex }})">Add Question</button>
-                                            </h5>
+                                        <div class="quiz-section">
 
-                                            @foreach($video->quizzes as $quizIndex => $quiz)
-                                                <div id="question-container-{{ $videoIndex }}-{{ $quizIndex }}" class="question-container mb-4 border p-3 rounded" data-question-index="{{ $quizIndex }}">
-                                                    <div class="form-group row">
-                                                        <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][id]" value="{{ $quiz->id }}">
-                                                        <label class="col-lg-2 col-form-label">Question: {{$quizIndex + 1}}<span class="required">*</span></label>
-                                                        <div class="col-lg-7">
-                                                            <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][question]" class="form-control required" placeholder="Enter question" value="{{ $quiz->question }}"  />
+
+{{--                                                <h5 class="d-flex justify-content-between align-items-center">Questions--}}
+{{--                                                    <button type="button" class="btn btn-sm btn-primary" onclick="addQuestion({{ $videoIndex }})">Add Question</button>--}}
+{{--                                                </h5>--}}
+
+                                                @foreach($video->quizzes as $quizIndex => $quiz)
+                                                    <div id="question-container-{{ $videoIndex }}-{{ $quizIndex }}" class="question-container mb-4 border p-3 rounded" data-quiz-index="{{ $quizIndex }}">
+                                                        <div class="form-group row">
+                                                            <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][id]" value="{{ $quiz->id }}">
+                                                            <label class="col-lg-2 col-form-label">
+                                                                <p>Question <span class="quiz-index">{{ $quizIndex + 1 }}</span></p><span class="required">*</span>
+                                                            </label>
+                                                            <div class="col-lg-7">
+                                                                <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][question]" class="form-control required" placeholder="Enter question text" value="{{ $quiz->question }}"  />
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                <button type="button" class="btn btn-danger btn-sm remove-quiz" data-video-index="{{$videoIndex}}" data-quiz-index="{{$quizIndex}}">Remove</button>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-lg-3">
-                                                            <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion({{ $videoIndex }}, {{ $quizIndex }})">Remove Question</button>
-                                                        </div>
+
+                                                        <!-- Options Section -->
+                                                        <div class="option-section">
+                                                        @foreach($quiz->options as $optionIndex => $option)
+
+                                                            <div class="form-group row option-container justify-content-between align-items-center" data-option-index="{{ $optionIndex }}">
+                                                                <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][id]" value="{{ $option->id }}">
+                                                                <label class="col-lg-2 col-form-label">Option {{ $optionIndex + 1 }}:</label>
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][option]" class="form-control required" placeholder="Enter option" value="{{ $option->option }}" />
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <input type="radio" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][correct_option]" value="{{ $optionIndex }}" {{ $option->is_correct ? 'checked' : '' }}> Correct
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <button type="button" class="btn btn-sm btn-danger remove-option" data-video-index="{{ $videoIndex }}" data-quiz-index="{{ $quizIndex }}" data-option-index="{{$optionIndex}}">Remove</button>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                         </div>
+                                                        <button type="button" class="btn btn-sm btn-primary add-option" data-video-index="{{$videoIndex}}" data-quiz-index="{{$quizIndex}}">Add Option</button>
                                                     </div>
-                                                    @foreach($quiz->options as $optionIndex => $option)
-
-                                                        <div class="form-group row option-container" data-option-index="{{ $optionIndex }}">
-                                                            <input type="hidden" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][id]" value="{{ $option->id }}">
-                                                            <label class="col-lg-2 col-form-label">Option {{ $optionIndex + 1 }}:</label>
-                                                            <div class="col-lg-4">
-                                                                <input type="text" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][options][{{ $optionIndex }}][option]" class="form-control required" placeholder="Enter option" value="{{ $option->option }}"  />
-                                                            </div>
-                                                            <div class="col-lg-3">
-                                                                <input type="radio" name="videos[{{ $videoIndex }}][quizzes][{{ $quizIndex }}][correct_option]" value="{{ $optionIndex }}" {{ $option->is_correct ? 'checked' : '' }}> Correct
-                                                            </div>
-                                                            <div class="col-lg-3">
-                                                                <button type="button" class="btn btn-sm btn-danger" onclick="removeOption({{ $videoIndex }}, {{ $quizIndex }}, {{$optionIndex}})">Remove Option</button>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="addOption({{ $videoIndex }}, {{ $quizIndex }})">Add Option</button>
-
-                                                </div>
-                                            @endforeach
+                                                @endforeach
 
                                         </div>
-
+                                        <button type="button" class="btn btn-sm btn-secondary add-quiz">Add Question</button>
                                     </div>
                                 @endforeach
                             @endif
                         </div>
                         <!-- Add Video Button -->
-                        <button type="button" class="btn btn-success mb-4" onclick="addVideo()">Add Another Video</button>
+                        <button type="button" class="btn btn-primary mt-3" id="add-video">Add Video</button>
                     </div>
                     <div class="card-footer d-flex justify-content-end">
                         <a href="{{ route('trainings-manage') }}" class="btn btn-secondary mr-2">Cancel</a>
@@ -132,292 +142,362 @@
 
 @section('custom_js')
     <script>
-        let videoCount = document.querySelectorAll('.video-container').length || 0;
+        $(document).ready(function () {
+            let videoIndex = $("#video-section .video-container").length;
 
-        // Add a new video
-        function addVideo() {
-            const videoSection = document.getElementById('video-section');
-            const newVideoIndex = videoCount++;
-
-            const videoTemplate = `
-        <div class="video-container mb-4 border p-3 rounded" data-video-index="${newVideoIndex}">
-            <h4 class="d-flex justify-content-between align-items-center">Video ${newVideoIndex + 1}
-            <button type="button" class="btn btn-sm btn-danger mt-3" onclick="removeVideo(null, ${newVideoIndex})">Remove Video</button>
-            </h4>
-            <div class="form-group row">
-                <label class="col-lg-3 form-label">Video Title</label>
-                <div class="col-lg-6">
-                    <input type="text" name="videos[${newVideoIndex}][title]" class="form-control required" placeholder="Enter video title" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 form-label">Video Description</label>
-                <div class="col-lg-6">
-                    <textarea name="videos[${newVideoIndex}][description]" class="form-control" rows="3" placeholder="Enter video description"></textarea>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 form-label">Upload Video</label>
-                <div class="col-lg-6">
-                    <input type="file" name="videos[${newVideoIndex}][video]" class="form-control" accept="video/*" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 form-label">Upload Thumbnail</label>
-                <div class="col-lg-6">
-                    <input type="file" name="videos[${newVideoIndex}][thumbnail]" class="form-control" accept="image/*" />
-                </div>
-            </div>
-            <div class="mcq-section mb-4">
-                <h5 class="d-flex justify-content-between align-items-center">Questions
-                <button type="button" class="btn btn-sm btn-primary" onclick="addQuestion(${newVideoIndex})">Add Question</button>
-                </h5>
-            </div>
-        </div>
-    `;
-
-            videoSection.insertAdjacentHTML('beforeend', videoTemplate);
-        }
-
-        // Remove a video
-        function removeVideo(trainingId, videoIndex) {
-            const videoContainer = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
-
-            if (!videoContainer) {
-                console.error("Video container not found!");
-                return;
-            }
-
-            // Get Video ID from Hidden Input Field
-            const videoIdInput = videoContainer.querySelector(`input[name="videos[${videoIndex}][id]"]`);
-            const videoLessonId = videoIdInput ? videoIdInput.value : null;
-
-            if (videoLessonId) {
-                swal.fire({
-                    title: 'Are you sure You want to delete this record?',
-                    text: '',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true
-                }).then(function(result) {
-                    if (result.value) {
-                        $.ajax({
-                            url: `/backend/training/${trainingId}/video/${videoLessonId}`,
-                            type: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function (response) {
-                                console.log(response.message);
-                                swal.fire(
-                                    'Deleted!',
-                                    'Your record has been deleted.',
-                                    'success'
-                                );
-                                videoContainer.remove(); // Remove from DOM
-                            },
-                            error: function (xhr) {
-                                console.error("Error deleting video:", xhr.responseText);
-                                swal("Error!", "Error deleting video. Please try again.", "error");
+            // Function to update indexes of videos and questions
+            function reindex() {
+                $(".video-container").each(function (vIndex) {
+                    $(this).find(".video-index").text(vIndex + 1);
+                    $(this).find("[name^='videos']").each(function () {
+                        let nameAttr = $(this).attr("name");
+                        if (nameAttr) {
+                            let updatedName = nameAttr.replace(/\[videos\]\[\d+\]/, `[videos][${vIndex}]`);
+                            $(this).attr("name", updatedName);
+                        }
+                    });
+                    console.log($(this).find(".question-container"));
+                    // Reindex quizzes inside each video
+                    $(this).find(".question-container").each(function (qIndex) {
+                        $(this).find(".quiz-index").text(qIndex + 1);
+                        $(this).find("[name^='videos']").each(function () {
+                            let nameAttr = $(this).attr("name");
+                            if (nameAttr) {
+                                let updatedName = nameAttr.replace(/\[quizzes\]\[\d+\]/, `[quizzes][${qIndex}]`);
+                                $(this).attr("name", updatedName);
                             }
                         });
-
-                    }
+                    });
                 });
-            } else {
-                videoContainer.remove();
             }
-        }
 
-        // Add a new question to a specific video
-        function addQuestion(videoIndex) {
-            const videoContainer = document.querySelector(`.video-container[data-video-index="${videoIndex}"]`);
-            const mcqSection = videoContainer.querySelector('.mcq-section');
-            const questionCount = videoContainer.querySelectorAll('.question-container').length || 0;
+            // Add new video
+            $("#add-video").click(function () {
+                let newIndex = videoIndex;
+                let newVideo = `
+        <div class="video-container mb-4 border p-3 rounded" data-video-index="${newIndex}">
+            <h4 class="d-flex justify-content-between align-items-center">
+                <p>Video <span class="video-index">${newIndex + 1}</span></p>
+                <button type="button" class="btn btn-danger btn-sm remove-video">Remove</button>
+            </h4>
+            <div class="form-group row mb-5">
+                <label class="col-lg-3 form-label">Video Title<span class="required">*</span></label>
+                <div class="col-lg-6"><input type="text" name="videos[${newIndex}][title]" class="form-control" placeholder="Enter video title"></div>
+            </div>
+            <div class="form-group row mb-5">
+                <label class="col-lg-3 form-label">Video Description</label>
+                <div class="col-lg-6"><textarea name="videos[${newIndex}][description]" class="form-control" rows="3" placeholder="Enter video description"></textarea></div>
+            </div>
+            <div class="form-group row mb-5">
+                <label class="col-lg-3 form-label">Upload Video<span class="required">*</span></label>
+                <div class="col-lg-6"><input type="file" name="videos[${newIndex}][video]" class="form-control" accept="video/*" /></div>
+            </div>
+            <div class="form-group row mb-5">
+                <label class="col-lg-3 form-label">Upload Thumbnail</label>
+                <div class="col-lg-6"><input type="file" name="videos[${newIndex}][thumbnail]" class="form-control" accept="image/*" /></div>
+            </div>
 
-            const questionTemplate = `
-        <div id="question-container-${videoIndex}-${questionCount}" class="question-container mb-4 border p-3 rounded" data-question-index="${questionCount}">
-            <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Question: ${questionCount + 1}</label>
-                <div class="col-lg-7">
-                    <input type="text" name="videos[${videoIndex}][quizzes][${questionCount}][question]" class="form-control required" placeholder="Enter question"  />
-                </div>
-                <div class="col-lg-3">
-                <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeQuestion(${videoIndex}, ${questionCount})">Remove Question</button>
+            <!-- Quiz Section -->
+            <div class="quiz-section">
+                <div id="question-container-${newIndex}-0" class="question-container mb-3 border p-2 rounded" data-quiz-index="0">
+                    <div class="form-group row">
+                         <label class="col-lg-2 col-form-label"><p>Question <span class="quiz-index">1</span></p></label>
+                         <div class="col-lg-7"><input type="text" name="videos[${newIndex}][quizzes][0][question]" class="form-control mb-5" placeholder="Enter question text"></div>
+                         <div class="col-lg-3">
+                              <button type="button" class="btn btn-danger btn-sm remove-quiz" data-video-index="${newIndex}" data-quiz-index="0">Remove</button>
+                          </div>
+                    </div>
+
+
+                    <!-- Options Section -->
+                    <div class="option-section">
+                        <div class="form-group row option-container justify-content-between align-items-center" data-option-index="0">
+                            <label class="col-lg-2 col-form-label">Option 1:</label>
+                            <div class="col-lg-4">
+                                <input type="text" name="videos[${newIndex}][quizzes][0][options][0][option]" class="form-control required" placeholder="Enter option">
+                            </div>
+                            <div class="col-lg-3">
+                                <input type="radio" name="videos[${newIndex}][quizzes][0][correct_option]" value="0"> Correct
+                            </div>
+                            <div class="col-lg-3">
+                                <button type="button" class="btn btn-sm btn-danger remove-option" data-video-index="${newIndex}" data-quiz-index="0" data-option-index="0">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary add-option">Add Option</button>
                 </div>
             </div>
+
+            <button type="button" class="btn btn-sm btn-secondary add-quiz">Add Question</button>
+        </div>
+        `;
+
+                $("#video-section").append(newVideo);
+                videoIndex++;
+                reindex();
+            });
+
+            // Remove video
+            $(document).on("click", ".remove-video", function () {
+                var trainingId = $(this).attr("data-training-id"); // OR $(this).data("training-id");
+                var videoIndex = $(this).attr("data-video-index"); // OR $(this).data("video-index");
+                var videoContainer = $(this).closest(".video-container");
+                var videoIdInput = videoContainer.find("input[type='hidden'][name^='videos'][name$='[id]']");
+                if (trainingId && videoIdInput.length) {
+                    var videoId = videoIdInput.val();
+                    console.log("Video ID:", videoId);
+
+                    // Perform any additional checks if needed
+                    if (videoId) {
+                        swal.fire({
+                            title: 'Are you sure You want to delete this record?',
+                            text: '',
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, delete it!',
+                            cancelButtonText: 'Cancel',
+                            reverseButtons: true
+                        }).then(function(result) {
+                            if (result.value) {
+                                $.ajax({
+                                    url: `/backend/training/${trainingId}/video/${videoId}`,
+                                    type: 'DELETE',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    success: function (response) {
+                                        console.log(response.message);
+                                        swal.fire(
+                                            'Deleted!',
+                                            'Your record has been deleted.',
+                                            'success'
+                                        );
+                                        videoContainer.remove();
+                                        reindex();
+                                    },
+                                    error: function (xhr) {
+                                        console.error("Error deleting video:", xhr.responseText);
+                                        swal("Error!", "Error deleting video. Please try again.", "error");
+                                    }
+                                });
+
+                            }
+                        });
+                    }
+                } else {
+                    console.log('new fresh video not id');
+                    videoContainer.remove();
+                    reindex();
+                }
+
+
+                // $(this).closest(".video-container").remove();
+                // reindex();
+            });
+
+            // Add new question (Fixing issue)
+            $(document).on("click", ".add-quiz", function () {
+                let videoContainer = $(this).closest(".video-container");
+                let videoIndex = $(".video-container").index(videoContainer); // Ensure correct video index
+                let quizIndex = videoContainer.find(".question-container").length;
+
+                let newQuiz = `
+        <div id="question-container-${videoIndex}-${quizIndex}" class="question-container mb-3 border p-2 rounded">
+             <div class="form-group row">
+                         <label class="col-lg-2 col-form-label"><p>Question <span class="quiz-index">${quizIndex + 1}</span></p></label>
+                         <div class="col-lg-7"><input type="text" name="videos[${videoIndex}][quizzes][${quizIndex}][question]" class="form-control mb-5" placeholder="Enter question text"></div>
+                         <div class="col-lg-3">
+                             <button type="button" class="btn btn-danger btn-sm remove-quiz" data-video-index="${videoIndex}" data-quiz-index="${quizIndex}">Remove</button>
+                         </div>
+             </div>
+            <!-- Options Section -->
             <div class="option-section">
-                <div class="form-group row option-container" data-option-index="0">
+                <div class="form-group row option-container justify-content-between align-items-center" data-option-index="0">
                     <label class="col-lg-2 col-form-label">Option 1:</label>
                     <div class="col-lg-4">
-                        <input type="text" name="videos[${videoIndex}][quizzes][${questionCount}][options][0][option]" class="form-control required" placeholder="Enter option"  />
+                        <input type="text" name="videos[${videoIndex}][quizzes][${quizIndex}][options][0][option]" class="form-control required" placeholder="Enter option">
                     </div>
                     <div class="col-lg-3">
-                        <input type="radio" name="videos[${videoIndex}][quizzes][${questionCount}][correct_option]" value="0"> Correct
+                        <input type="radio" name="videos[${videoIndex}][quizzes][${quizIndex}][correct_option]" value="0"> Correct
                     </div>
                     <div class="col-lg-3">
-              <button type="button" class="btn btn-sm btn-danger" onclick="removeOption( ${videoIndex}, ${questionCount}, 0)">Remove Option</button>
-            </div>
+                        <button type="button" class="btn btn-sm btn-danger remove-option" data-video-index="${videoIndex}" data-quiz-index="${quizIndex}" data-option-index="0">Remove</button>
+                    </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="addOption(${videoIndex}, ${questionCount})">Add Option</button>
+            <button type="button" class="btn btn-sm btn-primary add-option">Add Option</button>
+        </div>`;
 
-        </div>
-    `;
+                videoContainer.find(".quiz-section").append(newQuiz);
+                reindex();
+            });
+            // Remove option dynamically
+            $(document).on("click", ".remove-option", function () {
+                // let quizContainer = $(this).closest(".question-container");
+                // $(this).closest(".option-container").remove();
+                //
+                // // Reindex all options after removal
+                // reindexOptions(quizContainer);
 
-            mcqSection.insertAdjacentHTML('beforeend', questionTemplate);
-        }
+                let optionContainer = $(this).closest(".option-container");
+                let optionSection = optionContainer.closest(".option-section"); // Find the parent section containing all options
+                let optionIndex = optionContainer.data("option-index");
+                let videoIndex = $(this).data("video-index");
+                let questionIndex = $(this).data("quiz-index");
 
-        // Remove a question from a specific video
-        function removeQuestion(videoIndex, questionIndex) {
-            const questionContainer = document.getElementById(`question-container-${videoIndex}-${questionIndex}`);
+                if (optionContainer.length === 0) {
+                    console.error("Error: Could not find option container.");
+                    return;
+                }
 
-            if (!questionContainer) {
-                console.error("Question container not found!");
-                return;
-            }
+                // Find the hidden input inside the optionContainer
+                let optionInput = optionContainer.find(`input[name="videos[${videoIndex}][quizzes][${questionIndex}][options][${optionIndex}][id]"]`);
+                let optionId = optionInput.val(); // Get option ID from the hidden input
 
-            // Get Question ID
-            const questionIdInput = questionContainer.querySelector(`input[name="videos[${videoIndex}][quizzes][${questionIndex}][id]"]`);
-            const questionId = questionIdInput ? questionIdInput.value : null;
+                if (optionId) {
+                    swal.fire({
+                        title: 'Are you sure you want to delete this answer?',
+                        text: '',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true
+                    }).then(function (result) {
+                        if (result.value) {
+                            $.ajax({
+                                url: `/backend/delete-quiz-option/${optionId}`,
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function () {
+                                    swal.fire('Deleted!', 'Your record has been deleted.', 'success');
+                                    optionContainer.remove(); // Remove from DOM
+                                    reindexOptionsIds(optionSection, videoIndex, questionIndex); // Reindex remaining options
+                                },
+                                error: function () {
+                                    swal.fire("Error!", "Error deleting answer. Please try again.", "error");
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    optionContainer.remove(); // Remove from DOM if not saved in the database
+                    reindexOptionsIds(optionSection, videoIndex, questionIndex); // Reindex remaining options
+                }
+            });
+// Function to reindex options dynamically
+            function reindexOptionsIds(optionSection, videoIndex, questionIndex) {
+                optionSection.find(".option-container").each(function (index) {
+                    $(this).attr("data-option-index", index);
+                    $(this).find("label").text(`Option ${index + 1}:`);
 
-            if (questionId) {
-                swal.fire({
-                    title: 'Are you sure you want to delete this question and all its options?',
-                    text: '',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true
-                }).then(function(result) {
-                    if (result.value) {
-                        $.ajax({
-                            url: `/backend/delete-quiz/${questionId}`,
-                            type: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function (response) {
-                                swal.fire(
-                                    'Deleted!',
-                                    'Your record has been deleted.',
-                                    'success'
-                                );
-                                questionContainer.remove(); // Remove from DOM
-                            },
-                            error: function (xhr) {
-                                console.error("Error deleting question:", xhr.responseText);
-                                swal("Error!", "Error deleting question. Please try again.", "error");
-                            }
-                        });
-
-                    }
+                    // Update input field names with correct indexes
+                    $(this).find("input[type='hidden']").attr("name", `videos[${videoIndex}][quizzes][${questionIndex}][options][${index}][id]`);
+                    $(this).find("input[type='text']").attr("name", `videos[${videoIndex}][quizzes][${questionIndex}][options][${index}][option]`);
+                    $(this).find("input[type='radio']").attr("name", `videos[${videoIndex}][quizzes][${questionIndex}][correct_option]`).val(index);
                 });
-            } else {
-                questionContainer.remove();
             }
-        }
+            // Remove question
+            $(document).on("click", ".remove-quiz", function () {
+                let videoIndex = $(this).data("video-index");
+                let questionIndex = $(this).data("quiz-index");
+                let questionContainer = $(`#question-container-${videoIndex}-${questionIndex}`);
+                 console.log("questionContainer", questionContainer);
+                if (questionContainer.length === 0) {
+                    console.error("Question container not found!");
+                    //questionContainer.remove();
+                    $(this).closest(".question-container").remove();
+                    reindex();
+                    //return;
+                }
 
-        // Add a new option to a specific question
-        function addOption(videoIndex, questionIndex) {
+                // Get Question ID
+                let questionIdInput = questionContainer.find(`input[name="videos[${videoIndex}][quizzes][${questionIndex}][id]"]`);
+                let questionId = questionIdInput.length ? questionIdInput.val() : null;
+                 console.log("questionId", questionId);
+                if (questionId) {
+                    Swal.fire({
+                        title: "Are you sure you want to delete this question and all its options?",
+                        text: "",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "Cancel",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/backend/delete-quiz/${questionId}`,
+                                type: "DELETE",
+                                headers: {
+                                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                                },
+                                success: function (response) {
+                                    Swal.fire(
+                                        "Deleted!",
+                                        "Your record has been deleted.",
+                                        "success"
+                                    );
+                                    questionContainer.remove(); // Remove from DOM
+                                    reindex();
+                                },
+                                error: function (xhr) {
+                                    console.error("Error deleting question:", xhr.responseText);
+                                    Swal.fire("Error!", "Error deleting question. Please try again.", "error");
+                                }
+                            });
+                        }
+                    });
+               } else {
+                  questionContainer.remove();
+                    reindex();
+               }
+                // $(this).closest(".quiz-container").remove();
+                // reindex();
+            });
+            // Add option dynamically
+            $(document).on("click", ".add-option", function () {
+                let quizContainer = $(this).closest(".question-container");
+                let videoContainer = quizContainer.closest(".video-container");
 
+                // Store videoIndex and quizIndex for proper naming
+                quizContainer.data("video-index", videoContainer.index());
+                quizContainer.data("quiz-index", quizContainer.index());
 
-            const questionContainer = document.getElementById(`question-container-${videoIndex}-${questionIndex}`);
+                let optionSection = quizContainer.find(".option-section");
+                let optionIndex = optionSection.find(".option-container").length;
 
-            // Check if the question container is found
-            if (!questionContainer) {
-                console.error("Question container not found!");
-                return;
-            }
-
-            // Find the option section within the question container
-            let optionSection = questionContainer.querySelector('.option-section');
-
-            // If option section is not found, create and append it
-            if (!optionSection) {
-                optionSection = document.createElement('div');
-                optionSection.classList.add('option-section');
-                questionContainer.appendChild(optionSection);
-            }
-
-            const optionCount = questionContainer.querySelectorAll('.option-container').length || 0;
-
-            const optionTemplate = `
-        <div class="form-group row option-container" data-option-index="${optionCount}">
-            <label class="col-lg-2 col-form-label">Option ${optionCount + 1}:</label>
+                let newOption = `
+        <div class="form-group row option-container">
+            <label class="col-lg-2 col-form-label">Option ${optionIndex + 1}:</label>
             <div class="col-lg-4">
-                <input type="text" name="videos[${videoIndex}][quizzes][${questionIndex}][options][${optionCount}][option]" class="form-control required" placeholder="Enter option"  />
+                <input type="text" class="form-control required" placeholder="Enter option">
             </div>
             <div class="col-lg-3">
-                <input type="radio" name="videos[${videoIndex}][quizzes][${questionIndex}][correct_option]" value="${optionCount}"> Correct
+                <input type="radio"> Correct
             </div>
             <div class="col-lg-3">
-              <button type="button" class="btn btn-sm btn-danger" onclick="removeOption(${videoIndex}, ${questionIndex}, ${optionCount})">Remove Option</button>
+                <button type="button" class="btn btn-sm btn-danger remove-option" data-video-index="${videoContainer.index()}" data-quiz-index="${quizContainer.index()}" data-option-index="${optionIndex + 1}">Remove</button>
             </div>
-        </div>
-    `;
+        </div>`;
 
-            // Insert the new option into the option section
-            optionSection.insertAdjacentHTML('beforeend', optionTemplate);
-        }
+                optionSection.append(newOption);
 
-        // Remove an option (optional - not mandatory)
-        function removeOption(videoIndex, questionIndex, optionIndex) {
-            let optionContainer = $(`.option-container[data-option-index="${optionIndex}"]`);
-
-            if (optionContainer.length === 0) {
-                console.error("Error: Could not find option container.");
-                return;
-            }
-
-            // Find the hidden input inside the optionContainer
-            let optionInput = optionContainer.find(`input[name^="videos[${videoIndex}][quizzes][${questionIndex}][options][${optionIndex}][id]"]`);
-
-            if (optionInput.length === 0) {
-                console.warn("Hidden input not found for option ID.");
-            }
-
-            let optionId = optionInput.val(); // Get option ID from the hidden input
-
-            if (optionId) {
-                swal.fire({
-                    title: 'Are you sure you want to delete this answer?',
-                    text: '',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true
-                }).then(function(result) {
-                    if (result.value) {
-                        $.ajax({
-                            url: `/backend/delete-quiz-option/${optionId}`,
-                            type: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function (response) {
-                                swal.fire(
-                                    'Deleted!',
-                                    'Your record has been deleted.',
-                                    'success'
-                                );
-                                optionContainer.remove(); // Remove from DOM
-                            },
-                            error: function (xhr) {
-                                swal("Error!", "Error deleting answer. Please try again.", "error");
-                            }
-                        });
-
-                    }
+                // Reindex all options
+                reindexOptions(quizContainer);
+            });
+            // Function to reindex options
+            function reindexOptions(quizContainer) {
+                quizContainer.find(".option-container").each(function (index) {
+                    $(this).attr("data-option-index", index);
+                    $(this).find("label").text(`Option ${index + 1}:`);
+                    $(this).find("input[type='text']").attr("name", `videos[${quizContainer.data('video-index')}][quizzes][${quizContainer.data('quiz-index')}][options][${index}][option]`);
+                    $(this).find("input[type='radio']").attr("name", `videos[${quizContainer.data('video-index')}][quizzes][${quizContainer.data('quiz-index')}][correct_option]`).val(index);
                 });
-            } else {
-                optionContainer.remove(); // Remove from DOM if not saved in the database
             }
-        }
-    </script>
+        });
 
+    </script>
 @stop
