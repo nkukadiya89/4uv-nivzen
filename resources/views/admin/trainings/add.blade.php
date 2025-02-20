@@ -70,15 +70,17 @@
                                 <!-- Quizzes Section -->
                                 <div class="quiz-section">
                                     <div class="quiz-container mb-3 border p-2 rounded">
-                                        <h5 class="d-flex justify-content-between align-items-center">
-                                            <p>Question <span class="quiz-index">1</span></p>
-                                            <button type="button" class="btn btn-danger btn-sm remove-quiz">Remove</button>
-                                        </h5>
-                                        <input type="text" name="videos[0][quizzes][0][question]" class="form-control mb-2" placeholder="Enter question text">
+                                        <div class="form-group row">
+                                            <label class="col-lg-2 col-form-label"><p>Question <span class="quiz-index">1</span></p><span class="required">*</span></label>
+                                            <div class="col-lg-7"><input type="text" name="videos[0][quizzes][0][question]" class="form-control mb-5" placeholder="Enter question text"></div>
+                                            <div class="col-lg-3"><button type="button" class="btn btn-danger btn-sm remove-quiz">Remove</button></div>
+                                        </div>
+
+
 
                                         <!-- Options Section -->
                                         <div class="option-section">
-                                            <div class="form-group row option-container" data-option-index="0">
+                                            <div class="form-group row option-container justify-content-between align-items-center" data-option-index="0">
                                                 <label class="col-lg-2 col-form-label">Option 1:</label>
                                                 <div class="col-lg-4">
                                                     <input type="text" name="videos[0][quizzes][0][options][0][option]" class="form-control required" placeholder="Enter option" >
@@ -87,7 +89,7 @@
                                                     <input type="radio" name="videos[0][quizzes][0][correct_option]" value="0"> Correct
                                                 </div>
                                                 <div class="col-lg-3">
-                                                    <button type="button" class="btn btn-sm btn-danger remove-option">Remove Option</button>
+                                                    <button type="button" class="btn btn-sm btn-danger remove-option">Remove</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -177,15 +179,16 @@
             <!-- Quiz Section -->
             <div class="quiz-section">
                 <div class="quiz-container mb-3 border p-2 rounded">
-                    <h5 class="d-flex justify-content-between align-items-center">
-                        <p>Question <span class="quiz-index">1</span></p>
-                        <button type="button" class="btn btn-danger btn-sm remove-quiz">Remove</button>
-                    </h5>
-                    <input type="text" name="videos[${newIndex}][quizzes][0][question]" class="form-control mb-2" placeholder="Enter question text">
+                    <div class="form-group row">
+                         <label class="col-lg-2 col-form-label"><p>Question <span class="quiz-index">1</span></p></label>
+                         <div class="col-lg-7"><input type="text" name="videos[${newIndex}][quizzes][0][question]" class="form-control mb-5" placeholder="Enter question text"></div>
+                         <div class="col-lg-3"><button type="button" class="btn btn-danger btn-sm remove-quiz">Remove</button></div>
+                    </div>
+
 
                     <!-- Options Section -->
                     <div class="option-section">
-                        <div class="form-group row option-container" data-option-index="0">
+                        <div class="form-group row option-container justify-content-between align-items-center" data-option-index="0">
                             <label class="col-lg-2 col-form-label">Option 1:</label>
                             <div class="col-lg-4">
                                 <input type="text" name="videos[${newIndex}][quizzes][0][options][0][option]" class="form-control required" placeholder="Enter option">
@@ -194,7 +197,7 @@
                                 <input type="radio" name="videos[${newIndex}][quizzes][0][correct_option]" value="0"> Correct
                             </div>
                             <div class="col-lg-3">
-                                <button type="button" class="btn btn-sm btn-danger remove-option">Remove Option</button>
+                                <button type="button" class="btn btn-sm btn-danger remove-option">Remove</button>
                             </div>
                         </div>
                     </div>
@@ -225,15 +228,14 @@
 
                     let newQuiz = `
         <div class="quiz-container mb-3 border p-2 rounded">
-            <h5 class="d-flex justify-content-between align-items-center">
-                <p>Question <span class="quiz-index">${quizIndex + 1}</span></p>
-                <button type="button" class="btn btn-danger btn-sm remove-quiz">Remove</button>
-            </h5>
-            <input type="text" name="videos[${videoIndex}][quizzes][${quizIndex}][question]" class="form-control mb-2" placeholder="Enter question text">
-
+             <div class="form-group row">
+                         <label class="col-lg-2 col-form-label"><p>Question <span class="quiz-index">${quizIndex + 1}</span></p></label>
+                         <div class="col-lg-7"><input type="text" name="videos[${videoIndex}][quizzes][${quizIndex}][question]" class="form-control mb-5" placeholder="Enter question text"></div>
+                         <div class="col-lg-3"><button type="button" class="btn btn-danger btn-sm remove-quiz">Remove</button></div>
+             </div>
             <!-- Options Section -->
             <div class="option-section">
-                <div class="form-group row option-container" data-option-index="0">
+                <div class="form-group row option-container justify-content-between align-items-center" data-option-index="0">
                     <label class="col-lg-2 col-form-label">Option 1:</label>
                     <div class="col-lg-4">
                         <input type="text" name="videos[${videoIndex}][quizzes][${quizIndex}][options][0][option]" class="form-control required" placeholder="Enter option">
@@ -242,7 +244,7 @@
                         <input type="radio" name="videos[${videoIndex}][quizzes][${quizIndex}][correct_option]" value="0"> Correct
                     </div>
                     <div class="col-lg-3">
-                        <button type="button" class="btn btn-sm btn-danger remove-option">Remove Option</button>
+                        <button type="button" class="btn btn-sm btn-danger remove-option">Remove</button>
                     </div>
                 </div>
             </div>
@@ -252,7 +254,6 @@
                     videoContainer.find(".quiz-section").append(newQuiz);
                     reindex();
                 });
-                // Remove option dynamically
                 // Remove option dynamically
                 $(document).on("click", ".remove-option", function () {
                     let quizContainer = $(this).closest(".quiz-container");
@@ -289,7 +290,7 @@
                 <input type="radio"> Correct
             </div>
             <div class="col-lg-3">
-                <button type="button" class="btn btn-sm btn-danger remove-option">Remove Option</button>
+                <button type="button" class="btn btn-sm btn-danger remove-option">Remove</button>
             </div>
         </div>`;
 
