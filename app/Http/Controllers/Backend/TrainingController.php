@@ -159,7 +159,7 @@ class TrainingController extends Controller
         DB::beginTransaction();
 
         try {
-            $training = Training::create(['name' => $validated['name']]);
+            $training = Training::create(['name' => $validated['name'], 'created_by' => auth()->id()]);
 
             foreach ($validated['videos'] as $videoData) {
                 $videoPath = $videoData['video']->store('videos', 'public');
@@ -173,6 +173,7 @@ class TrainingController extends Controller
                     'description' => $videoData['description'] ?? '',
                     'video_url' => $videoPath,
                     'thumbnail_url' => $thumbnailPath,
+                    'created_by' => auth()->id(),
                 ]);
 
                 if (isset($videoData['quizzes'])) {
@@ -242,6 +243,7 @@ class TrainingController extends Controller
             } else {
                 // Update the training name
                 $training->name = $request->input('name');
+                $training->updated_by = auth()->id();
                 //$training->save();
 
                 // Process each video
@@ -251,7 +253,7 @@ class TrainingController extends Controller
                     $video->training_id = $training->id;
                     $video->title = $videoData['title'];
                     $video->description = $videoData['description'];
-
+                    $video->updated_by = auth()->id();
                     // Check if a new video is uploaded
                     if ($request->hasFile("videos.{$videoIndex}.video")) {
                         $videoFile = $request->file("videos.{$videoIndex}.video");
@@ -405,17 +407,44 @@ class TrainingController extends Controller
 
     public function deleteTraining($id)
     {
-        $object = Training::find($id);
+        $training = Training::find($id);
 
-        if ($object) {
-            if ($object->delete()) {
-                return 'TRUE';
-            } else {
-                return 'FALSE';
+        if ($training) {
+            // Delete all related Video Lessons & Quizzes
+            foreach ($training->videoLessons as $videoLesson) {
+                $videoLesson->deleted_by = auth()->id();
+                foreach ($videoLesson->quizzes as $quiz) {
+                    $quiz->deleted_by = auth()->id();
+                    $quiz->delete();
+                    $quiz->save(); // Soft delete quizzes
+                    foreach ($quiz->options as $option) {
+                        $option->deleted_by = auth()->id();
+                        $option->delete();
+                        $option->save();
+                    }
+                }
+                $videoLesson->delete();
+                $videoLesson->save();
             }
-        } else {
-            return 'FALSE';
+
+            // Delete the training itself
+            if ($training->delete()) {
+                $training->deleted_by = auth()->id();
+                $videoLesson->save();
+                return 'TRUE';
+            }
         }
+        return 'FALSE';
+//        if ($object) {
+//            $object->deleted_by = auth()->id();
+//            if ($object->delete()) {
+//                return 'TRUE';
+//            } else {
+//                return 'FALSE';
+//            }
+//        } else {
+//            return 'FALSE';
+//        }
     }
 
     public function bulkAction(Request $request)
@@ -432,8 +461,38 @@ class TrainingController extends Controller
         }
 
         if ($action === 'Delete') {
-            // Perform delete operation
-            Training::whereIn('id', $ids)->delete();
+            $userId = auth()->id();
+
+            // Fetch all trainings
+            $trainings = Training::whereIn('id', $ids)->get();
+
+            foreach ($trainings as $training) {
+                // Update `deleted_by` for Training
+                $training->deleted_by = $userId;
+                $training->save();
+
+                // Update `deleted_by` for VideoLessons and Quizzes
+                foreach ($training->videoLessons as $videoLesson) {
+                    $videoLesson->deleted_by = $userId;
+                    $videoLesson->save();
+
+                    foreach ($videoLesson->quizzes as $quiz) {
+                        $quiz->deleted_by = $userId;
+                        $quiz->save();
+                        foreach ($quiz->options as $option) {
+                            $option->deleted_by = $userId;
+                            $option->save();
+                        }
+                        $quiz->options()->delete(); // Soft delete options
+                        $quiz->delete(); // Soft delete quizzes
+                    }
+                }
+
+                // Soft delete related records
+                $training->videoLessons()->delete();
+                $training->quizzes()->delete();
+                $training->delete();
+            }
             return response('TRUE');
             //return response()->json(['message' => 'Records deleted successfully.']);
         }

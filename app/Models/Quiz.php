@@ -10,7 +10,7 @@ class Quiz extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $fillable = ['video_lesson_id', 'question'];
+    protected $fillable = ['video_lesson_id', 'question', 'created_by', 'updated_by', 'deleted_by'];
 
     public function options()
     {

@@ -10,7 +10,7 @@ class VideoLesson extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $fillable = ['training_id', 'title', 'description', 'video_url'];
+    protected $fillable = ['training_id', 'title', 'description', 'video_url', 'created_by', 'updated_by', 'deleted_by'];
 
     public function quizzes()
     {
