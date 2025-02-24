@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Distributor;
 use App\Mail\DistributorRegister;
 use App\Models\User;
 use Carbon\Carbon;
@@ -143,11 +142,13 @@ class DistributorController extends Controller
     public function showDistributorForm () {
         $title = 'Add Distributor';
         //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
-        $users = User::role('Distributor')
-            ->where('upline_id', auth()->id())
-            ->where('id', '!=', auth()->id())
-            ->select('id', 'firstname', 'lastname')
-            ->get();
+//        $users = User::role('Distributor')
+//            ->where('upline_id', auth()->id())
+//            ->where('id', '!=', auth()->id())
+//            ->select('id', 'firstname', 'lastname')
+//            ->get();
+        $user = auth()->user();
+        $users = $user->downlines;
 
         return view('admin.distributors.add', compact('title', 'users'));
     }
@@ -274,11 +275,13 @@ class DistributorController extends Controller
                 }
             } else {
                 //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
-                $users = User::role('Distributor')
-                    ->where('upline_id', auth()->id())
-                    ->where('id', '!=', auth()->id())
-                    ->select('id', 'firstname', 'lastname')
-                    ->get();
+//                $users = User::role('Distributor')
+//                    ->where('upline_id', auth()->id())
+//                    ->where('id', '!=', auth()->id())
+//                    ->select('id', 'firstname', 'lastname')
+//                    ->get();
+                $user = auth()->user();
+                $users = $user->downlines;
 
                 return view('admin.distributors.edit', compact('title', 'distributor', 'users'));
                 //return view('admin.distributors.edit', compact('distributor', 'title'));

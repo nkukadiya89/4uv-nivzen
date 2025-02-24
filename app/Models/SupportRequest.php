@@ -16,6 +16,9 @@ class SupportRequest extends Model
         'support_name',
         'description',
         'request_number',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
 
     public function fromUser() {

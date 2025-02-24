@@ -10,5 +10,5 @@ class QuizOption extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $fillable = ['quiz_id', 'option', 'is_correct'];
+    protected $fillable = ['quiz_id', 'option', 'is_correct', 'created_by', 'updated_by', 'deleted_by'];
 }

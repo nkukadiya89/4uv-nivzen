@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\SupportRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\SupportRequestMail;
 
 class SupportRequestController extends Controller
 {
@@ -33,6 +34,10 @@ class SupportRequestController extends Controller
             $query = $query->where('request_number', 'LIKE', '%' . $data['request_number'] . '%');
         }
 
+        // Check if the user is not an Administrator, filter by created_by
+        if (!auth()->user()->hasRole('Administrator')) {
+            $query = $query->where('created_by', auth()->id());
+        }
 
         $rec_per_page = 10;
         if (isset($data['length'])) {
@@ -106,7 +111,7 @@ class SupportRequestController extends Controller
         $inputs = $request->all();
 
         $validator = Validator::make($inputs, [
-            'from_user_id' => 'required|exists:users,id',
+            //'from_user_id' => 'required|exists:users,id',
             'to_user_id' => 'required|exists:users,id',
             'support_name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -121,20 +126,24 @@ class SupportRequestController extends Controller
 
         } else {
             $supportRequest = new SupportRequest();
-            $supportRequest->from_user_id = $request->from_user_id;
+            $supportRequest->from_user_id = Auth::id();
             $supportRequest->to_user_id = $request->to_user_id;
             $supportRequest->support_name = $request->support_name;
             $supportRequest->description = $request->description;
             $supportRequest->request_number = $requestNumber;
+            $supportRequest->created_by = Auth::id();
             $supportRequest->save();
 
             if ($supportRequest->save()) {
                 $toUser = User::find($request->to_user_id);
 
-//                Mail::raw("You have received a new support request: {$requestNumber}", function ($message) use ($toUser) {
-//                    $message->to($toUser->email)
-//                        ->subject('New Support Request');
-//                });
+                if ($toUser) {
+                    Mail::to($toUser->email)->send(new SupportRequestMail($supportRequest));
+//                    Mail::raw("You have received a new support request: {$requestNumber}", function ($message) use ($toUser) {
+//                        $message->to($toUser->email)
+//                            ->subject('New Support Request');
+//                    });
+                }
 
                 Session::flash('success-message', $request->name . " created successfully !");
                 $data['success'] = true;
@@ -157,7 +166,7 @@ class SupportRequestController extends Controller
 
                 $validator = Validator::make($inputs, [
                     'support_name' => 'required|string|max:255',
-                    'from_user_id' => 'required|exists:users,id',
+                    //'from_user_id' => 'required|exists:users,id',
                     'to_user_id' => 'required|exists:users,id',
                     'description' => 'required|string',
                 ]);
@@ -166,10 +175,10 @@ class SupportRequestController extends Controller
                     return response()->json(['errors' => $validator->errors()], 422);
                 } else {
                     $supportRequest->support_name = $request->support_name;
-                    $supportRequest->from_user_id = $request->from_user_id;
+                    $supportRequest->from_user_id = Auth::id();
                     $supportRequest->to_user_id = $request->to_user_id;
                     $supportRequest->description = $request->description;
-
+                    $supportRequest->updated_by = auth()->id();
 
                     if ($supportRequest->save()) {
                         Session::flash('success-message', $supportRequest->support_name . " updated successfully !");
@@ -216,7 +225,7 @@ class SupportRequestController extends Controller
     }
 
     public function viewSupport($id) {
-        $support = SupportRequest::find($id);
+        $support = SupportRequest::with(['fromUser', 'toUser'])->find($id);
         $title = 'View Support ';
         return view('admin.support.view', compact('title', 'support'));
     }
@@ -226,6 +235,8 @@ class SupportRequestController extends Controller
         $object = SupportRequest::find($id);
 
         if ($object) {
+            $object->deleted_by = auth()->id(); // Set deleted_by to current user ID
+            $object->save(); // Save the update before deleting
             if ($object->delete()) {
                 return 'TRUE';
             } else {
@@ -250,12 +261,13 @@ class SupportRequestController extends Controller
         }
 
         if ($action === 'Delete') {
+            SupportRequest::whereIn('id', $ids)->update(['deleted_by' => auth()->id()]);
             // Perform delete operation
             SupportRequest::whereIn('id', $ids)->delete();
             return response('TRUE');
             //return response()->json(['message' => 'Records deleted successfully.']);
         }
 
-        return response()->json(['message' => 'Invalid action.'], 400);
+        return response( 'Invalid action');
     }
 }

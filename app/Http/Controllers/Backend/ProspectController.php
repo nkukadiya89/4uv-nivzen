@@ -35,6 +35,11 @@ class ProspectController extends Controller
             }
         ]);
 
+        // Check if the user is not an Administrator, filter by created_by
+        if (!auth()->user()->hasRole('Administrator')) {
+            $query = $query->where('created_by', auth()->id());
+        }
+
 
         if (isset($data['name']) && $data['name'] != '') {
             $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
@@ -282,6 +287,7 @@ class ProspectController extends Controller
         $object = Prospect::find($id);
 
         if ($object) {
+            $object->deleted_by = auth()->id();
             if ($object->delete()) {
                 return 'TRUE';
             } else {
@@ -306,12 +312,18 @@ class ProspectController extends Controller
         }
 
         if ($action === 'Delete') {
-            // Perform delete operation
-            Prospect::whereIn('id', $ids)->delete();
+            $userId = auth()->id();
+            // Soft delete related ProspectStatus records first
+            ProspectStatus::whereIn('prospect_id', $ids)->update(['deleted_by' => $userId]);
+            ProspectStatus::whereIn('prospect_id', $ids)->delete(); // Soft delete related statuses
+
+            // Soft delete Prospects
+            Prospect::whereIn('id', $ids)->update(['deleted_by' => $userId]);
+            Prospect::whereIn('id', $ids)->delete(); // Soft delete prospects
             return response('TRUE');
             //return response()->json(['message' => 'Records deleted successfully.']);
         }
 
-        return response()->json(['message' => 'Invalid action.'], 400);
+        return response( 'Invalid action');
     }
 }

@@ -269,23 +269,66 @@ class AuthenticateController extends BaseController {
 
     public function dashboard() {
 
+//        $title = 'Dashboard';
+//        //$distributorCount = User::where('type', 'Distributor')->count();
+//        $distributorCount = User::role('Distributor')
+//            ->where('upline_id', auth()->id())
+//            ->where('id', '!=', auth()->id())
+//            ->count();
+//        $prospectCount = Prospect::count();
+//        $demoCount = Training::count();
+//
+//        $trainingsAttended = UserTrainingActivity::where('user_id', $userId = auth()->id())
+//            ->distinct('training_id')
+//            ->count('training_id');
+//
+//        // Calculate remaining trainings
+//        $trainingsToBeAttended = $demoCount - $trainingsAttended;
+//        $trainingsToBeAttended = max($trainingsToBeAttended, 0);
+//        //return view('admin.auth.dashboard',compact('title'));
+//        return view('admin.auth.dashboard', compact(
+//            'title',
+//            'distributorCount',
+//            'prospectCount',
+//            'demoCount',
+//            'trainingsAttended',
+//            'trainingsToBeAttended'
+//        ));
         $title = 'Dashboard';
-        //$distributorCount = User::where('type', 'Distributor')->count();
-        $distributorCount = User::role('Distributor')
-            ->where('upline_id', auth()->id())
-            ->where('id', '!=', auth()->id())
-            ->count();
-        $prospectCount = Prospect::count();
-        $demoCount = Training::count();
+        $authUser = auth()->user();
 
-        $trainingsAttended = UserTrainingActivity::where('user_id', $userId = auth()->id())
+        // Default counts
+        $distributorCount = 0;
+        $prospectCount = 0;
+        $demoCount = 0;
+
+        // Distributor count logic
+        if (!$authUser->hasRole('Administrator')) {
+            $distributorCount = User::role('Distributor')
+                ->where('upline_id', $authUser->id)
+                ->where('id', '!=', $authUser->id)
+                ->count();
+        } else {
+            $distributorCount = User::role('Distributor')->count();
+        }
+
+        // Prospect count filtering based on role
+        if ($authUser->hasRole('Administrator')) {
+            $prospectCount = Prospect::count(); // Show all prospects
+            $demoCount = Training::count(); // Show all trainings
+        } else {
+            $prospectCount = Prospect::where('created_by', $authUser->id)->count();
+            $demoCount = Training::where('created_by', $authUser->id)->count();
+        }
+
+        // Trainings attended by the logged-in user
+        $trainingsAttended = UserTrainingActivity::where('user_id', $authUser->id)
             ->distinct('training_id')
             ->count('training_id');
 
         // Calculate remaining trainings
-        $trainingsToBeAttended = $demoCount - $trainingsAttended;
-        $trainingsToBeAttended = max($trainingsToBeAttended, 0);
-        //return view('admin.auth.dashboard',compact('title'));
+        $trainingsToBeAttended = max($demoCount - $trainingsAttended, 0);
+
         return view('admin.auth.dashboard', compact(
             'title',
             'distributorCount',

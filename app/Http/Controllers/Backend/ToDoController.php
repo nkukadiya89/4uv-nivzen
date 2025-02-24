@@ -29,6 +29,10 @@ class ToDoController extends Controller
             $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
         }
 
+        // Check if the user is not an Administrator, filter by created_by
+        if (!auth()->user()->hasRole('Administrator')) {
+            $query = $query->where('created_by', auth()->id());
+        }
 
         $rec_per_page = 10;
         if (isset($data['length'])) {
@@ -59,7 +63,7 @@ class ToDoController extends Controller
             //$data[$key][$index++] = $val['id'];
             $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
             $data[$key][$index++] = $val['name'];
-            $data[$key][$index++] = $val['datetime'];
+            $data[$key][$index++] = Carbon::parse($val['datetime'])->format('d-m-Y h:i A');
             $data[$key][$index++] = $val['note'];
             //$data[$key][$index++] = $val['is_completed'] == 1 ? 'Completed' : 'Pending';
 
@@ -119,6 +123,7 @@ class ToDoController extends Controller
             $todo->datetime= $request->datetime;
             $todo->user_id = $request->user_id;
             $todo->note= $request->note;
+            $todo->created_by = auth()->id();
             $todo->save();
 
             if ($todo->save()) {
@@ -155,6 +160,7 @@ class ToDoController extends Controller
                     $todo->datetime= $request->datetime;
                     $todo->user_id = $request->user_id;
                     $todo->note= $request->note;
+                    $todo->updated_by = auth()->id();
 
                     if ($todo->save()) {
                         Session::flash('success-message', $todo->name . " updated successfully !");
@@ -183,6 +189,8 @@ class ToDoController extends Controller
         $object = ToDo::find($id);
 
         if ($object) {
+            $object->deleted_by = auth()->id(); // Set deleted_by to current user ID
+            $object->save(); // Save the update before deleting
             if ($object->delete()) {
                 return 'TRUE';
             } else {
@@ -207,12 +215,14 @@ class ToDoController extends Controller
         }
 
         if ($action === 'Delete') {
+            // Update deleted_by before deleting
+            ToDo::whereIn('id', $ids)->update(['deleted_by' => auth()->id()]);
             // Perform delete operation
             ToDo::whereIn('id', $ids)->delete();
             return response('TRUE');
             //return response()->json(['message' => 'Records deleted successfully.']);
         }
 
-        return response()->json(['message' => 'Invalid action.'], 400);
+        return response( 'Invalid action');
     }
 }

@@ -174,7 +174,7 @@ var DataTables = function() {
                 var url = $(this).attr('delete-url');
                 var title = $(this).attr('title');
                 var arrId = $(this).attr('rel');
-              
+
                 the.anyDeleteRecords(url, arrId, title);
             });
 
@@ -299,7 +299,7 @@ var DataTables = function() {
             return ajaxParams;
         },
         anyDeleteRecords: function(url, arrId, title= "") {
-         
+
             var model_title = title;
             swal.fire({
                 title: 'Are you sure You want to '+ model_title.toLowerCase()+' this record?',
@@ -458,6 +458,8 @@ var DataTables = function() {
                             $('.table-group-action-input').val('');
                             $('.kt-group-checkable').prop("checked", false);
 
+                        } else {
+                            swal.fire(data)
                         }
                     });
                 }

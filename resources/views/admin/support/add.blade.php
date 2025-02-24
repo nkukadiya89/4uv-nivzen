@@ -35,29 +35,29 @@
             <form class="form-horizontal" id="frmAdd" action="{{ route('support-add') }}">
                 <div class="card-body">
                     <div class="row">
+{{--                        <div class="col-12 col-md-4 col-lg-3">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label for="from_user_id">From User:<span class="required">*</span></label>--}}
+{{--                                <div>--}}
+{{--                                    <select class="form-control city custom-select required" name="from_user_id"--}}
+{{--                                        id="from_user_id" placeholder="From User">--}}
+{{--                                        <option value="">Select From User</option>--}}
+{{--                                        @foreach ($users as $res)--}}
+{{--                                            <option value="{{$res->id}}">{{$res->firstname}} {{$res->lastname}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">
-                                <label for="from_user_id">From User:<span class="required">*</span></label>
-                                <div>
-                                    <select class="form-control city custom-select required" name="from_user_id"
-                                        id="from_user_id" placeholder="From User">
-                                        <option value="">Select From User</option>
-                                        @foreach ($users as $res)
-                                        <option value="{{$res->id}}">{{$res->firstname}} {{$res->lastname}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-3">
-                            <div class="form-group">
-                                <label for="to_user_id">To User:<span class="required">*</span></label>
+                                <label for="to_user_id">Select Receiver:<span class="required">*</span></label>
                                 <div>
                                     <select class="form-control city custom-select required" name="to_user_id"
                                         id="to_user_id" placeholder="To User">
                                         <option value="">Select To User</option>
                                         @foreach ($users as $res)
-                                        <option value="{{$res->id}}">{{$res->firstname}} {{$res->lastname}}</option>
+                                           <option value="{{$res->id}}">{{$res->firstname}} {{$res->lastname}}</option>
                                         @endforeach
                                     </select>
                                 </div>

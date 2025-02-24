@@ -44,6 +44,11 @@ class TrainingController extends Controller
             $query->having('quiz_questions_count', '=', $data['quiz_questions_count']);
         }
 
+        // Check if the user is not an Administrator, filter by created_by
+        if (!auth()->user()->hasRole('Administrator')) {
+            $query = $query->where('created_by', auth()->id());
+        }
+
         $rec_per_page = 10;
         if (isset($data['length'])) {
             if ($data['length'] == '-1') {
@@ -319,6 +324,7 @@ class TrainingController extends Controller
         $videoLesson = $training->videoLessons()->find($videoLessonId);
 
         if ($videoLesson) {
+            $videoLesson->deleted_by = auth()->id();
             // Step 1: Delete the video file if it exists
             if ($videoLesson->video_url && Storage::exists('public/' . $videoLesson->video_url)) {
                 Storage::delete('public/' . $videoLesson->video_url);
@@ -326,14 +332,21 @@ class TrainingController extends Controller
 
             // Step 2: Delete the associated quizzes and quiz options
             $videoLesson->quizzes->each(function ($quiz) {
+                $quiz->deleted_by = auth()->id();
                 // Delete quiz options
+                foreach ($quiz->options as $option) {
+                    $option->deleted_by = auth()->id();
+                    $option->save();
+                }
                 $quiz->options()->delete();
                 // Delete the quiz
                 $quiz->delete();
+                $quiz->save();
             });
 
             // Step 3: Delete the video lesson
             $videoLesson->delete();
+            $videoLesson->save();
 
             return response()->json(['success' => true]);
         }
@@ -346,12 +359,16 @@ class TrainingController extends Controller
         $quiz = Quiz::find($quizId);
         if ($quiz) {
             // Delete options
+            $quiz->deleted_by = auth()->id();
             foreach ($quiz->options as $option) {
+                $option->deleted_by = auth()->id();
                 $option->delete();
+                $option->save();
             }
 
             // Delete quiz
             $quiz->delete();
+            $quiz->save();
 
             return response()->json(['success' => true]);
         }
@@ -363,13 +380,11 @@ class TrainingController extends Controller
     {
         $quizOption = QuizOption::find($quizOptionId);
         if ($quizOption) {
-            // Delete options
-//            foreach ($quiz->options as $option) {
-//                $option->delete();
-//            }
+            $quizOption->deleted_by = auth()->id();
 
             // Delete quiz
             $quizOption->delete();
+            $quizOption->save();
 
             return response()->json(['success' => true]);
         }
@@ -497,7 +512,7 @@ class TrainingController extends Controller
             //return response()->json(['message' => 'Records deleted successfully.']);
         }
 
-        return response()->json(['message' => 'Invalid action.'], 400);
+        return response( 'Invalid action');
     }
 
     // Store training activity when a video lesson is completed

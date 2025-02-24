@@ -191,8 +191,8 @@
                             <div class="form-group">
                                 <label for="upline_name">Upline Name<span class="required">*</span></label>
                                 <div>
-                                    <select class="form-control city custom-select required" name="upline_id"
-                                        id="upline_id" placeholder="Upline Name">
+                                    <select class="form-control select2 required" name="upline_id"
+                                        id="upline_id" placeholder="Upline Name" data-selected="{{ $distributor->upline_id }}">
 
                                         <option value="">Select Upline Name</option>
                                         @foreach ($users as $res)
@@ -209,7 +209,7 @@
                             <div class="form-group">
                                 <label for="leader_name">Leader Name<span class="required">*</span></label>
                                 <div>
-                                    <select class="form-control city custom-select required" name="leader_id"
+                                    <select class="form-control select2 required" name="leader_id"
                                         id="leader_id" placeholder="Leader Name">
 
                                         <option value="">Select Leader Name</option>
@@ -266,8 +266,24 @@ $('#description').summernote({
 $(document).ready(function() {
 
     @if(Session::has('success-message'))
-    toastr.info("{{ session('success-message') }}");
+       toastr.info("{{ session('success-message') }}");
     @endif
+
+    $('#upline_id').select2({
+        placeholder: "Select Upline Name",
+        allowClear: true,
+        width: '100%' // Ensures proper width inside Bootstrap forms
+    });
+    let selectedValue = $('#upline_id').attr('data-selected');
+    console.log(selectedValue);
+    if (selectedValue) {
+        $('#upline_id').val(selectedValue).trigger('change');
+    }
+    $('#leader_id').select2({
+        placeholder: "Select Leader Name",
+        allowClear: true,
+        width: '100%' // Ensures proper width inside Bootstrap forms
+    });
 });
 </script>
 @stop

@@ -16,6 +16,9 @@ class ToDo extends Model
         'datetime',
         'user_id',
         'note',
-        'action'
+        'action',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
 }

@@ -46,7 +46,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function batches() 
+    public function batches()
     {
         return $this->belongsToMany(Batch::class)->withTimestamps();
     }
@@ -59,5 +59,25 @@ class User extends Authenticatable
         } else {
             return $query->where('id', $user->id); // Other users can manage only their own details
         }
+    }
+
+    public function upline()
+    {
+        return $this->belongsTo(User::class, 'upline_id');
+    }
+
+    public function leader()
+    {
+        return $this->belongsTo(User::class, 'leader_id');
+    }
+
+    public function downlines()
+    {
+        return $this->hasMany(User::class, 'upline_id');
+    }
+
+    public function distributors()
+    {
+        return $this->hasMany(User::class, 'leader_id');
     }
 }
