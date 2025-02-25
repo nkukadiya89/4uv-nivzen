@@ -38,21 +38,21 @@ class UserRolePermissionSeeder extends Seeder
 
 
         // Create Roles
-        $superAdminRole = Role::create(['name' => 'Administrator']); //as super-admin
-        $adminRole = Role::create(['name' => 'golden-admin']);
-        $staffRole = Role::create(['name' => 'super-admin']);
-        $userRole = Role::create(['name' => 'dist-admin']);
+        $administratorRole = Role::create(['name' => 'Administrator']); //as super-admin
+        $goldAdminRole = Role::create(['name' => 'GoldenAdmin']);
+        $superAdminRole = Role::create(['name' => 'SuperAdmin']);
+        $distAdminRole = Role::create(['name' => 'DistAdmin']);
 
         // Lets give all permission to super-admin role.
         $allPermissionNames = Permission::pluck('name')->toArray();
 
-        $superAdminRole->givePermissionTo($allPermissionNames);
+        $administratorRole->givePermissionTo($allPermissionNames);
 
         // Let's give few permissions to admin role.
-        $adminRole->givePermissionTo(['create role', 'view role', 'update role']);
-        $adminRole->givePermissionTo(['create permission', 'view permission']);
-        $adminRole->givePermissionTo(['create user', 'view user', 'update user']);
-        $adminRole->givePermissionTo(['create product', 'view product', 'update product']);
+        $goldAdminRole->givePermissionTo(['create role', 'view role', 'update role']);
+        $goldAdminRole->givePermissionTo(['create permission', 'view permission']);
+        $goldAdminRole->givePermissionTo(['create user', 'view user', 'update user']);
+        $goldAdminRole->givePermissionTo(['create product', 'view product', 'update product']);
 
 
         // Let's Create User and assign Role to it.
@@ -70,53 +70,56 @@ class UserRolePermissionSeeder extends Seeder
                     'password' => Hash::make ('12345678'),
                 ]);
 
-        $superAdminUser->assignRole($superAdminRole);
+        $superAdminUser->assignRole($administratorRole);
 
 
-        $adminUser = User::firstOrCreate([
+        $goldenAdmin = User::firstOrCreate([
                             'email' => 'golden-admin@yopmail.com'
                         ], [
                             'name' => 'GoldenAdmin',
-                            'firstname' => 'David',
-                            'lastname' => 'Admin',
+                            'firstname' => 'Maulik',
+                            'lastname' => 'Bhavsar',
                             'dob' => now(),
                             'phone' => '9909923456',
-                            'email' => 'golden-admin@yopmail.com',
+                            'email' => 'maulik.bhavsar@yopmail.com',
                             'feature_access'=> '1',
                             'password' => Hash::make ('12345678'),
+                            'upline_id' => $superAdminUser->id
                         ]);
 
-        $adminUser->assignRole($adminRole);
+        $goldenAdmin->assignRole($goldAdminRole);
 
 
-        $staffUser = User::firstOrCreate([
+        $superAdmin1 = User::firstOrCreate([
                             'email' => 'super-admin@yopmail.com',
                         ], [
-                            'name' => 'SuperAdmin',
-                            'firstname' => 'Maldi',
-                            'lastname' => 'Staff',
+                            'name' => 'UmangAdmin',
+                            'firstname' => 'Umang',
+                            'lastname' => 'admin',
                             'dob' => now(),
                             'phone' => '9723456078',
-                            'email' => 'super-admin@yopmail.com',
+                            'email' => 'umang-admin@yopmail.com',
                             'feature_access'=> '1',
                             'password' => Hash::make('12345678'),
+                             'upline_id' => $goldenAdmin->id
                         ]);
 
-        $staffUser->assignRole($staffRole);
+        $superAdmin1->assignRole($superAdminRole);
 
-        $distAdmin = User::firstOrCreate([
+        $distAdmin1 = User::firstOrCreate([
             'email' => 'dist-admin@yopmail.com',
         ], [
-            'name' => 'DistAdmin',
-            'firstname' => 'Maldi',
+            'name' => 'Bapu',
+            'firstname' => 'Bapu',
             'lastname' => 'Staff',
             'dob' => now(),
             'phone' => '9723456078',
-            'email' => 'dist-admin@yopmail.com',
+            'email' => 'bapu@yopmail.com',
             'feature_access'=> '1',
             'password' => Hash::make('12345678'),
+            'upline_id' => $superAdmin1->id
         ]);
 
-        $distAdmin->assignRole($userRole);
+        $distAdmin1->assignRole($distAdminRole);
     }
 }

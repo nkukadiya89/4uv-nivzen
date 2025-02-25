@@ -44,7 +44,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::post('permissions/list-ajax', [PermissionController::class,'anyListAjax'])->name('permissions-list-ajax');
 
     Route::resource('roles',  RoleController::class);
-    
+
     Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy']);
     Route::get('roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('roles/{roleId}/give-permissions', [RoleController::class, 'givePermissionToRole']);
@@ -130,6 +130,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::post('prospects/list-ajax', [ProspectController::class,'anyListAjax'])->name('prospects-list-ajax');
     Route::any('prospects/add', [ProspectController::class,'showProspectForm'])->name('prospect-add-form');
     Route::post('prospects/add', [ProspectController::class,'addProspect'])->name('prospect-add');
+    Route::post('prospects/convert', [ProspectController::class,'convertToDistributor'])->name('prospect-convert-distributor');
     Route::any('prospects/edit/{id}', [ProspectController::class,'editProspect'])->name('prospect-edit');
     Route::any('prospects/view/{id}', [ProspectController::class,'viewProspect'])->name('prospect-view');
     Route::get('prospects/delete/{id}', [ProspectController::class,'deleteProspect'])->name('prospect-delete');

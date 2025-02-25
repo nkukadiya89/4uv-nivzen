@@ -118,7 +118,8 @@
 
                         <div class="col-12 col-md-12 col-lg-12">
                             <h4>Statuses</h4>
-                            <table class="table" id="statuses_table">
+                            <div class="table-responsive">
+                            <table class="table " id="statuses_table">
                                 <thead>
                                 <tr>
                                     <th>Status</th>
@@ -128,21 +129,36 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>
-                                        <select name="statuses[0][status]" class="form-control">
-                                            <option value="Invitation">Invitation</option>
-                                            <option value="Demo">Demo</option>
-                                            <option value="Followup">Followup</option>
-                                            <option value="Machine Purchased">Machine Purchased</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="date" name="statuses[0][date]" class="form-control"></td>
-                                    <td><input type="text" name="statuses[0][remarks]" class="form-control"></td>
-                                    <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
-                                </tr>
+                                @php
+                                    $statuses = old('statuses', [['status' => '', 'date' => '', 'remarks' => '']]);
+                                @endphp
+
+                                @foreach ($statuses as $index => $status)
+                                    <tr>
+                                        <td>
+                                            <select name="statuses[{{ $index }}][status]" id="statuses[{{ $index }}][status]" class="form-control custom-select required" placeholder="status">
+                                                <option value="">Please Select</option>
+                                                <option value="Invitation" {{ old("statuses.$index.status") == 'Invitation' ? 'selected' : '' }}>Invitation</option>
+                                                <option value="Demo" {{ old("statuses.$index.status") == 'Demo' ? 'selected' : '' }}>Demo</option>
+                                                <option value="Followup" {{ old("statuses.$index.status") == 'Followup' ? 'selected' : '' }}>Followup</option>
+                                                <option value="Machine Purchased" {{ old("statuses.$index.status") == 'Machine Purchased' ? 'selected' : '' }}>Machine Purchased</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="date" id="statuses[{{ $index }}][date]" name="statuses[{{ $index }}][date]" class="form-control required" value="{{ old("statuses.$index.date", date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" placeholder="date">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="statuses[{{ $index }}][remarks]" class="form-control" value="{{ old("statuses.$index.remarks") }}">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-danger remove_row">-</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
+                                <div id="error-message" style="color: red; display: none;;margin-left: 13px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -155,6 +171,7 @@
                 </div>
                 <!-- /.card-footer -->
             </form>
+            @include('admin.prospects.modal')
             <!--end::Form-->
         </div>
     </div>
@@ -173,19 +190,21 @@ $(document).ready(function() {
     @endif
 });
 document.getElementById('add_row').addEventListener('click', function() {
+    let today = new Date().toISOString().split('T')[0];
     let table = document.querySelector("#statuses_table tbody");
     let rowCount = table.rows.length;
     let row = table.insertRow();
     row.innerHTML = `
         <td>
-            <select name="statuses[${rowCount}][status]" class="form-control">
+            <select id="statuses[${rowCount}][status]" name="statuses[${rowCount}][status]" class="form-control custom-select required" placeholder="status">
+                <option value="">Please Select</option>
                 <option value="Invitation">Invitation</option>
                 <option value="Demo">Demo</option>
                 <option value="Followup">Followup</option>
                 <option value="Machine Purchased">Machine Purchased</option>
             </select>
         </td>
-        <td><input type="date" name="statuses[${rowCount}][date]" class="form-control"></td>
+        <td><input type="date" id="statuses[${rowCount}][date]" name="statuses[${rowCount}][date]" class="form-control required" value="${today}" max="${today}"></td>
         <td><input type="text" name="statuses[${rowCount}][remarks]" class="form-control"></td>
         <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
     `;

@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DistributorRegister;
 use App\Models\Prospect;
 use App\Models\ProspectStatus;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 
 class ProspectController extends Controller
@@ -154,6 +159,15 @@ class ProspectController extends Controller
             'statuses.*.remarks' => 'nullable|string'
         ]);
 
+        // Check if "Machine Purchased" appears more than once
+        $machinePurchasedCount = collect($request->statuses)->where('status', 'Machine Purchased')->count();
+
+        if ($machinePurchasedCount > 1) {
+            return response()->json([
+                'errors' => "Machine Purchased entry can only be added once."
+            ], 422);
+        }
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         } else {
@@ -177,10 +191,34 @@ class ProspectController extends Controller
                 })->toArray();
 
                 $prospect->statuses()->createMany($statuses);
-                Session::flash('success-message', $request->name . " created successfully !");
-                $data['success'] = true;
+                // **If "Machine Purchased" is selected, convert to Distributor**
+                if ($machinePurchasedCount == 1) {
+                    $upLineUsers = User::role('Distributor')
+                        //->where('upline_id', auth()->id())
+                        ->where('id', '!=', auth()->id())
+                        ->select('id', 'firstname', 'lastname')
+                        ->get();
+                    $superUsers = User::whereDoesntHave('roles', function ($query) {
+                        $query->where('name', 'Distributor');
+                    })
+                        //->where('upline_id', auth()->id())
+                        ->where('id', '!=', auth()->id())
+                        ->select('id', 'firstname', 'lastname')
+                        ->get();
 
-                return response()->json($data);
+                    $data['showDistributorModal'] = true;
+                    $data['prospect_id'] = $prospect->id;
+                    $data['name'] = $prospect->name;
+                    $data['email'] = $prospect->email;
+                    $data['upLineUsers'] = $upLineUsers;
+                    $data['superUsers'] = $superUsers;
+                    return response()->json($data);
+                } else {
+                    Session::flash('success-message', $request->name . " created successfully !");
+                    $data['success'] = true;
+
+                    return response()->json($data);
+                }
             }
             return redirect()->back()->with("success", " Prospect added successfully !");
         }
@@ -211,6 +249,15 @@ class ProspectController extends Controller
                     'statuses.*.date' => 'nullable|date',
                     'statuses.*.remarks' => 'nullable|string',
                 ]);
+
+                // **Check if "Machine Purchased" appears more than once**
+                $machinePurchasedCount = collect($request->statuses)->where('status', 'Machine Purchased')->count();
+
+                if ($machinePurchasedCount > 1) {
+                    return response()->json([
+                        'errors' => "Machine Purchased entry can only be added once."
+                    ], 422);
+                }
 
                 if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
@@ -258,9 +305,33 @@ class ProspectController extends Controller
                     }
 
                     if ($prospect->save()) {
-                        Session::flash('success-message', $prospect->name . " updated successfully !");
-                        $data['success'] = true;
-                        return response()->json($data);
+                        // **If "Machine Purchased" is selected, convert to Distributor**
+                        if ($machinePurchasedCount == 1) {
+                            $upLineUsers = User::role('Distributor')
+                                ->where('id', '!=', auth()->id())
+                                ->select('id', 'firstname', 'lastname')
+                                ->get();
+
+                            $superUsers = User::whereDoesntHave('roles', function ($query) {
+                                $query->where('name', 'Distributor');
+                            })
+                                ->where('id', '!=', auth()->id())
+                                ->select('id', 'firstname', 'lastname')
+                                ->get();
+
+                            $data['showDistributorModal'] = true;
+                            $data['prospect_id'] = $prospect->id;
+                            $data['name'] = $prospect->name;
+                            $data['email'] = $prospect->email;
+                            $data['upLineUsers'] = $upLineUsers;
+                            $data['superUsers'] = $superUsers;
+
+                            return response()->json($data);
+                        } else {
+                            Session::flash('success-message', $prospect->name . " updated successfully !");
+                            $data['success'] = true;
+                            return response()->json($data);
+                        }
                     }
                     return redirect()->back()->with("success", " Prospect updated successfully !");
                 }
@@ -273,6 +344,70 @@ class ProspectController extends Controller
         return Redirect(config('constants.ADMIN_URL') . 'prospects');
     }
 
+    public function convertToDistributor(Request $request) {
+        $request->validate([
+            'prospect_id' => 'required|exists:prospects,id',
+            'upline_id' => 'required|exists:users,id',
+            'leader_id' => 'required|exists:users,id'
+        ]);
+
+        $prospect = Prospect::find($request->prospect_id);
+
+        // Check if user already exists
+        $user = User::where('email', $prospect->email)->first();
+
+        if (!$user) {
+            $randomPassword = Str::random(10);
+            $hashedPassword = Hash::make($randomPassword);
+            // Create new user with distributor role
+            $user = new User();
+            $user->firstname = $prospect->name;
+            $user->lastname = $prospect->name;
+            $user->email = $prospect->email;
+            $user->phone = $prospect->mobile_no;
+            $user->dob =  '1990-01-01';
+            $user->address1 = $prospect->address;
+            $user->city = $prospect->city;
+            $user->state = $prospect->state;
+            $user->country = $prospect->country;
+            $user->upline_id = $request->upline_id;
+            $user->leader_id = $request->leader_id;
+            $user->type = 'Distributor';
+            $user->distributor_status = 'Active';
+            $user->password = $hashedPassword; // Set default password
+            $user->feature_access = '1';
+            $user->save();
+            $user->syncRoles('Distributor');
+
+            if ($user->save()) {
+                Mail::to($user->email)->send(new DistributorRegister($user, $randomPassword));
+                Session::flash('success-message', $prospect->name . " created Distributor successfully !");
+                $data['convertSuccess'] = true;
+                //$data['success'] = true;
+
+                return response()->json($data);
+            }
+        } else {
+            // Update existing user to Distributor
+            $user->type = 'Distributor';
+            $user->upline_id = $request->upline_id;
+            $user->leader_id = $request->leader_id;
+            $user->distributor_status = 'Active';
+            $user->save();
+            $user->syncRoles('Distributor');
+
+            if ($user->save()) {
+                //Mail::to($user->email)->send(new DistributorRegister($user, $randomPassword));
+                Session::flash('success-message', $prospect->name . " created Distributor successfully !");
+                $data['convertSuccess'] = true;
+                //$data['success'] = true;
+
+                return response()->json($data);
+            }
+        }
+
+        return response()->json(['success' => true]);
+    }
     public function viewProspect($id) {
 
         $prospect = Prospect::with(['statuses' => function($query) {

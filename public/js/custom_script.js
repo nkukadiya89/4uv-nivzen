@@ -88,7 +88,7 @@ $(document).ready(function() {
                 var textarea = $(this);
                 textarea.val(editor.getData());
             })
-
+            console.log("here");
 
             //   var send_data = $("#frmAdd").serialize();
 
@@ -102,11 +102,35 @@ $(document).ready(function() {
                 processData: false,
                 dataType: 'json',
                 success: function(data){
-
+                    console.log("data", data);
                     if (save_and_continue_flag) {
                         curObj.find('#frmAddNewSubmit').removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
                     } else {
                         curObj.find('button[type=submit]').removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                    };
+
+                   if (data.showDistributorModal) {
+                        console.log("test");
+                        // Populate modal with prospect details
+                        $('#prospect_name').text(data.name);
+                        $('#prospect_email').text(data.email);
+                        $('#prospect_id').val(data.prospect_id);
+
+                       // Clear existing dropdown options
+                       $('#upline_id').empty().append('<option value="">Select Upline Name</option>');
+                       $('#leader_id').empty().append('<option value="">Select Leader Name</option>');
+
+                       // Populate Upline Users dropdown
+                       $.each(data.upLineUsers, function (index, user) {
+                           $('#upline_id').append('<option value="' + user.id + '">' + user.firstname + ' ' + user.lastname + '</option>');
+                       });
+
+                       // Populate Leader Users dropdown
+                       $.each(data.superUsers, function (index, user) {
+                           $('#leader_id').append('<option value="' + user.id + '">' + user.firstname + ' ' + user.lastname + '</option>');
+                       });
+                        $('#prospectModal').modal('show');
+                        return;
                     }
 
                     if (data.success == true) {
@@ -121,7 +145,7 @@ $(document).ready(function() {
                         }
                         // window.location.href = (window.location.href).replace('/add', '');
 
-                    } else {
+                    }  else {
                         console.log(data);
                         if (data.errors) {
                             // Clear any previous errors
@@ -169,7 +193,12 @@ $(document).ready(function() {
                     // Clear previous errors
                     $('.is-invalid').removeClass('is-invalid');
                     $('.invalid-feedback').remove();
-
+                    console.log("type of", typeof error.responseJSON.errors);
+                    if (typeof error.responseJSON.errors === "string") {
+                        let errorMsg = error.responseJSON.errors;
+                        $('#error-message').text(errorMsg).show();
+                        return;
+                    }
                     if (error.responseJSON && error.responseJSON.errors) {
                         const errors = error.responseJSON.errors;
 
@@ -268,6 +297,30 @@ $(document).ready(function() {
 
                     curObj.find('button[type=submit]').removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
 
+                    if (data.showDistributorModal) {
+                        console.log("test");
+                        // Populate modal with prospect details
+                        $('#prospect_name').text(data.name);
+                        $('#prospect_email').text(data.email);
+                        $('#prospect_id').val(data.prospect_id);
+
+                        // Clear existing dropdown options
+                        $('#upline_id').empty().append('<option value="">Select Upline Name</option>');
+                        $('#leader_id').empty().append('<option value="">Select Leader Name</option>');
+
+                        // Populate Upline Users dropdown
+                        $.each(data.upLineUsers, function (index, user) {
+                            $('#upline_id').append('<option value="' + user.id + '">' + user.firstname + ' ' + user.lastname + '</option>');
+                        });
+
+                        // Populate Leader Users dropdown
+                        $.each(data.superUsers, function (index, user) {
+                            $('#leader_id').append('<option value="' + user.id + '">' + user.firstname + ' ' + user.lastname + '</option>');
+                        });
+                        $('#prospectModal').modal('show');
+                        return;
+                    }
+
                     if (data.success == true)  {
 
                         $('#i_num_available_error').hide();
@@ -276,7 +329,7 @@ $(document).ready(function() {
                         } else if ($("#redirect_url").length == 1) {
                             window.location.href = $("#redirect_url").val();
                         } else {
-                            window.location = strstr($("#frmEdit").attr("action"), '/edit/', true);
+                            window.location = strstr($("#frmEdit").attr("action"), '/edit/', '');
                         }
 
                     }  else {
@@ -306,7 +359,11 @@ $(document).ready(function() {
                     // Clear previous errors
                     $('.is-invalid').removeClass('is-invalid');
                     $('.invalid-feedback').remove();
-
+                    if (typeof error.responseJSON.errors === "string") {
+                        let errorMsg = error.responseJSON.errors;
+                        $('#error-message').text(errorMsg).show();
+                        return;
+                    }
                     if (error.responseJSON && error.responseJSON.errors) {
                         const errors = error.responseJSON.errors;
 
@@ -458,6 +515,148 @@ $(document).ready(function() {
         }
 
         return false;
+    });
+
+    $("#distributorConvertForm").submit(function() {
+
+        var form = $("#distributorConvertForm");
+        form.find('.duplicate-error').hide();
+        form.find(".form-group").removeClass('is-invalid');
+
+        if (form_valid("#distributorConvertForm")) {
+            var curObj = $(this);
+
+            curObj.find('button[type=submit]').addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
+
+            $('textarea.ckeditor').each(function() {
+                var textarea = $(this);
+                textarea.val(editor.getData());
+            });
+
+
+
+            var send_data = new FormData($("#distributorConvertForm")[0])
+
+            // var send_data = form.serialize();
+
+            $.ajax({
+                url: $("#distributorConvertForm").attr("action"),
+                method: 'post',
+                data: send_data,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(data){
+
+                    curObj.find('button[type=submit]').removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+
+                    if (data.convertSuccess) {
+                        console.log("yesy sucesss");
+                        window.location.href = $("#distributorConvertForm").attr("redirect");
+                    }
+                    if (data.success == true)  {
+                        $("#prospectModal").modal("hide");
+                        $('#i_num_available_error').hide();
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url; // Redirect to the dashboard
+                        } else if ($("#redirect_url").length == 1) {
+                            window.location.href = $("#redirect_url").val();
+                        } else {
+                            window.location.href = (window.location.href).replace('/add', '');
+                        }
+
+                    }  else {
+                        //    data = $.parseJSON(data);
+                        data = data;
+
+                        $(data).each(function(i, val) {
+                            $.each(val, function(key, v) {
+                                $('#' + key).closest('.form-group').addClass('is-invalid');
+                                $('#' + key).after('<div id="#' + key + '_error" class="help-block invalid-feedback">' + v + '.</div>');
+                                $('#' + key + '_error').show();
+                            });
+                        });
+
+                        if ($('.is-invalid .form-control').length > 0) {
+                            $('html, body').animate({
+                                scrollTop: $('.is-invalid .form-control').first().offset().top - 200
+                            }, 1000);
+
+                            $('.is-invalid .form-control').first().focus()
+                        }
+                    }
+                },
+                error: function( error) {
+                    console.error("AJAX Error Response:", error); // Log the error for debugging
+                    $('button[type="submit"]').prop('disabled', false);
+                    // Clear previous errors
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('.invalid-feedback').remove();
+
+                    if (error.responseJSON && error.responseJSON.errors) {
+                        const errors = error.responseJSON.errors;
+
+                        $.each(errors, function (key, messages) {
+                            // Example: questions.1.correct -> [questions, 1, correct]
+                            const parts = key.split('.');
+                            let field;
+
+                            // Handle dynamic fields
+                            if (parts.length === 3 && parts[0] === 'questions') {
+                                const questionId = parts[1]; // Extract question index
+                                const fieldName = parts[2]; // Extract field type (e.g., correct, options)
+
+                                if (fieldName === 'correct') {
+                                    // Radio button for correct answer
+                                    field = $(`input[name="questions[${questionId}][${fieldName}]"]`);
+                                } else {
+                                    // Other input fields
+                                    field = $(`input[name="questions[${questionId}][${fieldName}]"]`);
+                                }
+                            }
+
+                            if (field && field.length) {
+                                // Add error class and display message
+                                field.addClass('is-invalid');
+                                field.after('<div class="invalid-feedback">' + messages[0] + '</div>');
+                            } else {
+                                // Log if the field is not found
+                                console.warn('Field not found in form:', key);
+                                $.each(errors, function(key, messages) {
+                                    // For each error field, process the array of messages
+                                    $.each(messages, function(index, message) {
+                                        // Ensure we don't duplicate error elements
+                                        let inputElement = $('#' + key);
+                                        let errorElementId = key + '_error';
+
+                                        // Check if the error message block already exists
+                                        if ($('#' + errorElementId).length === 0) {
+                                            // Add error styling and message
+                                            inputElement.closest('.form-group').addClass('is-invalid');
+                                            inputElement.after('<div id="' + errorElementId + '" class="help-block invalid-feedback">' + message + '</div>');
+                                        }
+
+                                        // Show the error message
+                                        $('#' + errorElementId).show();
+                                    });
+                                });
+                            }
+                        });
+                    } else {
+                        console.warn('No validation errors found in the response.');
+                    }
+                }
+            });
+        }
+
+        return false;
+    });
+
+    $("#distributorConvertFormCancel").click(function () {
+        if (confirm("Are you sure you want to cancel?")) {
+            $("#prospectModal").modal("hide"); // Hide the modal
+            window.location.href = (window.location.href).replace('/add', '');
+        }
     });
 
 });

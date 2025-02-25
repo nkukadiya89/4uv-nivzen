@@ -195,7 +195,7 @@
                                         id="upline_id" placeholder="Upline Name" data-selected="{{ $distributor->upline_id }}">
 
                                         <option value="">Select Upline Name</option>
-                                        @foreach ($users as $res)
+                                        @foreach ($upLineUsers as $res)
                                         <option value="{{ $res->id }}" {{ $distributor->upline_id == $res->id ? 'selected' : '' }}>
                                             {{ $res->firstname }} {{$res->lastname}}
                                         </option>
@@ -213,7 +213,7 @@
                                         id="leader_id" placeholder="Leader Name">
 
                                         <option value="">Select Leader Name</option>
-                                        @foreach ($users as $res)
+                                        @foreach ($superUsers as $res)
                                         <option value="{{ $res->id }}" {{ $distributor->leader_id == $res->id ? 'selected' : '' }}>
                                             {{ $res->firstname }} {{$res->lastname}}
                                         </option>

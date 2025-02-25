@@ -132,16 +132,16 @@
                         <div class="col-12 col-md-4 col-lg-3">
 
                             <div class="form-group">
-                                <label for="type">Type<span class="required">*</span></label>
+                                <label for="type">User Type <small>(Machine Users / Distributors)</small><span class="required">*</span></label>
                                 <div>
                                     <select name="type" id="type" class="form-control city custom-select required" placeholder="User Type">
                                         <option value="">Select User Type</option>
                                         <option value="User"
-                                            {{ old('type', $distributor->type ?? '') == 'User' ? 'selected' : '' }}>User
+                                            {{ old('type', $distributor->type ?? '') == 'User' ? 'selected' : '' }}>Kangen User
                                         </option>
                                         <option value="Distributor"
                                             {{ old('type', $distributor->type ?? '') == 'Distributor' ? 'selected' : '' }}>
-                                            Distributor</option>
+                                            Kangen Distributor</option>
                                     </select>
                                 </div>
                             </div>
@@ -188,7 +188,7 @@
                                         id="upline_id" placeholder="Upline Name">
 
                                         <option value="">Select Upline Name</option>
-                                        @foreach ($users as $res)
+                                        @foreach ($upLineUsers as $res)
                                         <option value="{{ $res->id }}">
                                             {{ $res->firstname }} {{$res->lastname}}
                                         </option>
@@ -205,7 +205,7 @@
                                         id="leader_id" placeholder="Leader Name">
 
                                         <option value="">Select Leader Name</option>
-                                        @foreach ($users as $res)
+                                        @foreach ($superUsers as $res)
                                         <option value="{{ $res->id }}">
                                             {{ $res->firstname }} {{$res->lastname}}
                                         </option>

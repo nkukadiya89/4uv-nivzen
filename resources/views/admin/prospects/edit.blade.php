@@ -130,7 +130,7 @@
                                                     <option value="Machine Purchased" {{ $status->status == 'Machine Purchased' ? 'selected' : '' }}>Machine Purchased</option>
                                                 </select>
                                             </td>
-                                            <td><input type="date" name="statuses[{{ $index }}][date]" class="form-control" value="{{ $status->date }}"></td>
+                                            <td><input type="date" name="statuses[{{ $index }}][date]" class="form-control" value="{{ $status->date }}" max="<?php echo date('Y-m-d'); ?>"></td>
                                             <td><input type="text" name="statuses[{{ $index }}][remarks]" class="form-control" value="{{ $status->remarks }}"></td>
                                             <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
                                         </tr>
@@ -145,13 +145,14 @@
                                                 <option value="Machine Purchased">Machine Purchased</option>
                                             </select>
                                         </td>
-                                        <td><input type="date" name="statuses[0][date]" class="form-control"></td>
+                                        <td><input type="date" name="statuses[0][date]" class="form-control" max="<?php echo date('Y-m-d'); ?>"></td>
                                         <td><input type="text" name="statuses[0][remarks]" class="form-control"></td>
                                         <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
                                     </tr>
                                 @endif
                                 </tbody>
                             </table>
+                            <div id="error-message" style="color: red; display: none;;margin-left: 13px;"></div>
                         </div>
                     </div>
                 </div>
@@ -164,6 +165,7 @@
                 </div>
                 <!-- /.card-footer -->
             </form>
+            @include('admin.prospects.modal')
             <!--end::Form-->
         </div>
     </div>
@@ -182,19 +184,20 @@ $(document).ready(function() {
     @endif
 });
 document.getElementById('add_row').addEventListener('click', function() {
+    let today = new Date().toISOString().split('T')[0];
     let table = document.querySelector("#statuses_table tbody");
     let rowCount = table.rows.length;
     let row = table.insertRow();
     row.innerHTML = `
         <td>
-            <select name="statuses[${rowCount}][status]" class="form-control">
+            <select id="statuses[${rowCount}][status]" name="statuses[${rowCount}][status]" class="form-control custom-select required" placeholder="status">
                 <option value="Invitation">Invitation</option>
                 <option value="Demo">Demo</option>
                 <option value="Followup">Followup</option>
                 <option value="Machine Purchased">Machine Purchased</option>
             </select>
         </td>
-        <td><input type="date" name="statuses[${rowCount}][date]" class="form-control"></td>
+        <td><input type="date" id="statuses[${rowCount}][date]" name="statuses[${rowCount}][date]" class="form-control required" value="${today}" max="${today}"></td>
         <td><input type="text" name="statuses[${rowCount}][remarks]" class="form-control"></td>
         <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
     `;

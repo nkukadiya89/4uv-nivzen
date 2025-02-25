@@ -29,7 +29,13 @@ class DistributorController extends Controller
 
         // Add condition to fetch only 'Distributor' type users
         //$query = $query->where('type', 'Distributor');
-        $query = User::role('Distributor')->where('upline_id', auth()->id());
+        if (auth()->user()->hasRole('Administrator')) {
+            $query = User::role('Distributor');
+        } else {
+            $query = User::role('Distributor')->where('upline_id', auth()->id());
+        }
+        //$query = User::role('Distributor')->where('upline_id', auth()->id());
+
 
         if (isset($data['enagic_id']) && $data['enagic_id'] != '') {
             $query = $query->where('enagic_id', 'LIKE', '%' . $data['enagic_id'] . '%');
@@ -142,15 +148,21 @@ class DistributorController extends Controller
     public function showDistributorForm () {
         $title = 'Add Distributor';
         //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
-//        $users = User::role('Distributor')
-//            ->where('upline_id', auth()->id())
-//            ->where('id', '!=', auth()->id())
-//            ->select('id', 'firstname', 'lastname')
-//            ->get();
-        $user = auth()->user();
-        $users = $user->downlines;
-
-        return view('admin.distributors.add', compact('title', 'users'));
+        $upLineUsers = User::role('Distributor')
+            //->where('upline_id', auth()->id())
+            ->where('id', '!=', auth()->id())
+            ->select('id', 'firstname', 'lastname')
+            ->get();
+//        $user = auth()->user();
+//        $users = $user->downlines;
+        $superUsers = User::whereDoesntHave('roles', function ($query) {
+                       $query->where('name', 'Distributor');
+                  })
+            //->where('upline_id', auth()->id())
+            ->where('id', '!=', auth()->id())
+            ->select('id', 'firstname', 'lastname')
+            ->get();
+        return view('admin.distributors.add', compact('title', 'upLineUsers', 'superUsers'));
     }
 
     public function addDistributor(Request $request) {
@@ -280,10 +292,24 @@ class DistributorController extends Controller
 //                    ->where('id', '!=', auth()->id())
 //                    ->select('id', 'firstname', 'lastname')
 //                    ->get();
-                $user = auth()->user();
-                $users = $user->downlines;
+//                $user = auth()->user();
+//                $users = $user->downlines;
+                $upLineUsers = User::role('Distributor')
+                    //->where('upline_id', auth()->id())
+                    ->where('id', '!=', auth()->id())
+                    ->select('id', 'firstname', 'lastname')
+                    ->get();
+//        $user = auth()->user();
+//        $users = $user->downlines;
+                $superUsers = User::whereDoesntHave('roles', function ($query) {
+                    $query->where('name', 'Distributor');
+                })
+                    //->where('upline_id', auth()->id())
+                    ->where('id', '!=', auth()->id())
+                    ->select('id', 'firstname', 'lastname')
+                    ->get();
 
-                return view('admin.distributors.edit', compact('title', 'distributor', 'users'));
+                return view('admin.distributors.edit', compact('title', 'distributor', 'upLineUsers', 'superUsers'));
                 //return view('admin.distributors.edit', compact('distributor', 'title'));
             }
 
