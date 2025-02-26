@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\ModulesController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\UsersController;
+use App\Http\Controllers\Backend\MachineUsersController;
 use App\Http\Controllers\Backend\DistributorController;
 use App\Http\Controllers\Backend\ProspectController;
 use App\Http\Controllers\Backend\ToDoController;
@@ -49,7 +50,7 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::get('roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
     Route::put('roles/{roleId}/give-permissions', [RoleController::class, 'givePermissionToRole']);
 
-    // Manage user moddule
+    // Manage user module
     Route::get('users', [UsersController::class,'index'])->name('users-manage');
     Route::post('users/list-ajax', [UsersController::class,'anyListAjax'])->name('users-list-ajax');
     Route::any('users/add', [UsersController::class,'showUsersForm'])->name('user-add-form');
@@ -59,7 +60,9 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     Route::get('users/delete/{id}', [UsersController::class,'deleteUser'])->name('user-delete')->middleware('permission:delete user');
     Route::post('users/bulk-action', [UsersController::class, 'bulkAction'])->name('user.bulkAction');
 
-
+    // Manage user module
+    Route::get('machine-users', [MachineUsersController::class,'index'])->name('machine-users-manage');
+    Route::post('machine-users/list-ajax', [MachineUsersController::class,'anyListAjax'])->name('machine-users-list-ajax');
     // Manage courses moddule
 //    Route::get('courses', [CoursesController::class,'index'])->name('courses-manage');
 //    Route::post('courses/list-ajax', [CoursesController::class,'anyListAjax'])->name('courses-list-ajax');

@@ -26,10 +26,7 @@
                 <div class="card-title">
                 </div>
                 <div class="p-2">
-                    @if(auth()->user()->hasRole('Administrator') || auth()->user()->can('create user'))
-                    <a href="{{ route('user-add-form') }}" class="btn btn-primary">
-                        <i class="la la-plus"></i>New User</a>
-                    @endif
+
                 </div>
             </div>
 
@@ -62,7 +59,6 @@
                             <th>City</th>
                             <th>State</th>
                             <th>Country</th>
-                            <th>Roles</th>
                             <th>Status</th>
                             <th width="105" class="no-sort text-center">Actions</th>
                         </tr>
@@ -94,7 +90,6 @@
                                        name="state"></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                        name="country"></td>
-                            <td><input type="text" class="form-control form-control-sm form-filter" name="roles"></td>
                             <td>
                                 <select class="form-control form-control-sm form-filter kt-input" title="Select"
                                         name="account_status">
@@ -126,8 +121,7 @@ $(document).ready(function() {
     toastr.info("{{ session('success-message') }}");
     @endif
 
-    var url = '{{config('
-    constants.ADMIN_URL ')}}users/list-ajax';
+    var url = '{{config('constants.ADMIN_URL ')}}machine-users/list-ajax';
     DataTables.init('#datatable_ajax', url);
 
     $('#date_range').daterangepicker({

@@ -43,6 +43,7 @@ class ProspectController extends Controller
         // Check if the user is not an Administrator, filter by created_by
         if (!auth()->user()->hasRole('Administrator')) {
             $query = $query->where('created_by', auth()->id());
+            $query = $query->where('status', 0);
         }
 
 
@@ -372,14 +373,18 @@ class ProspectController extends Controller
             $user->country = $prospect->country;
             $user->upline_id = $request->upline_id;
             $user->leader_id = $request->leader_id;
-            $user->type = 'Distributor';
+            $user->type = $request->type;
             $user->distributor_status = 'Active';
             $user->password = $hashedPassword; // Set default password
             $user->feature_access = '1';
             $user->save();
-            $user->syncRoles('Distributor');
+            if ($request->type === 'Distributor') {
+                $user->syncRoles('Distributor');
+            }
 
             if ($user->save()) {
+                $prospect->status = 1; // or true
+                $prospect->save(); // Explicitly save
                 Mail::to($user->email)->send(new DistributorRegister($user, $randomPassword));
                 Session::flash('success-message', $prospect->name . " created Distributor successfully !");
                 $data['convertSuccess'] = true;
@@ -389,12 +394,14 @@ class ProspectController extends Controller
             }
         } else {
             // Update existing user to Distributor
-            $user->type = 'Distributor';
+            $user->type = $request->type;
             $user->upline_id = $request->upline_id;
             $user->leader_id = $request->leader_id;
             $user->distributor_status = 'Active';
             $user->save();
-            $user->syncRoles('Distributor');
+            if ($request->type === 'Distributor') {
+                $user->syncRoles('Distributor');
+            }
 
             if ($user->save()) {
                 //Mail::to($user->email)->send(new DistributorRegister($user, $randomPassword));

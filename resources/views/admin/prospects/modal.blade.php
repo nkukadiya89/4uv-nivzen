@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="prospectModal">Convert to Distributor</h5>
+                <h5 class="modal-title" id="prospectModal">Convert Prospect to Distributor/Kangen User</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -12,6 +12,16 @@
                 <form id="distributorConvertForm" action="{{ route('prospect-convert-distributor') }}" redirect="{{route('prospects-manage')}}">
                     <input type="hidden" id="prospect_id" name="prospect_id">
 
+                    <div class="form-group">
+                            <label for="type">User Type <small>(Machine Users / Distributors)</small><span class="required">*</span></label>
+                            <div>
+                                <select name="type" id="type" class="form-control city custom-select required" placeholder="User Type">
+                                    <option value="">Select User Type</option>
+                                    <option value="User">Kangen User</option>
+                                    <option value="Distributor">Kangen Distributor</option>
+                                </select>
+                            </div>
+                        </div>
                     <div class="form-group">
                         <label for="upline_id">Upline Name<span class="required">*</span></label>
                         <select name="upline_id" id="upline_id" class="form-control required" placeholder="Upline Name">
