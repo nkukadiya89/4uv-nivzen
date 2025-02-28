@@ -39,6 +39,8 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     //Route::get('profile', [ AuthenticateController::class,'myProfile'])->name('my-profile');
     Route::any('profile', [AuthenticateController::class,'updateProfile'])->name('profile');
     Route::post('logout', [ AuthenticateController::class,'logout'])->name('backend-logout');
+    Route::get('change-password',[AuthenticateController::class,'displayChangePasswordForm'])->name('auth.change_password_form');
+    Route::post('change-password',[AuthenticateController::class,'changePassword'])->name('auth.change_password');
 
     Route::resource('permissions', PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);

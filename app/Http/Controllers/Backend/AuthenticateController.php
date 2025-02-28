@@ -338,4 +338,9 @@ class AuthenticateController extends BaseController {
             'trainingsToBeAttended'
         ));
     }
+
+    public function displayChangePasswordForm(Request $request){
+        $user = Auth::user();
+        return view('auth.change_password',compact('user'));
+    }
  }
