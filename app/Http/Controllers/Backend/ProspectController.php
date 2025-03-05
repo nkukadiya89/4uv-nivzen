@@ -32,6 +32,9 @@ class ProspectController extends Controller
         $query = new Prospect();
 
         $query = Prospect::withCount([
+            'statuses as invitation_count' => function ($query) {
+                $query->where('status', 'Invitation');
+            },
             'statuses as demo_count' => function ($query) {
                 $query->where('status', 'Demo');
             },
@@ -45,7 +48,6 @@ class ProspectController extends Controller
             $query = $query->where('created_by', auth()->id());
             $query = $query->where('status', 0);
         }
-
 
         if (isset($data['name']) && $data['name'] != '') {
             $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
@@ -105,6 +107,7 @@ class ProspectController extends Controller
             $data[$key][$index++] = $val['state'];
             $data[$key][$index++] = $val['country'];
 // Add demo and follow-up counts
+            $data[$key][$index++] = $val['invitation_count'];
             $data[$key][$index++] = $val['demo_count'];
             $data[$key][$index++] = $val['follow_up_count'];
             //$data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
@@ -136,6 +139,133 @@ class ProspectController extends Controller
         return $return_data;
     }
 
+    public function filterManage(Request $request, $id){
+        $title = 'Filter Prospects';
+        $user = User::find($id);
+        $userRoles = $user->roles->pluck('name','name')->all();
+        return view('admin.prospects.filter', compact('title', 'user'));
+    }
+
+    public function filterListAjax(Request $request)
+    {
+        $id = $request->query('id'); // Get 'id' from the query string
+        $data = $request->all();
+
+        $sortColumn = array('name','email','mobile_no', 'city', 'state', 'country');
+        $query = new Prospect();
+
+        $query = Prospect::withCount([
+            'statuses as invitation_count' => function ($query) {
+                $query->where('status', 'Invitation');
+            },
+            'statuses as demo_count' => function ($query) {
+                $query->where('status', 'Demo');
+            },
+            'statuses as follow_up_count' => function ($query) {
+                $query->where('status', 'Followup');
+            }
+        ]);
+
+        // Check if the user is not an Administrator, filter by created_by
+        if (!auth()->user()->hasRole('Administrator')) {
+            $query = $query->where('created_by', auth()->id());
+            $query = $query->where('status', 0);
+        }
+        if ($id) {
+            $query->where('created_by', $id);
+        }
+
+        if (isset($data['name']) && $data['name'] != '') {
+            $query = $query->where('name', 'LIKE', '%' . $data['name'] . '%');
+        }
+
+        if (isset($data['email']) && $data['email'] != '') {
+            $query = $query->where('email', 'LIKE', '%' . $data['email'] . '%');
+        }
+
+        if (isset($data['mobile_no']) && $data['mobile_no'] != '') {
+            $query = $query->where('mobile_no', 'LIKE', '%' . $data['mobile_no'] . '%');
+        }
+
+        if (isset($data['city']) && $data['city'] != '') {
+            $query = $query->where('city', 'LIKE', '%' . $data['city'] . '%');
+        }
+
+        if (isset($data['state']) && $data['state'] != '') {
+            $query = $query->where('state', 'LIKE', '%' . $data['state'] . '%');
+        }
+
+        if (isset($data['country']) && $data['country'] != '') {
+            $query = $query->where('country', 'LIKE', '%' . $data['country'] . '%');
+        }
+
+        $rec_per_page = 10;
+        if (isset($data['length'])) {
+            if ($data['length'] == '-1') {
+                $rec_per_page = '';
+            } else {
+                $rec_per_page = $data['length'];
+            }
+        }
+
+        $sort_order = $data['order']['0']['dir'];
+        $order_field = $sortColumn[$data['order']['0']['column']];
+        if ($sort_order != '' && $order_field != '') {
+            $query = $query->orderBy($order_field, $sort_order);
+        } else {
+            $query = $query->orderBy('id', 'desc');
+        }
+
+        $users = $query->paginate($rec_per_page);
+
+        $arrUsers = $users->toArray();
+        $data = array();
+        $style1 = 'border:2px; width:50px;height: 13px;display: inline-block;';//background-color:#28C8FB;';
+
+        foreach ($arrUsers['data'] as $key => $val) {
+            $index = 0;
+            $data[$key][$index++] = '<input type="checkbox" class="row-checkbox" value="' . $val['id'] . '">';
+            //$data[$key][$index++] = $val['id'];
+            $data[$key][$index++] = $val['name'];
+            $data[$key][$index++] = $val['email'];
+            $data[$key][$index++] = $val['mobile_no'];
+            $data[$key][$index++] = $val['city'];
+            $data[$key][$index++] = $val['state'];
+            $data[$key][$index++] = $val['country'];
+// Add demo and follow-up counts
+            $data[$key][$index++] = $val['invitation_count'];
+            $data[$key][$index++] = $val['demo_count'];
+            $data[$key][$index++] = $val['follow_up_count'];
+            //$data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
+
+
+            // $data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
+            $action = '';
+            $action .= '<div class="d-flex">';
+
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->can('prospects edit')) {
+                $action .= '<a class="btn btn-sm btn-clean btn-icon btn-icon-lg" rel="' . $val['id'] . '"  href="' . route('prospect-edit', ['id' => $val['id']]) . '" title="view"><i class="la la-edit"></i> </a>';
+            }
+
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->can('prospects view')) {
+                $action .= '<a class="btn btn-sm btn-clean btn-icon btn-icon-lg" rel="' . $val['id'] . '"  href="' . route('prospect-view', ['id' => $val['id']]) . '" title="view"><i class="la la-eye"></i> </a>';
+            }
+
+            if (auth()->user()->hasRole('Administrator') || auth()->user()->can('prospects delete')) {
+                $action .= '<a title="Delete" id="delete_record" class="btn btn-sm btn-clean btn-icon btn-icon-lg delete_record" href="javascript:;" rel="' . $val['id'] . '" delete-url="' . route('prospect-delete', ['id' => $val['id']]) . '"><i class="la la-trash"></i></a>';
+            }
+
+            $action .= '</div>';
+            $data[$key][$index++] = $action;
+        }
+        $return_data['data'] = $data;
+        $return_data['iTotalRecords'] = $arrUsers['total'];
+        $return_data['iTotalDisplayRecords'] = $arrUsers['total'];
+        $return_data['data_array'] = $arrUsers['data'];
+        return $return_data;
+
+    }
+
     public function showProspectForm () {
         $title = 'Add Prospect';
         return view('admin.prospects.add', compact('title'));
@@ -155,7 +285,7 @@ class ProspectController extends Controller
             'state' => 'required',
             'country' => 'required',
             'statuses' => 'required|array', // Ensure statuses is an array
-            'statuses.*.status' => 'required|in:Invitation,Demo,Followup,Machine Purchased',
+            'statuses.*.status' => 'required|in:Prospect,Invitation,Demo,Followup,Machine Purchased',
             'statuses.*.date' => 'required|date',
             'statuses.*.remarks' => 'nullable|string'
         ]);
@@ -330,6 +460,7 @@ class ProspectController extends Controller
                             return response()->json($data);
                         } else {
                             Session::flash('success-message', $prospect->name . " updated successfully !");
+                            $data['redirect_url'] = config('constants.ADMIN_URL') . 'prospects';
                             $data['success'] = true;
                             return response()->json($data);
                         }
@@ -374,7 +505,8 @@ class ProspectController extends Controller
             $user->upline_id = $request->upline_id;
             $user->leader_id = $request->leader_id;
             $user->type = $request->type;
-            $user->distributor_status = 'Active';
+            $user->enagic_id = $request->enagic_id;
+            $user->distributor_status = 'Inactive';
             $user->password = $hashedPassword; // Set default password
             $user->feature_access = '1';
             $user->save();
@@ -397,7 +529,8 @@ class ProspectController extends Controller
             $user->type = $request->type;
             $user->upline_id = $request->upline_id;
             $user->leader_id = $request->leader_id;
-            $user->distributor_status = 'Active';
+            $user->enagic_id = $request->enagic_id;
+            $user->distributor_status = 'Inactive';
             $user->save();
             if ($request->type === 'Distributor') {
                 $user->syncRoles('Distributor');

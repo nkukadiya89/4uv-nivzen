@@ -42,9 +42,33 @@ class UsersController extends Controller
         $sortColumn = array('firstname','lastname','email','phone','dob', 'city', 'state', 'country', 'status');
 
         $authUser = Auth::user();
-        $query = User::manageableBy($authUser)->with('roles');
-
-        $query = $query->where('id', '!=', auth()->id());
+        //$query = User::manageableBy($authUser)->with('roles');
+        if ($authUser->role == 'Administrator') {
+            // Administrator can see all users, ordered by latest
+            $query = User::orderBy('id', 'desc')->get();
+        } elseif ($authUser->role == 'Golden Admin') {
+            // Golden Admin can see only Super Admins they created, ordered by latest
+            $query = User::where('upline_id', $authUser->id)
+                ->where('role', 'Super Admin')
+                ->orderBy('id', 'desc')
+                ->get();
+        } elseif ($authUser->role == 'Super Admin') {
+            // Super Admin can see only Dist Admins they created, ordered by latest
+            $query = User::where('upline_id', $authUser->id)
+                ->where('role', 'Dist Admin')
+                ->orderBy('id', 'desc')
+                ->get();
+        } elseif ($authUser->role == 'Dist Admin') {
+            // Dist Admin can see only Distributors they created, ordered by latest
+            $query = User::where('upline_id', $authUser->id)
+                ->where('role', 'Distributor')
+                ->orderBy('id', 'desc')
+                ->get();
+        } else {
+            // Distributors or unknown roles cannot see other users
+            $query = [];
+        }
+        //$query = $query->where('id', '!=', auth()->id());
         //$query = $query->where('type', 'User');
         $query = User::whereHas('roles', function ($query) {
             $query->where('name', '!=', 'Distributor');

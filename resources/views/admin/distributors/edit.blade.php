@@ -81,6 +81,26 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="form-group ">
+                                <label  for="roles" >Roles<span class="required">*</span></label>
+                                <div>
+
+                                    <select name="roles" class="form-control required"  id="user_roles"  placeholder="Role">
+                                        <option value="">Select Role</option>
+                                        @foreach ($roles as $role)
+                                            <option
+                                                value="{{ $role }}"
+                                                {{ in_array($role, $userRoles) ? 'selected':'' }}
+                                            >
+                                                {{ $role }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('roles') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
 
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="form-group">

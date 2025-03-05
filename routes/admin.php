@@ -133,6 +133,9 @@ Route::group(['middleware' => ['web', 'backend:backend']], function() {
     // Manage Prospects modules
     Route::get('prospects', [ProspectController::class, 'index'])->name('prospects-manage');
     Route::post('prospects/list-ajax', [ProspectController::class,'anyListAjax'])->name('prospects-list-ajax');
+    Route::get('prospects/filter/{id}', [ProspectController::class, 'filterManage'])->name('prospects-filter-manage');
+    Route::post('prospects/filter/ajax', [ProspectController::class, 'filterListAjax'])->name('prospects-filter-list-ajax');
+
     Route::any('prospects/add', [ProspectController::class,'showProspectForm'])->name('prospect-add-form');
     Route::post('prospects/add', [ProspectController::class,'addProspect'])->name('prospect-add');
     Route::post('prospects/convert', [ProspectController::class,'convertToDistributor'])->name('prospect-convert-distributor');

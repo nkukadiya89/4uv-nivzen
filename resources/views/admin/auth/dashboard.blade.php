@@ -11,7 +11,7 @@
                     <!--end::Page Title-->
                     <!--begin::Actions-->
                     <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-4 bg-gray-200">
-                        
+
                     </div>
 
                     <!--end::Actions-->
@@ -90,7 +90,7 @@
                                             <div class="col mr-2">
                                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                     No. Of Follow-up</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
                                             </div>
                                             <div class="col-auto">
                                                 <i class="fas fa-calendar fa-2x text-gray-300"></i>

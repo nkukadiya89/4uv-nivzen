@@ -9,7 +9,7 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">{{$title}}</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">{{$title}}-{{$user->firstname}}</h5>
                     <!--end::Page Title-->
                 </div>
                 <!--end::Page Heading-->
@@ -122,10 +122,29 @@ $(document).ready(function() {
       toastr.info("{{ session('success-message') }}");
     @endif
 
-    var url = '{{config('constants.ADMIN_URL ')}}prospects/list-ajax';
+    var id = '{{$user->id}}'; // Replace with the actual ID value
+    var url = '{{ route('prospects-filter-list-ajax') }}' + '?id=' + id;
+    //var url = '{{route('prospects-filter-list-ajax')}}';
     DataTables.init('#datatable_ajax', url);
 
+    {{--var id = 32; // Replace with the actual ID value--}}
 
+    {{--var url = "{{ config('constants.ADMIN_URL') }}prospects/list-ajax";--}}
+
+    {{--$('#datatable_ajax').DataTable({--}}
+    {{--    processing: true,--}}
+    {{--    serverSide: true,--}}
+    {{--    ajax: {--}}
+    {{--        url: url,--}}
+    {{--        type: "POST",--}}
+    {{--        data: function(d) {--}}
+    {{--            d.user_id = id; // Pass ID dynamically--}}
+    {{--        },--}}
+    {{--        headers: {--}}
+    {{--            "X-CSRF-TOKEN": "{{ csrf_token() }}" // CSRF protection--}}
+    {{--        }--}}
+    {{--    }--}}
+    {{--});--}}
     // When "Select All" checkbox is clicked
     $('#select-all').click(function() {
         var isChecked = $(this).prop('checked'); // Check if "Select All" is checked

@@ -12,6 +12,13 @@
                 <form id="distributorConvertForm" action="{{ route('prospect-convert-distributor') }}" redirect="{{route('prospects-manage')}}">
                     <input type="hidden" id="prospect_id" name="prospect_id">
 
+
+                    <div class="form-group">
+                            <label for="enagic_id">Enagic Id</label>
+                            <div>
+                                <input id="enagic_id" type="text" class="form-control" name="enagic_id" placeholder="Enagic Id">
+                            </div>
+                    </div>
                     <div class="form-group">
                             <label for="type">User Type <small>(Machine Users / Distributors)</small><span class="required">*</span></label>
                             <div>

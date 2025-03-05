@@ -42,18 +42,43 @@ class MachineUsersController extends Controller
         $sortColumn = array('firstname','lastname','email','phone','dob', 'city', 'state', 'country', 'status');
 
         $authUser = Auth::user();
-        $query = User::query();
+        $query = User::query()
+            ->select([
+                'users.id',
+                'users.firstname',
+                'users.lastname',
+                'users.email',
+                'users.phone',
+                'users.dob',
+                'users.city',
+                'users.state',
+                'users.country',
+                'users.status',
+                DB::raw('COUNT(DISTINCT prospects.id) as total_prospects'), // Count total prospects created by the user
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Invitation" THEN 1 END) as invitation_count'),
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Demo" THEN 1 END) as demo_count'),
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Followup" THEN 1 END) as followup_count'),
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Machine Purchased" THEN 1 END) as machine_purchased_count')
+            ])
+            ->leftJoin('prospect_statuses', 'users.id', '=', 'prospect_statuses.prospect_id') // Ensure proper join
+            ->leftJoin('prospects', 'users.id', '=', 'prospects.created_by') // Join with prospects to count total prospects
+            ->where('users.type', 'User')
+            ->when(!auth()->user()->hasRole('Administrator'), function ($query) {
+                $query->where('users.upline_id', auth()->id()); // Apply condition if not Administrator
+            })
+            ->where('users.id', '!=', auth()->id()) // Exclude the authenticated user
+            ->groupBy('users.id');
 
         //$query = $query->where('type', 'User');
-        if (auth()->user()->hasRole('Administrator')) {
-            $query = $query->where('id', '!=', auth()->id());
-        } else {
-            $query = $query
-                ->where('type', 'User')
-                ->where(function ($query) {
-                    $query->where('upline_id', auth()->id());
-                });
-        }
+//        if (auth()->user()->hasRole('Administrator')) {
+//            $query = $query->where('id', '!=', auth()->id());
+//        } else {
+//            $query = $query
+//                ->where('type', 'User')
+//                ->where(function ($query) {
+//                    $query->where('upline_id', auth()->id());
+//                });
+//        }
 
         if (isset($data['firstname']) && $data['firstname'] != '') {
             $query = $query->where('firstname', 'LIKE', '%' . $data['firstname'] . '%');
@@ -131,6 +156,12 @@ class MachineUsersController extends Controller
             $data[$key][$index++] = $val['city'];
             $data[$key][$index++] = $val['state'];
             $data[$key][$index++] = $val['country'];
+            // Check if user is Administrator, then add a clickable link
+            if (auth()->user()->hasRole('Administrator')) {
+                $data[$key][$index++] = '<a rel="' . $val['id'] . '" href="' . config('constant.ADMIN_URL') . 'prospects/filter/' . $val['id'] . '" class="prospect-link" data-user-id="' .  $val['id'] . '">' . $val['total_prospects'] . '</a>';
+            } else {
+                $data[$key][$index++] = $val['total_prospects']; // Just show the number if not an Administrator
+            }
 
             // Fetch user and their roles
 //            $user = User::find($val['id']);

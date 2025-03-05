@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class DistributorController extends Controller
 {
@@ -25,18 +26,44 @@ class DistributorController extends Controller
         $data = $request->all();
 
         $sortColumn = array('enagic_id','firstname','lastname', 'email', 'phone','dob', 'city', 'state', 'country', 'status');
-        $query = new User();
+        //$query = new User();
 
         // Add condition to fetch only 'Distributor' type users
         //$query = $query->where('type', 'Distributor');
-        if (auth()->user()->hasRole('Administrator')) {
-            $query = User::role('Distributor');
-        } else {
-            $query = User::role('Distributor')->where('upline_id', auth()->id());
-        }
+//        if (auth()->user()->hasRole('Administrator')) {
+//            $query = User::role('Distributor');
+//        } else {
+//            $query = User::role('Distributor')->where('upline_id', auth()->id());
+//        }
         //$query = User::role('Distributor')->where('upline_id', auth()->id());
 
-
+        $query = User::query()
+            ->select([
+                'users.id',
+                'users.firstname',
+                'users.lastname',
+                'users.email',
+                'users.phone',
+                'users.dob',
+                'users.city',
+                'users.state',
+                'users.country',
+                'users.enagic_id',
+                'users.status',
+                DB::raw('COUNT(DISTINCT prospects.id) as total_prospects'), // Count total prospects created by the user
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Invitation" THEN 1 END) as invitation_count'),
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Demo" THEN 1 END) as demo_count'),
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Followup" THEN 1 END) as followup_count'),
+                DB::raw('COUNT(CASE WHEN prospect_statuses.status = "Machine Purchased" THEN 1 END) as machine_purchased_count')
+            ])
+            ->leftJoin('prospect_statuses', 'users.id', '=', 'prospect_statuses.prospect_id') // Ensure proper join
+            ->leftJoin('prospects', 'users.id', '=', 'prospects.created_by') // Join with prospects to count total prospects
+            ->where('users.type', 'Distributor')
+            ->when(!auth()->user()->hasRole('Administrator'), function ($query) {
+                $query->where('users.upline_id', auth()->id()); // Apply condition if not Administrator
+            })
+            ->where('users.id', '!=', auth()->id()) // Exclude the authenticated user
+            ->groupBy('users.id');
         if (isset($data['enagic_id']) && $data['enagic_id'] != '') {
             $query = $query->where('enagic_id', 'LIKE', '%' . $data['enagic_id'] . '%');
         }
@@ -115,6 +142,11 @@ class DistributorController extends Controller
             $data[$key][$index++] = $val['city'];
             $data[$key][$index++] = $val['state'];
             $data[$key][$index++] = $val['country'];
+            if (auth()->user()->hasRole('Administrator')) {
+                $data[$key][$index++] = '<a rel="' . $val['id'] . '" href="' . config('constant.ADMIN_URL') . 'prospects/filter/' . $val['id'] . '" class="prospect-link" data-user-id="' .  $val['id'] . '">' . $val['total_prospects'] . '</a>';
+            } else {
+                $data[$key][$index++] = $val['total_prospects']; // Just show the number if not an Administrator
+            }
 
             $data[$key][$index++] = $val['status'] == 1 ? 'Active' : 'Inactive';
 
@@ -147,6 +179,7 @@ class DistributorController extends Controller
 
     public function showDistributorForm () {
         $title = 'Add Distributor';
+        $roles = Role::pluck('name','name')->all();
         //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
         $upLineUsers = User::role('Distributor')
             //->where('upline_id', auth()->id())
@@ -162,7 +195,7 @@ class DistributorController extends Controller
             ->where('id', '!=', auth()->id())
             ->select('id', 'firstname', 'lastname')
             ->get();
-        return view('admin.distributors.add', compact('title', 'upLineUsers', 'superUsers'));
+        return view('admin.distributors.add', compact('title', 'upLineUsers', 'superUsers','roles'));
     }
 
     public function addDistributor(Request $request) {
@@ -214,12 +247,19 @@ class DistributorController extends Controller
             $distributor->status = isset($request->status) && $request->status == 'Active' ? 1: 0;
             $distributor->feature_access = '1';
 
+            // Set Role Based on User's Role
+            if (auth()->user()->hasRole('Administrator')) {
+                $role = $request->roles ?? 'Distributor'; // If no role selected, default to 'Distributor'
+            } else {
+                $role = 'Distributor'; // Non-Admins can only assign 'Distributor'
+            }
+
             $distributor->save();
-            $distributor->syncRoles('Distributor');
+            $distributor->syncRoles($role);
 
             if ($distributor->save()) {
                 Mail::to($distributor->email)->send(new DistributorRegister($distributor, $randomPassword));
-                Session::flash('success-message', $request->title . " created successfully !");
+                Session::flash('success-message', 'Distributor'. $request->firstname . " created successfully !");
                 $data['success'] = true;
 
                 return response()->json($data);
@@ -233,6 +273,8 @@ class DistributorController extends Controller
 
         $distributor = User::find($id);
         $title = 'Edit Distributor';
+        $roles = Role::pluck('name','name')->all();
+        $userRoles = $distributor->roles->pluck('name','name')->all();
         $inputs  = $request->all();
         if ($distributor || !empty($distributor)) {
             if($inputs) {
@@ -277,8 +319,18 @@ class DistributorController extends Controller
                     $distributor->leader_id = $request->leader_id;
                     $distributor->status = isset($request->status) && $request->status == 'Active' ? 1: 0;
 
+                    if (auth()->user()->hasRole('Administrator')) {
+                        $role = $request->roles ?? 'Distributor'; // If no role selected, default to 'Distributor'
+                    } else {
+                        $role = 'Distributor'; // Non-Admins can only assign 'Distributor'
+                    }
+
+                    $distributor->save();
+                    $distributor->syncRoles($role);
+
                     if ($distributor->save()) {
                         Session::flash('success-message', $distributor->firstname . " updated successfully !");
+                        $data['redirect_url'] = config('constants.ADMIN_URL') . 'distributors';
                         $data['success'] = true;
 
                         return response()->json($data);
@@ -309,7 +361,7 @@ class DistributorController extends Controller
                     ->select('id', 'firstname', 'lastname')
                     ->get();
 
-                return view('admin.distributors.edit', compact('title', 'distributor', 'upLineUsers', 'superUsers'));
+                return view('admin.distributors.edit', compact('title', 'distributor', 'upLineUsers', 'superUsers','userRoles','roles'));
                 //return view('admin.distributors.edit', compact('distributor', 'title'));
             }
 

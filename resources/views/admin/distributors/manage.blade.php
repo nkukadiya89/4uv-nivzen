@@ -66,6 +66,7 @@
                             <th>City</th>
                             <th>State</th>
                             <th>Country</th>
+                            <th>No. Of Prospects</th>
                             <th>Status</th>
                             <th width="105" class="no-sort text-center">Actions</th>
                         </tr>
@@ -93,6 +94,8 @@
                                        name="state"></td>
                             <td><input type="text" class="form-control form-control-sm form-filter kt-input"
                                        name="country"></td>
+                            <td><input type="text" class="form-control form-control-sm form-filter kt-input"
+                                       name="total_prospects"></td>
                             <td>
                                 <select class="form-control form-control-sm form-filter kt-input" title="Select"
                                         name="account_status">

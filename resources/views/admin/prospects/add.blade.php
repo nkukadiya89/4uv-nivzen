@@ -137,7 +137,7 @@
                                     <tr>
                                         <td>
                                             <select name="statuses[{{ $index }}][status]" id="statuses[{{ $index }}][status]" class="form-control custom-select required" placeholder="status">
-                                                <option value="">Please Select</option>
+                                                <option value="Prospect" {{ old("statuses.$index.status") == 'Prospect' ? 'selected' : '' }}>Prospect</option>
                                                 <option value="Invitation" {{ old("statuses.$index.status") == 'Invitation' ? 'selected' : '' }}>Invitation</option>
                                                 <option value="Demo" {{ old("statuses.$index.status") == 'Demo' ? 'selected' : '' }}>Demo</option>
                                                 <option value="Followup" {{ old("statuses.$index.status") == 'Followup' ? 'selected' : '' }}>Followup</option>
@@ -145,7 +145,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="date" id="statuses[{{ $index }}][date]" name="statuses[{{ $index }}][date]" class="form-control required" value="{{ old("statuses.$index.date", date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" placeholder="date">
+                                            <input type="date" id="statuses[{{ $index }}][date]" name="statuses[{{ $index }}][date]" class="form-control required" value="{{ old("statuses.$index.date", date('Y-m-d')) }}" min="{{ date('Y-m-d') }}" placeholder="date">
                                         </td>
                                         <td>
                                             <input type="text" name="statuses[{{ $index }}][remarks]" class="form-control" value="{{ old("statuses.$index.remarks") }}">
@@ -197,14 +197,14 @@ document.getElementById('add_row').addEventListener('click', function() {
     row.innerHTML = `
         <td>
             <select id="statuses[${rowCount}][status]" name="statuses[${rowCount}][status]" class="form-control custom-select required" placeholder="status">
-                <option value="">Please Select</option>
+                <option value="Prospect">Prospect</option>
                 <option value="Invitation">Invitation</option>
                 <option value="Demo">Demo</option>
                 <option value="Followup">Followup</option>
                 <option value="Machine Purchased">Machine Purchased</option>
             </select>
         </td>
-        <td><input type="date" id="statuses[${rowCount}][date]" name="statuses[${rowCount}][date]" class="form-control required" value="${today}" max="${today}"></td>
+        <td><input type="date" id="statuses[${rowCount}][date]" name="statuses[${rowCount}][date]" class="form-control required" value="${today}" min="${today}"></td>
         <td><input type="text" name="statuses[${rowCount}][remarks]" class="form-control"></td>
         <td><button type="button" class="btn btn-sm btn-danger remove_row">-</button></td>
     `;
