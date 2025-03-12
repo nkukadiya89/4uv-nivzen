@@ -204,10 +204,15 @@
                                         id="upline_id" placeholder="Upline Name">
 
                                         <option value="">Select Upline Name</option>
-                                        @foreach ($upLineUsers as $res)
-                                        <option value="{{ $res->id }}">
-                                            {{ $res->firstname }} {{$res->lastname}}
+                                        <option value="{{ auth()->id() }}">
+                                            {{ auth()->user()->firstname }} {{ auth()->user()->lastname }} (You)
                                         </option>
+                                        @foreach ($upLineUsers as $res)
+                                            @if ($res->id !== auth()->id())
+                                                <option value="{{ $res->id }}">
+                                                    {{ $res->firstname }} {{$res->lastname}}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -221,10 +226,15 @@
                                         id="leader_id" placeholder="Leader Name">
 
                                         <option value="">Select Leader Name</option>
-                                        @foreach ($superUsers as $res)
-                                        <option value="{{ $res->id }}">
-                                            {{ $res->firstname }} {{$res->lastname}}
+                                        <option value="{{ auth()->id() }}">
+                                            {{ auth()->user()->firstname }} {{ auth()->user()->lastname }} (You)
                                         </option>
+                                        @foreach ($superUsers as $res)
+                                            @if ($res->id !== auth()->id())
+                                                <option value="{{ $res->id }}">
+                                                    {{ $res->firstname }} {{$res->lastname}}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>

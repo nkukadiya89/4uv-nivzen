@@ -181,9 +181,9 @@ class DistributorController extends Controller
         $title = 'Add Distributor';
         $roles = Role::pluck('name','name')->all();
         //$users = User::where('id', '!=', auth()->id())->select('id', 'firstname', 'lastname')->get();
-        $upLineUsers = User::role('Distributor')
+        $upLineUsers = User::query()
             //->where('upline_id', auth()->id())
-            ->where('id', '!=', auth()->id())
+            //->where('id', '!=', auth()->id())
             ->select('id', 'firstname', 'lastname')
             ->get();
 //        $user = auth()->user();
@@ -192,7 +192,7 @@ class DistributorController extends Controller
                        $query->where('name', 'Distributor');
                   })
             //->where('upline_id', auth()->id())
-            ->where('id', '!=', auth()->id())
+            //->where('id', '!=', auth()->id())
             ->select('id', 'firstname', 'lastname')
             ->get();
         return view('admin.distributors.add', compact('title', 'upLineUsers', 'superUsers','roles'));
@@ -346,9 +346,9 @@ class DistributorController extends Controller
 //                    ->get();
 //                $user = auth()->user();
 //                $users = $user->downlines;
-                $upLineUsers = User::role('Distributor')
+                $upLineUsers = User::query()
                     //->where('upline_id', auth()->id())
-                    ->where('id', '!=', auth()->id())
+                    //->where('id', '!=', auth()->id())
                     ->select('id', 'firstname', 'lastname')
                     ->get();
 //        $user = auth()->user();
@@ -357,7 +357,7 @@ class DistributorController extends Controller
                     $query->where('name', 'Distributor');
                 })
                     //->where('upline_id', auth()->id())
-                    ->where('id', '!=', auth()->id())
+                    //->where('id', '!=', auth()->id())
                     ->select('id', 'firstname', 'lastname')
                     ->get();
 

@@ -215,10 +215,15 @@
                                         id="upline_id" placeholder="Upline Name" data-selected="{{ $distributor->upline_id }}">
 
                                         <option value="">Select Upline Name</option>
-                                        @foreach ($upLineUsers as $res)
-                                        <option value="{{ $res->id }}" {{ $distributor->upline_id == $res->id ? 'selected' : '' }}>
-                                            {{ $res->firstname }} {{$res->lastname}}
+                                        <option value="{{ auth()->id() }}" {{ $distributor->upline_id == auth()->id() ? 'selected' : '' }}>
+                                            {{ auth()->user()->firstname }} {{ auth()->user()->lastname }} (You)
                                         </option>
+                                        @foreach ($upLineUsers as $res)
+                                            @if ($res->id !== auth()->id())
+                                                <option value="{{ $res->id }}" {{ $distributor->upline_id == $res->id ? 'selected' : '' }}>
+                                                    {{ $res->firstname }} {{$res->lastname}}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -233,10 +238,15 @@
                                         id="leader_id" placeholder="Leader Name">
 
                                         <option value="">Select Leader Name</option>
-                                        @foreach ($superUsers as $res)
-                                        <option value="{{ $res->id }}" {{ $distributor->leader_id == $res->id ? 'selected' : '' }}>
-                                            {{ $res->firstname }} {{$res->lastname}}
+                                        <option value="{{ auth()->id() }}" {{ $distributor->upline_id == auth()->id() ? 'selected' : '' }}>
+                                            {{ auth()->user()->firstname }} {{ auth()->user()->lastname }} (You)
                                         </option>
+                                        @foreach ($superUsers as $res)
+                                            @if ($res->id !== auth()->id())
+                                                <option value="{{ $res->id }}" {{ $distributor->leader_id == $res->id ? 'selected' : '' }}>
+                                                    {{ $res->firstname }} {{$res->lastname}}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
