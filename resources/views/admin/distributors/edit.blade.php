@@ -68,7 +68,7 @@
                                 <label for="dob">Date of Birth<span class="required">*</span></label>
                                 <div>
                                     <input class="form-control" type="date" placeholder="Birth date" name="dob"
-                                        value="{{ $distributor->dob }}" autocomplete="off" />
+                                        value="{{ $distributor->dob }}" autocomplete="off" max="{{ now()->toDateString() }}" />
                                 </div>
                             </div>
                         </div>
@@ -257,7 +257,7 @@
                             <div class="form-group">
                                 <label for="status">Account Status</label>
                                 <div>
-                                    <select name="status" id="status" class="form-control" required>
+                                    <select name="status" id="status" class="form-control">
                                         <option value="Active"
                                             {{ old('status', $distributor->status ?? '') == 'Active' ? 'selected' : '' }}>
                                             Active</option>
