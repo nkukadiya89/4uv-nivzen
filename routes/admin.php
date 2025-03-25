@@ -28,8 +28,10 @@ Route::group(['middleware' => [ 'guest.backend:backend']], function() {
 
     Route::any('register/add', [AuthenticateController::class, 'addUser'])->name('backend.register');
 
-    Route::any('reset-password', [AuthenticateController::class, 'sendResetLinkEmail'])->name('backend.reset.password');
-
+    Route::post('reset-password', [AuthenticateController::class, 'sendResetLinkEmail'])->name('backend.reset.password');
+    Route::get('password/reset/{token}', [AuthenticateController::class, 'showResetLinkForm'])->name('password.reset');
+    Route::post('/password/update', [AuthenticateController::class, 'updatePassword'])
+    ->name('password.update');
 });
 
 Route::group(['middleware' => ['web', 'backend:backend']], function() {
