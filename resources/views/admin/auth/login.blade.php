@@ -149,8 +149,9 @@
                             <h5>Enter your email to reset your password</h5>
                         </div>
                         <!--begin::Form-->
-                        <form class="form" action="{{route('backend.reset.password')}}" novalidate="novalidate"
+                        <form class="form" method="POST" action="{{route('backend.reset.password')}}"
                               id="kt_login_forgot_form">
+                              @csrf
                             <div class="form-group">
                                 <input class="form-control" type="email" placeholder="Email" name="email"
                                        autocomplete="off" />
@@ -183,7 +184,11 @@
             @if(Session::has('success-message'))
                   toastr.info("{{ session('success-message') }}");
             @endif
+            $('#kt_login_forgot_submit').click(function(e) {
+                e.preventDefault(); // Remove this if found elsewhere
 
+                $('#kt_login_forgot_form').submit();
+            });
 
         });
     </script>
