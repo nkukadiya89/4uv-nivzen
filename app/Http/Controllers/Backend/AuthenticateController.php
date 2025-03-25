@@ -5,6 +5,8 @@ use App\Models\User;
 use App\Models\Prospect;
 use App\Models\Training;
 use App\Models\UserTrainingActivity;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -232,39 +234,79 @@ class AuthenticateController extends BaseController {
     public function sendResetLinkEmail(Request $request) {
          //$this->validateEmail($request);
          $user = DB::table('users')->where('email', '=', $request->email)->first();
+
          if (!$user) {
             $data['status'] = 'false';
-            return response()->json($data);
+            Session::flash('success-message', 'User Not Found');
+            return redirect()->back()->with("success", " User Not Found !");
          }
-
+         $userArray = json_decode(json_encode($user), true);
          //get password reset token
-        //  DB::table('password_reset_tokens')->insert([
-        //      'email' => $request->email,
-        //      'token' => Str::random(60),
-        //      'created_at' => Carbon::now()
-        //  ]);
-        //  $tokenData = DB::table('password_reset_tokens')->where('email', $request->email)->first();
+         DB::table('password_reset_tokens')->insert([
+             'email' => $request->email,
+             'token' => Str::random(60),
+             'created_at' => Carbon::now()
+         ]);
+         $tokenData = DB::table('password_reset_tokens')->where('email', $request->email)->first();
 
 
-        //  $event_name="Reset Password";
-        //  $data['name'] = $user->firstname;
-        //  $data['link'] = config('constants.ADMIN_URL').'/password/reset/'.Str::random(60).'?email='.$request->email;
-        //  $data['site_url'] = config('constants.ADMIN_URL');
+         $event_name="Reset Password";
+         $data['name'] = $user->firstname;
+         $data['link'] = config('constants.ADMIN_URL').'password/reset/'.Str::random(60).'?email='.$request->email;
+         $data['site_url'] = config('constants.ADMIN_URL');
 
-        //  $to      = 'test.wld3@gmail.com';
-        //  $subject = 'Request for password reset';
-        //  $message = 'hello';
-        //  $headers = 'From: webmaster@example.com'       . "\r\n" .
-        //               'Reply-To: webmaster@example.com' . "\r\n" .
-        //               'X-Mailer: PHP/' . phpversion();
+         $to      = $request->email;
+         $subject = 'Request for password reset';
+         $message = 'hello';
+         $headers = 'From: noreply@thelastmiddleclass.com'       . "\r\n" .
+                      'Reply-To: noreply@thelastmiddleclass.com' . "\r\n" .
+                      'X-Mailer: PHP/' . phpversion();
 
-        //  mail($to, $subject, $message, $headers);
-        //  $this->sendKlaviyoEmail($request->email, $event_name, $data);
+         //Mail::to($request->email)->send($to, $subject, $message, $headers);
+         Mail::to($request->email)->send(new ResetPasswordMail($userArray, $data, $subject, $message, $headers));
+         //$this->sendKlaviyoEmail($request->email, $event_name, $data);
 
          $data['status'] = 'true';
+         Session::flash('success-message', 'Password reset Mail send successfully');
+         return redirect()->back()->with("success", " Distributor added successfully !");
+        // return response()->json($data);
+    }
+    public function showResetLinkForm(Request $request, $token) {
+        return view('admin.auth.reset_password', [
+            'token' => $token,
+            'email' => $request->query('email'),
+        ]);
+    }
 
+    public function updatePassword(Request $request) {
+        // var_dump($request->email);
+        // exit;
+        $request->validate([
+            'email' => 'required|email|exists:users,email', // Adjust table if needed
+            'token' => 'required',
+            'password' => 'required|min:6',
+            'password_confirmation' => 'required|min:6',
+        ]);
 
-         return response()->json($data);
+        // Fetch the reset record from the database
+            $resetRecord = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+            // Check if the token exists and is valid
+            if (!$resetRecord) {
+                return back()->withErrors(['email' => 'Invalid or expired reset token.']);
+            }
+
+            // Update the user's password
+            User::where('email', $request->email)->update([
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Delete the token after successful password reset
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            Session::flash('success-message', 'Password Change successfully');
+            return redirect()->route('backend.login')->with('status', 'Password reset successfully. You can now login.');
     }
 
     public function dashboard() {
